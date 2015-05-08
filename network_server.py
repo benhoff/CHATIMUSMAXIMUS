@@ -11,7 +11,6 @@ class SocketThread(QtCore.QThread):
         self.socket = None
 
     def run(self):
-        print(self.socket_descriptor, " Starting Thread")
         self.socket = QtNetwork.QTcpSocket(parent=self)
         if not self.socket.setSocketDescriptor(self.socket_descriptor):
             self.error.emit(self.socket.error())
@@ -21,21 +20,16 @@ class SocketThread(QtCore.QThread):
         self.socket.readyRead.connect(self.readyRead)
         self.socket.disconnected.connect(self.disconnected)
 
-        print(self.socket_descriptor, " Client connected")
-
         # make this thread a loop
         self.exec_()
 
     @QtCore.pyqtSlot() 
     def readyRead(self):
         data = self.socket.readAll()
-        print(type(data))
-        print(self.socket_descriptor, " Data in: ", data)
         self.chat_signal.emit(data)
 
     @QtCore.pyqtSlot()
     def disconnected(self):
-        print(self.socket_descriptor, " Disconnected")
         self.socket.deleteLater()
         self.exit(0)
 
@@ -48,7 +42,6 @@ class NetworkServer(QtNetwork.QTcpServer):
         self.sockets = []
    
     def incomingConnection(self, socket_desciptor):
-        print(socket_desciptor, " Connecting...")
         # TODO: Think about this memory management piece
         thread = SocketThread(socket_desciptor)
         thread.finished.connect(thread.deleteLater)
