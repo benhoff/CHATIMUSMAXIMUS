@@ -2,6 +2,8 @@ from PyQt5 import QtNetwork, QtCore
 
 class SocketThread(QtCore.QThread):
     error = QtCore.pyqtSignal(QtNetwork.QTcpSocket.SocketError)
+    chat_signal = QtCore.pyqtSignal(QtCore.QByteArray)
+
     # TODO: Connect readData to a signal which emits the data
     def __init__(self, id, parent=None):
         super(SocketThread, self).__init__(parent)
@@ -10,7 +12,7 @@ class SocketThread(QtCore.QThread):
 
     def run(self):
         print(self.socket_descriptor, " Starting Thread")
-        self.socket = QtNetwork.QTcpSocket()
+        self.socket = QtNetwork.QTcpSocket(parent=self)
         if not self.socket.setSocketDescriptor(self.socket_descriptor):
             self.error.emit(self.socket.error())
             return
@@ -27,9 +29,9 @@ class SocketThread(QtCore.QThread):
     @QtCore.pyqtSlot() 
     def readyRead(self):
         data = self.socket.readAll()
+        print(type(data))
         print(self.socket_descriptor, " Data in: ", data)
-
-        self.socket.write(data)
+        self.chat_signal.emit(data)
 
     @QtCore.pyqtSlot()
     def disconnected(self):
@@ -38,18 +40,22 @@ class SocketThread(QtCore.QThread):
         self.exit(0)
 
 class NetworkServer(QtNetwork.QTcpServer):
+    chat_signal = QtCore.pyqtSignal(QtCore.QByteArray)
     # TODO: Pass into own thread and call in a exec loop
     def __init__(self, parent=None):
         super(NetworkServer, self).__init__(parent)
-        self.listen(port=1024)
+        self.listen(port=54545)
+        self.sockets = []
    
     def incomingConnection(self, socket_desciptor):
         print(socket_desciptor, " Connecting...")
         # TODO: Think about this memory management piece
-        thread = SocketThread(socket_desciptor, self)
+        thread = SocketThread(socket_desciptor)
         thread.finished.connect(thread.deleteLater)
+        thread.chat_signal.connect(self.chat_slot)
         thread.start()
-
-    @QtCore.pyqtSlot()
-    def start_read(self):
-        pass
+        self.sockets.append(thread)
+    
+    @QtCore.pyqtSlot(QtCore.QByteArray)
+    def chat_slot(self, qbyte_array):
+        self.chat_signal.emit(qbyte_array)
