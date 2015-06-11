@@ -1,5 +1,5 @@
 import websocket
-import urllib.request 
+import requests
 import threading
 import time
 
@@ -19,20 +19,14 @@ def on_error(ws, e):
 
 if __name__ == '__main__':
     streamer_name = 'beohoff'
-
-    website_socket= 'ws://www.watchpeoplecode.com/streamer/{}'.format(
-            streamer_name)
-    website_url = 'http://www.watchpeoplecode.com/streamer/beohoff'
-    request = urllib.request.urlopen(website_url, '/chat') 
-    encoding = request.headers.get_content_charset()
-    if encoding is None:
-        encoding = 'utf-8'
-    key = request.read().decode(encoding)
-    print(key)
-    connection = httplib.HTTPConnection(website_url)
-    conn.request('POST', '/chat')
-    response = conn.getresponse()
-    key = response.read().split(':')[0]
+    # this is default for the flask app
+    port_number =  5000
+    website_socket= 'ws://www.watchpeoplecode.com/streamer/{}:{}/chat'.format(
+            streamer_name, port_number)
+    website_url = 'http://www.watchpeoplecode.com/streamer/beohoff:{}/chat/'.format(port_number)
+    #header = {'username':'beohoff'}
+    r = requests.post(website_url)
+    print(r.text, r)
     ws = websocket.WebSocketApp(website_socket+ '/chat',
             on_message = onmessage)
     ws.on_open = onopen
