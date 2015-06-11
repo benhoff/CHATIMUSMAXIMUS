@@ -43,6 +43,7 @@ class NetworkServer(QtNetwork.QTcpServer):
    
     def incomingConnection(self, socket_desciptor):
         # TODO: Think about this memory management piece
+        print("incoming connection")
         thread = SocketThread(socket_desciptor)
         thread.finished.connect(thread.deleteLater)
         thread.chat_signal.connect(self.chat_slot)
