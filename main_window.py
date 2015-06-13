@@ -23,6 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.pyqtSlot(QtCore.QByteArray)
     def chat_slot(self, qbyte_array):
         text = str(qbyte_array).split('\\r\\n')[12]
+        print(text)
         text = text.split('&', maxsplit=2)
 
         host = text[0][5:]

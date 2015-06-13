@@ -19,9 +19,6 @@ class Socket(websocket.WebSocketApp):
                                      on_message=self.on_message, 
                                      on_error=self.on_error)
 
-        #self.send_packet_helper(0)
-        #self.send_packet_helper(5, data="{'name':'initialize'}")
-
     def on_open(self, *args):
         print('Websocket open!')
 
@@ -29,30 +26,35 @@ class Socket(websocket.WebSocketApp):
         print('Websocket closed!')
     
     def on_message(self, *args):
-        message = args[1].split(':')
+        message = args[1].split(':', 3)
         key = int(message[0])
         callback =message[1]
         namespace = message[2]
 
-        if len(message) == 4:
+        if len(message) >= 4:
            data = message[3]
         else:
             data = ''
-        print('Key: ', key) 
         if key == 1 and args[1] == '1::':
-            print("Connecting to namespace!")
             self.send_packet_helper(1)
-        elif key == 1 and args[1] == '1::/chat':
+        elif key == 1 and args[1] == '1::{}'.format(self.namespace):
             self.send_packet_helper(5, data={'name':'initialize'})
             self.send_packet_helper(5, data={'name':'join', 'args':['beohoff']})
         if key == 2:
             pass
+        if key  == 5:
+            data = json.loads(data)
+            if data['name'] == 'message':
+                message = data['args'][0]
+                self.message_signal(message['sender'], message['text'])
 
-        print(args[1])
-        
+
+    def message_signal(self, sender, message):
+        # TODO: make this so much better
+        print(sender, message)
 
     def on_error(self, *args):
-        print(args)
+        print(args[1])
 
     def disconnect(self):
         callback = ''
@@ -79,7 +81,6 @@ class Socket(websocket.WebSocketApp):
 
         callback = ''
         message = ':'.join([str(type_key), callback, self.namespace, data])
-        print("Packet helper: ", message)
         self.send(message)
     
     LISTNER_KEYS = {'DISCONNECT':0,
@@ -101,6 +102,9 @@ class Socket(websocket.WebSocketApp):
                  'BINARY_ACK':6}
 
 if __name__ == '__main__':
+    # TODO: need to build in like pinger so that we stay connected to the server
+    # TODO: need to parse our data
+
     streamer_name = 'beohoff'
     # this is default for the flask app
     socket = Socket()
