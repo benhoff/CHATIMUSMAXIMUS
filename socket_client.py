@@ -5,30 +5,6 @@ from threading import Thread, Event
 import html
 from PyQt5 import QtCore
 
-class ServerPinger(Thread):
-    """
-    Socket.io server requires feedback from the client to let it know that 
-    the client is still 'alive'. This class does that without blocking
-    """
-    # this makes so the program exits if only this thread type is left
-    # equals good
-    daemon = True
-
-    def __init__(self, ping_interval, ping_function, *args, **kwargs):
-        self.ping_interval = ping_interval
-        self.ping_function = ping_function
-        super(ServerPinger, self).__init__(*args, **kwargs)
-        self.event_instance = Event()
-
-    def run(self):
-        self.event_instance.wait(self.ping_interval)
-        while not self.event_instance.is_set():
-            self.ping_function()
-            self.event_instance.wait(self.ping_interval)
-
-    def cancel(self):
-        self.event_instance.set()
-
 class Messager(QtCore.QObject):
     """
     Super trivial class to get around the issue with multiple inhertiance in
@@ -43,40 +19,29 @@ class Messager(QtCore.QObject):
 
 class SocketThread(Thread):
     # If only dameon threads are left, exit the program
-    dameon = True
+    daemon = True
     def __init__(self, streamer_name, namespace='/chat', *args, **kwargs):
         self.socket = Socket(streamer_name, namespace)
         self.chat_signal = self.socket.chat_signal
         super(SocketThread, self).__init__(*args, **kwargs)
 
     def run(self):
-        self.socket.run_forever()
-
+        self.socket.run_forever(ping_interval=self.socket._heartbeat)
 
 class Socket(websocket.WebSocketApp):
     def __init__(self, streamer_name, namespace='/chat'):
         self._streamer_name = streamer_name
         self.namespace = namespace 
-        website_url = 'http://www.watchpeoplecode.com/socket.io/1/'
-        r = requests.post(website_url)
-        params = r.text
-
-        # unused variables are connection_timeout and supported_formats
-        key, heartbeat_timeout, _, _ = params.split(':') 
+        self._website_url = 'http://www.watchpeoplecode.com/socket.io/1/'
+        key, heartbeat = self._connect_to_server_helper()
+        self._heartbeat = heartbeat - 2
         
         # alters URL to be more websocket...ie
-        website_socket = website_url.replace('http', 'ws') + 'websocket/'
-        super(Socket, self).__init__(website_socket + key,
+        self._website_socket = self._website_url.replace('http', 'ws') + 'websocket/'
+        super(Socket, self).__init__(self._website_socket + key,
                                      on_open=self.on_open, on_close=self.on_close,
                                      on_message=self.on_message, 
                                      on_error=self.on_error)
-        
-        # create a pinger to re-ping the server so we don't timeout
-        self._server_pinger = ServerPinger(int(heartbeat_timeout) - 2,
-                                           self._ping_server)
-
-        # start the server pinger
-        self._server_pinger.start()
 
         # use the trivial instance `_messager` to get around multiple inheritance
         # problems with PyQt
@@ -84,11 +49,27 @@ class Socket(websocket.WebSocketApp):
         # Duck type the `chat_signal` onto the `Socket` instance/class
         self.chat_signal = self._messager.chat_signal
 
+    def _reconnect_to_server(self):
+        # NOTE: not sure if this is required
+        #key, _ = self._connect_to_server_helper()
+        #self.url =
+        pass
+
+    def _connect_to_server_helper(self):
+        r = requests.post(self._website_url)
+        params = r.text
+
+        # unused variables are connection_timeout and supported_formats
+        key, heartbeat_timeout, _, _ = params.split(':') 
+        heartbeat_timeout = int(heartbeat_timeout)
+        return key, heartbeat_timeout
+
     def on_open(self, *args):
         print('Websocket open!')
 
     def on_close(self, *args):
         print('Websocket closed!')
+        # TODO: Retry the socket
 
     def _ping_server(self):
         # this pings the server
