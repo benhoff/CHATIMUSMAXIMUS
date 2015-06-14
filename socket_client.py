@@ -31,14 +31,11 @@ class Socket(websocket.WebSocketApp):
                                      on_open=self.on_open, on_close=self.on_close,
                                      on_message=self.on_message, 
                                      on_error=self.on_error)
-
-        thread = Thread(target=self.run_forever, args=(None, None, self._heartbeat))
-        thread.setDaemon(True)
-        thread.start()
-        event = Event()
-        ping_thread = Thread(target=self._ping_server, args=(event))
-        ping_thread.setDaemon(True)
-        ping_thread.start()
+        
+        # start a thread and set the socket to run forever
+        self._thread = Thread(target=self.run_forever)
+        self._thread.setDaemon(True)
+        self._thread.start()
 
         # use the trivial instance `_messager` to get around multiple inheritance
         # problems with PyQt
@@ -47,9 +44,8 @@ class Socket(websocket.WebSocketApp):
         self.chat_signal = self._messager.chat_signal
 
     def _reconnect_to_server(self):
-        # NOTE: not sure if this is required
-        #key, _ = self._connect_to_server_helper()
-        #self.url =
+        self._thread.join()
+        thread = Thread()
         pass
 
     def _connect_to_server_helper(self):
@@ -66,19 +62,8 @@ class Socket(websocket.WebSocketApp):
 
     def on_close(self, *args):
         print('Websocket closed!')
-        # TODO: Retry the socket
+        self._thread.join()
 
-    def _ping_server(self, event=None):
-        # this pings the server
-        if event is not None:
-            event.wait(self._heartbeat)
-            while not event.is_set():
-                print('sending ping!')
-                self.send_packet_helper(2)
-                event.wait(self._heartbeat)
-        else:
-            self.send_packet_helper(2)
-    
     def on_message(self, *args):
         message = args[1].split(':', 3)
         print(message)
@@ -95,6 +80,8 @@ class Socket(websocket.WebSocketApp):
             self.send_packet_helper(5, data={'name':'initialize'})
             data = {'name':'join', 'args':['{}'.format(self._streamer_name)]}
             self.send_packet_helper(5, data=data)
+        elif key == 2:
+            self.send_packet_helper(2)
         elif key  == 5:
             data = json.loads(data, )
             if data['name'] == 'message':
