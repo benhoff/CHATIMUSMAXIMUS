@@ -17,24 +17,13 @@ class Messager(QtCore.QObject):
     def recieve_chat_data(self, sender, message):
         self.chat_signal.emit(sender, message)
 
-class SocketThread(Thread):
-    # If only dameon threads are left, exit the program
-    daemon = True
-    def __init__(self, streamer_name, namespace='/chat', *args, **kwargs):
-        self.socket = Socket(streamer_name, namespace)
-        self.chat_signal = self.socket.chat_signal
-        super(SocketThread, self).__init__(*args, **kwargs)
-
-    def run(self):
-        self.socket.run_forever(ping_interval=self.socket._heartbeat)
-
 class Socket(websocket.WebSocketApp):
     def __init__(self, streamer_name, namespace='/chat'):
         self._streamer_name = streamer_name
         self.namespace = namespace 
         self._website_url = 'http://www.watchpeoplecode.com/socket.io/1/'
         key, heartbeat = self._connect_to_server_helper()
-        self._heartbeat = heartbeat - 2
+        self._heartbeat = heartbeat/2 
         
         # alters URL to be more websocket...ie
         self._website_socket = self._website_url.replace('http', 'ws') + 'websocket/'
@@ -42,6 +31,14 @@ class Socket(websocket.WebSocketApp):
                                      on_open=self.on_open, on_close=self.on_close,
                                      on_message=self.on_message, 
                                      on_error=self.on_error)
+
+        thread = Thread(target=self.run_forever, args=(None, None, self._heartbeat))
+        thread.setDaemon(True)
+        thread.start()
+        event = Event()
+        ping_thread = Thread(target=self._ping_server, args=(event))
+        ping_thread.setDaemon(True)
+        ping_thread.start()
 
         # use the trivial instance `_messager` to get around multiple inheritance
         # problems with PyQt
@@ -71,12 +68,20 @@ class Socket(websocket.WebSocketApp):
         print('Websocket closed!')
         # TODO: Retry the socket
 
-    def _ping_server(self):
+    def _ping_server(self, event=None):
         # this pings the server
-        self.send_packet_helper(2)
+        if event is not None:
+            event.wait(self._heartbeat)
+            while not event.is_set():
+                print('sending ping!')
+                self.send_packet_helper(2)
+                event.wait(self._heartbeat)
+        else:
+            self.send_packet_helper(2)
     
     def on_message(self, *args):
         message = args[1].split(':', 3)
+        print(message)
         key = int(message[0])
         namespace = message[2]
 
