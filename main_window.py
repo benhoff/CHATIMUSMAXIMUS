@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 import html, json
+from datetime import datetime
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -25,7 +26,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.text_edit.setTextColor(QtGui.QColor("red"))
         cursor = self.text_edit.textCursor()
         cursor.setCharFormat(self.name_formater)
-        cursor.insertText(sender + ': ')
+        formated_datetime = ' [' + datetime.now().strftime("%H:%M:%S") + ']'
+        cursor.insertText(sender + formated_datetime + ': ')
 
         cursor.setCharFormat(self.text_formater)
         cursor.insertText(message)
