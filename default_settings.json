@@ -1,0 +1,17 @@
+{
+	"chrome_tcp_server": {
+		"host": "127.0.0.1",
+		"port": "54545"
+	},
+
+	"watchpeoplecode":{
+		"channel": ""
+	},
+
+	"twitch": {
+		"oauth_token": "",
+		"channel": "",
+		"nick": ""
+	}
+}
+
