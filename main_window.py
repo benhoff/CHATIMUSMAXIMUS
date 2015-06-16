@@ -22,20 +22,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.text_formater.setForeground(QtCore.Qt.black)
         self.text_formater.setFontPointSize(13)
 
-    def _chat_formater(self, sender, message):
+    def _chat_formater(self, sender, message, platform=None):
         self.text_edit.setTextColor(QtGui.QColor("red"))
         cursor = self.text_edit.textCursor()
         cursor.setCharFormat(self.name_formater)
-        formated_datetime = ' [' + datetime.now().strftime("%H:%M:%S") + ']'
-        cursor.insertText(sender + formated_datetime + ': ')
+        if not platform:
+            platform = ''
+        formatted_datetime = datetime.now().strftime("%H:%M:%S")
+        bracket_string = '[{}@{}]: '.format(platform, formatted_datetime)
+        cursor.insertText(sender + bracket_string)
 
         cursor.setCharFormat(self.text_formater)
         cursor.insertText(message)
         cursor.insertBlock()
 
-    @QtCore.pyqtSlot(str, str)
-    def socket_chat_slot(self, sender, message):
-        self._chat_formater(sender, message)
+    @QtCore.pyqtSlot(str, str, str)
+    def socket_chat_slot(self, sender, message, platform):
+        self._chat_formater(sender, message, platform)
 
     @QtCore.pyqtSlot(QtCore.QByteArray)
     def chat_slot(self, qbyte_array):
@@ -45,4 +48,4 @@ class MainWindow(QtWidgets.QMainWindow):
         host = text[0][5:]
         user = html.unescape(text[1][7:])
         message = html.unescape(text[2][8:][:-1])
-        self._chat_formater(user, message)
+        self._chat_formater(user, message, 'YT')

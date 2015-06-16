@@ -6,6 +6,8 @@ import html
 from messager import Messager
 
 class Socket(websocket.WebSocketApp):
+    PLATFORM = 'WPC'
+
     def __init__(self, streamer_name, namespace='/chat'):
         self._streamer_name = streamer_name
         self.namespace = namespace 
@@ -76,7 +78,7 @@ class Socket(websocket.WebSocketApp):
                 message = data['args'][0]
                 sender = html.unescape(message['sender'])
                 message = html.unescape(message['text'])
-                self._messager.recieve_chat_data(sender, message)
+                self._messager.recieve_chat_data(sender, message, self.PLATFORM)
 
     def on_error(self, *args):
         print(args[1])

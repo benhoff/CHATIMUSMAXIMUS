@@ -7,8 +7,9 @@ from PyQt5 import QtCore
 
 class ReadOnlyIRCBot(QtCore.QObject):
     HOST = 'irc.twitch.tv'
+    PLATFORM = 'TWITCH'
     PORT = 6667
-    chat_signal = QtCore.pyqtSignal(str, str) 
+    chat_signal = QtCore.pyqtSignal(str, str, str) 
 
     def __init__(self, channel, nick=None, oauth_token=None, parent=None):
         super(ReadOnlyIRCBot, self).__init__(parent)
@@ -78,7 +79,7 @@ class ReadOnlyIRCBot(QtCore.QObject):
                                 message = line[2]
                             else:
                                 message = 'PLACEHOLDER'
-                            self.chat_signal.emit(test_line[0], message)
+                            self.chat_signal.emit(test_line[0], message, self.PLATFORM)
                             break
                         
                 except:
