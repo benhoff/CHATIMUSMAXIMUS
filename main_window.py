@@ -29,7 +29,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not platform:
             platform = ''
         formatted_datetime = datetime.now().strftime("%H:%M:%S")
-        bracket_string = '[{}@{}]: '.format(platform, formatted_datetime)
+        bracket_string = ' [{}@{}]: '.format(platform, formatted_datetime)
         cursor.insertText(sender + bracket_string)
 
         cursor.setCharFormat(self.text_formater)
