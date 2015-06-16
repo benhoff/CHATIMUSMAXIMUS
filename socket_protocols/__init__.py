@@ -1,2 +1,2 @@
 from socket_protocols.irc_client import ReadOnlyIRCBot
-from socket_protocols.socket_client import ReadOnlyWebSocket, ReadOnlyTCPSocket
+from socket_protocols.socket_clients import ReadOnlyWebSocket, ReadOnlyTCPSocket

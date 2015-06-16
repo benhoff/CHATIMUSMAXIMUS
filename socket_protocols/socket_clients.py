@@ -1,16 +1,17 @@
 import websocket
 import json
 import requests
-from threading import Thread, Event
 import html
-from messager import Messager
+from threading import Thread, Event
 from PyQt5 import QtNetwork, QtCore
 
+from utils import Messager
+
 class ReadOnyTCPSocket(QtNetwork.QTcpSocket):
+    chat_signal = QtCore.pyqtSignal(QtCore.QByteArray, str)
     HOST = '127.1.0'
     PORT = '54545'
-    error = QtCore.pyqtSignal(QtNetwork.QTcpSocket.SocketError)
-    chat_signal = QtCore.pyqtSignal(QtCore.QByteArray)
+    PLATFORM  = 'YT'
 
     # TODO: Connect readData to a signal which emits the data
     def __init__(self, parent=None):
@@ -20,11 +21,11 @@ class ReadOnyTCPSocket(QtNetwork.QTcpSocket):
     @QtCore.pyqtSlot() 
     def readyRead(self):
         data = self.readAll()
-        self.chat_signal.emit(data)
-
+        self.chat_signal.emit(data, self.PLATFORM)
 
 class ReadOnlyWebSocket(websocket.WebSocketApp):
     PLATFORM = 'WPC'
+    # NOTE: chat_signal defined in `__init__`
 
     def __init__(self, streamer_name, namespace='/chat'):
         self._streamer_name = streamer_name
