@@ -4,8 +4,26 @@ import requests
 from threading import Thread, Event
 import html
 from messager import Messager
+from PyQt5 import QtNetwork, QtCore
 
-class Socket(websocket.WebSocketApp):
+class ReadOnyTCPSocket(QtNetwork.QTcpSocket):
+    HOST = '127.1.0'
+    PORT = '54545'
+    error = QtCore.pyqtSignal(QtNetwork.QTcpSocket.SocketError)
+    chat_signal = QtCore.pyqtSignal(QtCore.QByteArray)
+
+    # TODO: Connect readData to a signal which emits the data
+    def __init__(self, parent=None):
+        super(ReadOnyTCPSocket, self).__init__(parent)
+        self.connectToHost(self.HOST, self.PORT)
+
+    @QtCore.pyqtSlot() 
+    def readyRead(self):
+        data = self.readAll()
+        self.chat_signal.emit(data)
+
+
+class ReadOnlyWebSocket(websocket.WebSocketApp):
     PLATFORM = 'WPC'
 
     def __init__(self, streamer_name, namespace='/chat'):
@@ -56,7 +74,6 @@ class Socket(websocket.WebSocketApp):
 
     def on_message(self, *args):
         message = args[1].split(':', 3)
-        print(message)
         key = int(message[0])
         namespace = message[2]
 

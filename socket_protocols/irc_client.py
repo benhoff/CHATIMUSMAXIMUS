@@ -2,8 +2,8 @@ import socket
 import sys
 import os
 from threading import Thread
-from messager import Messager
 from PyQt5 import QtCore
+from utils import Messager
 
 class ReadOnlyIRCBot(QtCore.QObject):
     HOST = 'irc.twitch.tv'
