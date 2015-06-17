@@ -7,7 +7,7 @@ from utils import Messager
 
 class ReadOnlyIRCBot(QtCore.QObject):
     HOST = 'irc.twitch.tv'
-    PLATFORM = 'TWITCH'
+    PLATFORM = 'Twitch'
     PORT = 6667
     chat_signal = QtCore.pyqtSignal(str, str, str) 
 
@@ -75,11 +75,12 @@ class ReadOnlyIRCBot(QtCore.QObject):
                     test_line = line[1].split()
                     if len(test_line) > 0:
                         if test_line[1] == 'PRIVMSG':
+                            sender = test_line[0].split('!', 1)[0]
                             if len(line) > 1:
                                 message = line[2]
                             else:
                                 message = 'PLACEHOLDER'
-                            self.chat_signal.emit(test_line[0], message, self.PLATFORM)
+                            self.chat_signal.emit(sender, message, self.PLATFORM)
                             break
                         
                 except:

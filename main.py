@@ -38,8 +38,9 @@ app = QtWidgets.QApplication(sys.argv)
 main_window = MainWindow()
 main_window.show()
 # connect the sockets signals to the GUI
-youtube_socket.chat_signal.connect(main_window.chat_slot)
-wpc_socket.chat_signal.connect(main_window.chat_slot)
-irc_client.chat_signal.connect(main_window.chat_slot)
+youtube_socket.chat_signal.connect(main_window.chat_byte_slot)
+wpc_socket.chat_signal.connect(main_window.chat_string_slot)
+irc_client.chat_signal.connect(main_window.chat_string_slot)
+
 # loop... forever
 sys.exit(app.exec_())

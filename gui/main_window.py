@@ -24,12 +24,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.text_format = None
         self._set_up_text_formats()
 
-    @QtCore.pyqtSlot(str, str, str, name='chat_slot')
-    def chat_slot(self, sender, message, platform):
+    @QtCore.pyqtSlot(str, str, str)
+    def chat_string_slot(self, sender, message, platform):
         self._chat_formater(sender, message, platform)
 
-    @QtCore.pyqtSlot(QtCore.QByteArray, str, name='chat_slot')
-    def chat_slot(self, qbyte_array, platform):
+    @QtCore.pyqtSlot(QtCore.QByteArray, str)
+    def chat_byte_slot(self, qbyte_array, platform):
         text = str(qbyte_array).split('\\r\\n')[12]
         text = text.split('&', maxsplit=2)
 
