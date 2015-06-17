@@ -7,16 +7,16 @@ from PyQt5 import QtNetwork, QtCore
 
 from utils import Messager
 
-class ReadOnyTCPSocket(QtNetwork.QTcpSocket):
+class ReadOnlyTCPSocket(QtNetwork.QTcpSocket):
     chat_signal = QtCore.pyqtSignal(QtCore.QByteArray, str)
     HOST = '127.1.0'
-    PORT = '54545'
+    PORT = 54545
     PLATFORM  = 'YT'
 
     # TODO: Connect readData to a signal which emits the data
     def __init__(self, parent=None):
-        super(ReadOnyTCPSocket, self).__init__(parent)
-        self.connectToHost(self.HOST, self.PORT)
+        super(ReadOnlyTCPSocket, self).__init__(parent)
+        self.connectToHost(QtNetwork.QHostAddress(self.HOST), self.PORT)
 
     @QtCore.pyqtSlot() 
     def readyRead(self):
