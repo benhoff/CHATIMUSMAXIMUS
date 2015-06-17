@@ -14,11 +14,11 @@ class ReadOnlyTCPSocket(QtNetwork.QTcpSocket):
     # TODO: Connect readData to a signal which emits the data
     def __init__(self, host=None, port=None, parent=None):
         super(ReadOnlyTCPSocket, self).__init__(parent)
-        self.connectToHost(QtNetwork.QHostAddress(self.HOST), self.PORT)
         self.host = host
         if not isinstance(port, int):
             port = int(port)
         self.port = port
+        self.connectToHost(QtNetwork.QHostAddress(self.host), self.port)
 
     @QtCore.pyqtSlot() 
     def readyRead(self):

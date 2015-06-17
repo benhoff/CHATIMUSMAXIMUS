@@ -24,12 +24,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.text_format = None
         self._set_up_text_formats()
 
-    #FIXME: there's a way to do name deconflcition in a way that makes sense
     @QtCore.pyqtSlot(str, str, str, name='chat_slot')
-    def socket_chat_slot(self, sender, message, platform):
+    def chat_slot(self, sender, message, platform):
         self._chat_formater(sender, message, platform)
 
-    #FIXME: there's a way to do name deconflcition in a way that makes sense
     @QtCore.pyqtSlot(QtCore.QByteArray, str, name='chat_slot')
     def chat_slot(self, qbyte_array, platform):
         text = str(qbyte_array).split('\\r\\n')[12]

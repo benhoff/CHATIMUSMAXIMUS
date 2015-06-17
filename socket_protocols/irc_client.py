@@ -15,7 +15,7 @@ class ReadOnlyIRCBot(QtCore.QObject):
         super(ReadOnlyIRCBot, self).__init__(parent)
         if nick is None:
             nick = channel 
-        if oauth_token is None:
+        if oauth_token is None or oauth_token == '':
             oauth_token = os.getenv('TWITCH_KEY')
         self.nick = nick
         self.oauth_token = oauth_token
