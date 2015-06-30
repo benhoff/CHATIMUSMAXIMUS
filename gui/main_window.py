@@ -12,12 +12,26 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # set title window to `CHATIMUSMAXIMUS`
         self.setWindowTitle("CHATIMUSMAXIMUS")
+        
+
+
 
         # create the text edit used to display the text
         self.text_edit = QtWidgets.QTextEdit(parent=self)
         self.text_edit.setReadOnly(True)
 
-        self.setCentralWidget(self.text_edit)
+        vertical_layout = QtWidgets.QVBoxLayout()
+
+        button = QtWidgets.QPushButton("CLEAR")
+        button.clicked.connect(self.text_edit.clear)
+
+        vertical_layout.addWidget(self.text_edit)
+        vertical_layout.addWidget(button)
+
+        central_widget = QtWidgets.QWidget()
+        central_widget.setLayout(vertical_layout)
+
+        self.setCentralWidget(central_widget)
 
         # sets name and text formats
         self.name_format = None
