@@ -13,9 +13,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # set title window to `CHATIMUSMAXIMUS`
         self.setWindowTitle("CHATIMUSMAXIMUS")
         
-
-
-
         # create the text edit used to display the text
         self.text_edit = QtWidgets.QTextEdit(parent=self)
         self.text_edit.setReadOnly(True)

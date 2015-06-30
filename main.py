@@ -5,6 +5,8 @@ from PyQt5 import QtWidgets, QtNetwork, QtCore
 from gui import MainWindow
 import socket_protocols
 
+from youtube_scrapper import YoutubeScrapper
+
 
 # handle the settings
 default_filename = 'default_settings.json'
@@ -26,19 +28,18 @@ twitch_settings = settings['twitch']
 
 # instantiate the sockets
 wpc_socket = socket_protocols.ReadOnlyWebSocket(wpc_settings['channel'])
-youtube_socket = socket_protocols.ReadOnlyTCPSocket(chrome_server_settings['host'],
-                                                    chrome_server_settings['port'])
-
 irc_client = socket_protocols.ReadOnlyIRCBot(twitch_settings['channel'], 
                                              twitch_settings['nick'], 
                                              twitch_settings['oauth_token'])
+
+youtube_scrapper = YoutubeScrapper('https://www.youtube.com/watch?v=W2DS6wT6_48')
 
 # create the GUI
 app = QtWidgets.QApplication(sys.argv)
 main_window = MainWindow()
 main_window.show()
 # connect the sockets signals to the GUI
-youtube_socket.chat_signal.connect(main_window.chat_byte_slot)
+youtube_scrapper.chat_signal.connect(main_window.chat_string_slot)
 wpc_socket.chat_signal.connect(main_window.chat_string_slot)
 irc_client.chat_signal.connect(main_window.chat_string_slot)
 
