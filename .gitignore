@@ -1,0 +1,6 @@
+__pycache__
+ENV*
+*.swp
+settings.json
+ghostdriver.log
+client_secrets.json
