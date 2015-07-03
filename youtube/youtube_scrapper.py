@@ -1,57 +1,12 @@
 import sys
 import os
-#import httplib2
 
 from time import sleep
 from threading import Thread
 
 from selenium import webdriver
 
-from apiclient.discovery import build
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.file import Storage
-from oauth2client.tools import argparser, run_flow
-
 from PyQt5 import QtCore
-
-"""
-_YOUTUBE_API_SERVICE_NAME = 'youtube'
-_YOUTUBE_API_VERSION = 'v3'
-
-def _youtube_authentication():
-    client_secrets_file = 'client_secrets.json'
-    youtube_scope = "https://www.googleapis.com/auth/youtube.readonly"
-    missing_client_message = "You need to populate the client_secrets.json!"
-
-    flow = flow_from_clientsecrets(client_secrets_file,
-            scope=youtube_scope,
-            message=missing_client_message)
-
-    storage = Storage("{}-oauth2.json".format(sys.argv[0]))
-    credentials = storage.get()
-
-    if credentials is None or credentials.invalid:
-        credentials = run_flow(flow, storage, args)
-
-    return build(_YOUTUBE_API_SERVICE_NAME, 
-                 _YOUTUBE_API_VERSION, 
-                 http=credentials.authorize(httplib2.Http()))
-
-def get_current_youtube_link():
-    youtube_api = _youtube_authentication()
-
-    broadcasts_requests = youtube.liveBroadcasts().list(
-            broadcastStatus=('active',),
-            part='id',
-            maxResults=5)
-
-    while broadcasts_requests:
-        response = broadcasts_requests.execute()
-
-    youtube_id = response.get('items', [])[0]['id']
-
-    return 'http://youtube.com/watch?v={}'.format(youtube_id)
-"""
 
 class YoutubeScrapper(QtCore.QObject):
     chat_signal = QtCore.pyqtSignal(str, str, str)

@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets, QtNetwork, QtCore
 from gui import MainWindow
 import socket_protocols
 
-from youtube_scrapper import YoutubeScrapper
+from youtube import YoutubeScrapper
 
 
 # handle the settings
