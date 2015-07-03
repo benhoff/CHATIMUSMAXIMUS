@@ -1,5 +1,5 @@
 import sys 
-from os import path
+import os
 import json
 from PyQt5 import QtWidgets, QtNetwork, QtCore
 from gui import MainWindow
@@ -32,7 +32,12 @@ irc_client = socket_protocols.ReadOnlyIRCBot(twitch_settings['channel'],
                                              twitch_settings['nick'], 
                                              twitch_settings['oauth_token'])
 
-youtube_scrapper = YoutubeScrapper('https://www.youtube.com/watch?v=4ZIyVg6l6ro')
+youtube_url = os.getenv('YOUTUBE_URL')
+
+if youtube_url == str():
+    print('No Youtube Scraper')
+
+youtube_scrapper = YoutubeScrapper(youtube_url)
 
 # create the GUI
 app = QtWidgets.QApplication(sys.argv)
