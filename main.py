@@ -6,7 +6,7 @@ from gui import MainWindow
 import socket_protocols
 
 from youtube import YoutubeScrapper
-
+import utils
 
 # handle the settings
 default_filename = 'default_settings.json'
@@ -16,10 +16,11 @@ if path.exists(perferred_filename):
     filename = perferred_filename
 else:
     filename = default_filename
-    print('Change your default settings!')
 
 with open(filename) as setting_file:    
     settings = json.load(setting_file)
+
+utils.validate_json_settings(settings)
 
 # alias out the individual settings for each of the sockets
 wpc_settings = settings['watchpeoplecode']
