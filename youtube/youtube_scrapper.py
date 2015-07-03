@@ -51,8 +51,3 @@ class YoutubeScrapper(QtCore.QObject):
                     author = comment.find_element_by_class_name('author').text
                     message = comment.find_element_by_class_name('comment-text').text
                     self.chat_signal.emit(author, message, 'YT')
-
-if __name__ == '__main__':
-    scrapper = YoutubeScrapper('https://www.youtube.com/watch?v=W2DS6wT6_48')
-    while True:
-        sleep(1)
