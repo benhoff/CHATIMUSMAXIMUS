@@ -38,17 +38,9 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.pyqtSlot(str, str, str)
     def chat_string_slot(self, sender, message, platform):
         self._chat_formater(sender, message, platform)
+        self.text_edit.verticalScrollBar().setValue(
+                self.text_edit.verticalScrollBar().maximum())
 
-    @QtCore.pyqtSlot(QtCore.QByteArray, str)
-    def chat_byte_slot(self, qbyte_array, platform):
-        text = str(qbyte_array).split('\\r\\n')[12]
-        text = text.split('&', maxsplit=2)
-
-        host = text[0][5:]
-        user = html.unescape(text[1][7:])
-        message = html.unescape(text[2][8:][:-1])
-        self._chat_formater(user, message, platform)
-    
     # FIXME: poor method name, not descriptive of what it does
     def _chat_formater(self, sender, message, platform):
         """
