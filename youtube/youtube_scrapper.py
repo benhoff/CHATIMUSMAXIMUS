@@ -36,11 +36,6 @@ class YoutubeScrapper(QtCore.QObject):
         all_comments = driver.find_element_by_id("all-comments")
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)
-        for comment in comments:
-            author = comment.find_element_by_class_name('author').text
-            message = comment.find_element_by_class_name('comment-text').text
-
-            self.chat_signal.emit(author, message, 'YT')
 
         while True:
             comments = all_comments.find_elements_by_tag_name('li')
