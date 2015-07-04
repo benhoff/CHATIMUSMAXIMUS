@@ -7,32 +7,18 @@ from PyQt5 import QtNetwork, QtCore
 
 from utils import Messager
 
-class ReadOnlyTCPSocket(QtNetwork.QTcpSocket):
-    chat_signal = QtCore.pyqtSignal(QtCore.QByteArray, str)
-    PLATFORM  = 'YT'
-
-    # TODO: Connect readData to a signal which emits the data
-    def __init__(self, host=None, port=None, parent=None):
-        super(ReadOnlyTCPSocket, self).__init__(parent)
-        self.host = host
-        if not isinstance(port, int):
-            port = int(port)
-        self.port = port
-        self.connectToHost(QtNetwork.QHostAddress(self.host), self.port)
-
-    @QtCore.pyqtSlot() 
-    def readyRead(self):
-        data = self.readAll()
-        self.chat_signal.emit(data, self.PLATFORM)
-
 class ReadOnlyWebSocket(websocket.WebSocketApp):
     PLATFORM = 'WPC'
     # NOTE: chat_signal defined in `__init__`
 
-    def __init__(self, streamer_name, namespace='/chat'):
+    def __init__(self, 
+                 streamer_name, 
+                 namespace='/chat', 
+                 website_url='http://www.watchpeoplecode.com/socket.io/1/'):
+
         self._streamer_name = streamer_name
         self.namespace = namespace 
-        self._website_url = 'http://www.watchpeoplecode.com/socket.io/1/'
+        self._website_url = website_url 
         key, heartbeat = self._connect_to_server_helper()
         self._heartbeat = heartbeat/2 
         

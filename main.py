@@ -2,11 +2,13 @@ import sys
 import os
 import json
 from PyQt5 import QtWidgets, QtNetwork, QtCore
+import sleekxmpp
 from gui import MainWindow
 import socket_protocols
 
 from youtube import YoutubeScrapper
 import utils
+from xmpp_client import ReadOnlyXMPPBot
 
 # handle the settings
 default_filename = 'default_settings.json'
@@ -38,6 +40,13 @@ if youtube_url == str():
     print('No Youtube Scraper')
 
 youtube_scrapper = YoutubeScrapper(youtube_url)
+jid = sleekxmpp.JID(local='Benhoff', 
+                    domain='livecoding.tv', 
+                    resource='bot')
+
+livecode = ReadOnlyXMPPBot(jid, os.getenv('LIVECODE_PASS'))
+livecode.connect()
+livecode.process()
 
 # create the GUI
 app = QtWidgets.QApplication(sys.argv)
@@ -47,6 +56,7 @@ main_window.show()
 youtube_scrapper.chat_signal.connect(main_window.chat_string_slot)
 wpc_socket.chat_signal.connect(main_window.chat_string_slot)
 irc_client.chat_signal.connect(main_window.chat_string_slot)
+livecode.chat_signal.connect(main_window.chat_string_slot)
 
 # loop... forever
 sys.exit(app.exec_())
