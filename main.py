@@ -12,7 +12,7 @@ import utils
 default_filename = 'default_settings.json'
 perferred_filename = 'settings.json'
 
-if path.exists(perferred_filename):
+if os.path.exists(perferred_filename):
     filename = perferred_filename
 else:
     filename = default_filename
