@@ -1,6 +1,13 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
 import html, json
+from enum import Enum
 from datetime import datetime
+from PyQt5 import QtWidgets, QtCore, QtGui
+
+class StatusBarSelector(Enum):
+    Youtube = 0
+    Twitch = 1
+    Livecoding = 2
+    WatchPeopleCode = 3
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -34,6 +41,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.name_format = None
         self.text_format = None
         self._set_up_text_formats()
+        self._status_widgets = []
+        self._set_up_status_bar_helper()
+
+    def _set_up_status_bar_helper(self):
+        status_bar = QtWidgets.QStatusBar(parent=self)
+        red_button = 'gui/resources/red_button.png'
+        for platform in StatusBarSelector:
+            button = QtWidgets.QPushButton(QtGui.QIcon(red_button), 
+                                           ' ' + platform.name)
+
+            button.setFlat(True)
+            button.setAutoFillBackground(True)
+            status_bar.addWidget(button)
+            self._status_widgets.append(button)
+
+        self.setStatusBar(status_bar)
+
+    def set_service_icon(self, service_index, bool):
+        button = self._status_widgets[service_index]
+        if bool:
+            green_button = 'gui/resources/green_button.png'
+            button.setIcon(QtGui.QIcon(green_button))
+        else:
+            red_button = 'gui/resources/red_button.png'
+            button.setIcon(red_button)
 
     @QtCore.pyqtSlot(str, str, str)
     def chat_string_slot(self, sender, message, platform):

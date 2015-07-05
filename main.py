@@ -3,7 +3,7 @@ import os
 import json
 from PyQt5 import QtWidgets, QtNetwork, QtCore
 import sleekxmpp
-from gui import MainWindow
+import gui
 import socket_protocols
 
 from youtube import YoutubeScrapper
@@ -28,10 +28,14 @@ def get_settings_helper():
 
     return settings
 
-def instantiate_chats_helper(settings):
+def instantiate_chats_helper(settings, main_window=None):
     """
     returns a list of all instantiated chats
     """
+    def set_status_helper(status_index):
+        if main_window:
+            main_window.set_service_icon(status_index, 
+                                         True)
     # create the list to return
     chat_site_list = []
 
@@ -47,6 +51,7 @@ def instantiate_chats_helper(settings):
         wpc_socket = socket_protocols.ReadOnlyWebSocket(wpc_settings['channel'])
         # append instantiated websocket to chat list
         chat_site_list.append(wpc_socket)
+        set_status_helper(gui.StatusBarSelector.WatchPeopleCode.value)
     
     # check to see if user has passed in both the channel and the 
     # OAuth token in order to instantiate the twitch client
@@ -61,20 +66,20 @@ def instantiate_chats_helper(settings):
    
         # append instantiated irc client to chat list
         chat_site_list.append(irc_client)
+        set_status_helper(gui.StatusBarSelector.Twitch.value)
     
     # check for youtube video url, and create youtube scrapper if present
     if youtube_settings['video_url'] != str() or os.getenv('YOUTUBE_URL'):
         youtube_scrapper = YoutubeScrapper(youtube_settings['video_url'])
         # append instantiated yotuube scraper to chat list
         chat_site_list.append(youtube_scrapper)
+        set_status_helper(gui.StatusBarSelector.Youtube.value)
     
     # check for livecode channel and password
     if livecode_settings['name'] != str() and (livecode_settings['pass'] != str() or os.getenv('LIVECODE_PASS')):
         # check to see the user has passed in a bot nick and assign it if so
-        if livecode_settings['bot_nick'] != str():
-            bot_nick = livecode_settings['bot_nick']
-        else:
-            bot_nick = 'ReadOnlyBot'
+        bot_nick = livecode_settings['bot_nick'] if livecode_settings['bot_nick'] != str() else 'ReadOnlyBot'
+        livecode_pass = livecode_settings['pass'] if livecode_settings['pass'] != str() else os.getenv('LIVECODE_PASS') 
 
         jid = sleekxmpp.JID(local=livecode_settings['name'], 
                             domain='livecoding.tv', 
@@ -84,14 +89,15 @@ def instantiate_chats_helper(settings):
         livecode.connect()
         livecode.process()
         chat_site_list.append(livecode)
+        set_status_helper(gui.StatusBarSelector.Livecoding.value)
 
     return chat_site_list
 
 settings = get_settings_helper()
-chat_list = instantiate_chats_helper(settings)
 # create the GUI
 app = QtWidgets.QApplication(sys.argv)
-main_window = MainWindow()
+main_window = gui.MainWindow()
+chat_list = instantiate_chats_helper(settings, main_window)
 main_window.show()
 
 # connect the sockets signals to the GUI
