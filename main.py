@@ -9,6 +9,14 @@ import socket_protocols
 from youtube import YoutubeScrapper
 import utils
 from xmpp_client import ReadOnlyXMPPBot
+import sleekxmpp
+
+def fake_verify(*args):
+    return
+
+# monkey patch to fix issues with either livecode or 
+# sleekxmpp. hard to tell where the problem is
+sleekxmpp.xmlstream.cert.verify = fake_verify
 
 def get_settings_helper():
     default_filename = 'default_settings.json'
