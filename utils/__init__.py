@@ -1,2 +1,2 @@
 from utils.messager import Messager
-from utils.settings_validator import validate_json_settings
+from utils.settings_warner import settings_warner

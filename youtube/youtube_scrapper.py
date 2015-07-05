@@ -13,10 +13,9 @@ class YoutubeScrapper(QtCore.QObject):
 
     def __init__(self, video_url=None, parent=None):
         super(YoutubeScrapper, self).__init__(parent)
-        """
-        if video_url is None:
-            video_url = get_current_youtube_link()
-        """
+        if video_url is None or video_url == str():
+            #video_url = get_current_youtube_link()
+            video_url = os.getenv('YOUTUBE_URL')
 
         self.video_url = video_url
         self._number_of_messages = 0

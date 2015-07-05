@@ -7,6 +7,20 @@
 		"oauth_token": "",
 		"channel": "",
 		"nick": ""
+	},
+
+	"livecode": {
+		"name": "",
+		"pass": "",
+		"bot_nick": ""
+	},
+
+	"youtube": {
+		"video_url": ""
+	},
+
+	"app_settings":{
+		"warn_user_about_settings": true
 	}
 }
 

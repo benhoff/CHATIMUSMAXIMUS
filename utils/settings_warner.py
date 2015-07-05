@@ -3,7 +3,6 @@ def _wpc_validations(json_object):
         wpc_settings = json_object['watchpeoplecode']
         if wpc_settings['channel'] == str():
             print('No WatchPeopleCode channel name given in settings!')
-    # TODO: add in some print logic here!
     except Exception as e:
         print(e)
 
@@ -19,6 +18,30 @@ def _twitch_validation(json_object):
     except Exception as e:
         print(e)
 
-def validate_json_settings(json_object):
+def _livecode_validations(json_object):
+    try:
+        livecode_settings = json_object['livecode']
+        if livecode_settings['pass'] == str():
+            print('No livecode password!')
+    except Exception as e:
+        print(e)
+
+def _youtube_validation(json_object):
+    try:
+        youtube_settings = json_object['youtube']
+        if youtube_settings['video_url'] == str():
+            print('No Youtube video url given!')
+
+    except Exception as e:
+        print(e)
+
+
+def settings_warner(json_object):
+    """
+    Provides feedback about the state of the settings
+    file by printing to console
+    """
     _wpc_validations(json_object)
     _twitch_validation(json_object)
+    _livecode_validations(json_object)
+    _youtube_validation(json_object)

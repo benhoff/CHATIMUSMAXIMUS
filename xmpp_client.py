@@ -10,7 +10,10 @@ from utils import Messager
 
 
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
-    def __init__(self, jid, password, room=None, nick='ReadOnlyBot'):
+    def __init__(self, jid, password='', room=None, nick='ReadOnlyBot'):
+        if password == str():
+            password = os.getenv('LIVECODE_PASS')
+
         super(ReadOnlyXMPPBot, self).__init__(jid, password)
         if room is None:
             room = '{}@chat.livecoding.tv'.format(jid.user)

@@ -11,11 +11,11 @@ class ReadOnlyIRCBot(QtCore.QObject):
     PORT = 6667
     chat_signal = QtCore.pyqtSignal(str, str, str) 
 
-    def __init__(self, channel, nick=None, oauth_token=None, parent=None):
+    def __init__(self, channel, oauth_token=None, nick=None, parent=None):
         super(ReadOnlyIRCBot, self).__init__(parent)
-        if nick is None:
+        if nick is None or nick == str():
             nick = channel 
-        if oauth_token is None or oauth_token == '':
+        if oauth_token is None or oauth_token == str():
             oauth_token = os.getenv('TWITCH_KEY')
             if not oauth_token:
                 print("No twitch OAUTH token found :(")
