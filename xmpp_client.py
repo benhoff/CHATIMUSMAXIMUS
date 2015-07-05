@@ -47,7 +47,7 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
     def muc_message(self, msg):
         self._messager.recieve_chat_data(msg['mucnick'], 
                                          msg['body'], 
-                                         'LIVECODE')
+                                         'Livecode')
 
 if __name__ == '__main__':
     jid = sleekxmpp.JID(local='Benhoff', 

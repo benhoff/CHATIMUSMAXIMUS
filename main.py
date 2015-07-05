@@ -69,8 +69,8 @@ def instantiate_chats_helper(settings, main_window=None):
         
         # create the irc client
         irc_client = socket_protocols.ReadOnlyIRCBot(twitch_settings['channel'], 
-                                                     twitch_settings['nick'], 
-                                                     twitch_settings['oauth_token'])
+                                                     twitch_settings['oauth_token'],
+                                                     nick=twitch_settings['nick'])
    
         # append instantiated irc client to chat list
         chat_site_list.append(irc_client)
