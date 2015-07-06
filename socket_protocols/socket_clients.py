@@ -4,11 +4,10 @@ import requests
 import html
 from threading import Thread, Event
 from PyQt5 import QtNetwork, QtCore
-
+import gui
 from utils import Messager
 
 class ReadOnlyWebSocket(websocket.WebSocketApp):
-    PLATFORM = 'WPC'
     # NOTE: chat_signal defined in `__init__`
 
     def __init__(self, 
@@ -85,7 +84,9 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 message = data['args'][0]
                 sender = html.unescape(message['sender'])
                 message = html.unescape(message['text'])
-                self._messager.recieve_chat_data(sender, message, self.PLATFORM)
+                self._messager.recieve_chat_data(sender, 
+                                                 message, 
+                                                 gui.StatusBarSelector.WatchPeopleCode.value)
 
     def on_error(self, *args):
         print(args[1])

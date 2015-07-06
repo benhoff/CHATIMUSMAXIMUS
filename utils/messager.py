@@ -4,7 +4,7 @@ class Messager(QtCore.QObject):
     Super trivial class to get around the issue with multiple inhertiance in
     PyQt
     """
-    chat_signal = QtCore.pyqtSignal(str, str, str)
+    chat_signal = QtCore.pyqtSignal(str, str, int)
     def __init__(self, parent=None):
         super(Messager, self).__init__(parent)
 

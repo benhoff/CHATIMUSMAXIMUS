@@ -4,12 +4,12 @@ import os
 from threading import Thread
 from PyQt5 import QtCore
 from utils import Messager
+import gui
 
 class ReadOnlyIRCBot(QtCore.QObject):
     HOST = 'irc.twitch.tv'
-    PLATFORM = 'Twitch'
     PORT = 6667
-    chat_signal = QtCore.pyqtSignal(str, str, str) 
+    chat_signal = QtCore.pyqtSignal(str, str, int) 
 
     def __init__(self, channel, oauth_token=None, nick=None, parent=None):
         super(ReadOnlyIRCBot, self).__init__(parent)
@@ -72,7 +72,9 @@ class ReadOnlyIRCBot(QtCore.QObject):
                 if len(server_controls) > 0 and server_controls[1] == 'PRIVMSG':
                     sender = server_controls[0].split('!', 1)[0]
                     message = line[2]
-                    self.chat_signal.emit(sender, message, self.PLATFORM)
+                    self.chat_signal.emit(sender, 
+                                          message, 
+                                          gui.StatusBarSelector.Twitch.value)
                     break
                         
 if __name__ == '__main__':

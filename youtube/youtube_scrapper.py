@@ -7,9 +7,10 @@ from threading import Thread
 from selenium import webdriver
 
 from PyQt5 import QtCore
+import gui
 
 class YoutubeScrapper(QtCore.QObject):
-    chat_signal = QtCore.pyqtSignal(str, str, str)
+    chat_signal = QtCore.pyqtSignal(str, str, int)
 
     def __init__(self, video_url=None, parent=None):
         super(YoutubeScrapper, self).__init__(parent)
@@ -49,4 +50,6 @@ class YoutubeScrapper(QtCore.QObject):
                 for comment in comments:
                     author = comment.find_element_by_class_name('author').text
                     message = comment.find_element_by_class_name('comment-text').text
-                    self.chat_signal.emit(author, message, 'YT')
+                    self.chat_signal.emit(author, 
+                                          message,
+                                          gui.StatusBarSelector.Youtube.value)

@@ -7,7 +7,7 @@ from threading import Thread
 import sleekxmpp
 
 from utils import Messager
-
+import gui
 
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
     def __init__(self, jid, password='', room=None, nick='ReadOnlyBot'):
@@ -47,7 +47,7 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
     def muc_message(self, msg):
         self._messager.recieve_chat_data(msg['mucnick'], 
                                          msg['body'], 
-                                         'Livecode')
+                                         gui.StatusBarSelector.Livecoding.value)
 
 if __name__ == '__main__':
     jid = sleekxmpp.JID(local='Benhoff', 
