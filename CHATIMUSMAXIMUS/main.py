@@ -77,8 +77,9 @@ def instantiate_chats_helper(settings, main_window=None):
         set_status_helper(gui.StatusBarSelector.Twitch.value)
     
     # check for youtube video url, and create youtube scrapper if present
-    if youtube_settings['video_url'] != str() or os.getenv('YOUTUBE_URL'):
-        youtube_scrapper = YoutubeScrapper(youtube_settings['video_url'])
+    if youtube_settings['channel_id'] != str():
+        youtube_url = 'http://www.youtube.com/channel/{}/live'.format(youtube_settings['channel_id'])
+        youtube_scrapper = YoutubeScrapper(youtube_url)
         # append instantiated yotuube scraper to chat list
         chat_site_list.append(youtube_scrapper)
         set_status_helper(gui.StatusBarSelector.Youtube.value)
