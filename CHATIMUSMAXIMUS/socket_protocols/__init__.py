@@ -1,2 +1,3 @@
+from socket_protocols.irc_plugin import EchoToMessage
 from socket_protocols.irc_client import create_irc_bot
 from socket_protocols.socket_io_client import ReadOnlyWebSocket

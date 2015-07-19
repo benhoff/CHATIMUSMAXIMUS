@@ -7,6 +7,7 @@ from PyQt5 import QtNetwork, QtCore
 import gui
 from utils import Messager
 
+# TODO: switch to using the WebSocket and the asyncio lib
 class ReadOnlyWebSocket(websocket.WebSocketApp):
     # NOTE: chat_signal defined in `__init__`
 
@@ -31,6 +32,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         # start a thread and set the socket to run forever
         self._thread = Thread(target=self.run_forever)
         self._thread.setDaemon(True)
+        # pass this into belowping_interval=heartbeat/2
         self._thread.start()
 
         # use the trivial instance `_messager` to get around multiple inheritance

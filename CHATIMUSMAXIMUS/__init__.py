@@ -19,11 +19,8 @@ sleekxmpp.xmlstream.cert.verify = fake_verify
 
 def get_settings_helper():
     main_dir = os.path.dirname(os.path.realpath(__file__))
-    print(main_dir)
     default_filename = os.path.join(main_dir, 'default_settings.json')
-    print(default_filename)
     perferred_filename = os.path.join(main_dir, 'settings.json')
-    print(perferred_filename)
 
     if os.path.exists(perferred_filename):
         filename = perferred_filename
@@ -39,7 +36,7 @@ def get_settings_helper():
 
     return settings
 
-def instantiate_chats_helper(settings, main_window=None):
+def instantiate_chats_helper(settings, main_window=None, event_loop=None):
     """
     returns a list of all instantiated chats
     """
@@ -74,8 +71,12 @@ def instantiate_chats_helper(settings, main_window=None):
         irc_client = socket_protocols.create_irc_bot(twitch_settings['channel'], 
                                                      twitch_settings['oauth_token'],
                                                      nick=twitch_settings['nick'])
-        
-        irc_chat_plugin = irc_client.get_plugin('irc_plugin')
+
+        if event_loop is not None:
+            irc_client.loop = event_loop
+            irc_client.create_connection()
+
+        irc_chat_plugin = irc_client.get_plugin(socket_protocols.EchoToMessage)
 
         # append instantiated irc client to chat list
         chat_site_list.append(irc_chat_plugin)

@@ -1,12 +1,13 @@
 import irc3
 import threading
+from socket_protocols import EchoToMessage
 
 _config = dict(
         ssl=False,
         includes=[
             'irc3.plugins.core',
             'irc3.plugins.autojoins',
-            'irc_plugin',
+            EchoToMessage,
             __name__,
             ]
         )
@@ -24,9 +25,5 @@ def create_irc_bot(channel, password, nick=None,
     _config['realname'] = realname
 
     bot = irc3.IrcBot.from_config(_config)
-
-    thread = threading.Thread(bot.run)
-    thread.setDaemon(True)
-    thread.start()
 
     return bot
