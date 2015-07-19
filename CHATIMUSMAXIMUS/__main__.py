@@ -19,8 +19,9 @@ def fake_verify(*args):
 sleekxmpp.xmlstream.cert.verify = fake_verify
 
 def get_settings_helper():
-    default_filename = 'default_settings.json'
-    perferred_filename = 'settings.json'
+    main_dir = os.path.dirname(os.path.dirname('__file__'))
+    default_filename = os.path.join(main_dir, 'default_settings.json')
+    perferred_filename = os.path.join(main_dir, 'settings.json')
 
     if os.path.exists(perferred_filename):
         filename = perferred_filename
@@ -68,12 +69,14 @@ def instantiate_chats_helper(settings, main_window=None):
              os.getenv('TWITCH_KEY')):
         
         # create the irc client
-        irc_client = socket_protocols.ReadOnlyIRCBot(twitch_settings['channel'], 
+        irc_client = socket_protocols.create_irc_bot(twitch_settings['channel'], 
                                                      twitch_settings['oauth_token'],
                                                      nick=twitch_settings['nick'])
-   
+        
+        irc_chat_plugin = irc_client.get_plugin('irc_plugin')
+
         # append instantiated irc client to chat list
-        chat_site_list.append(irc_client)
+        chat_site_list.append(irc_chat_plugin)
         set_status_helper(gui.StatusBarSelector.Twitch.value)
     
     # check for youtube video url, and create youtube scrapper if present
