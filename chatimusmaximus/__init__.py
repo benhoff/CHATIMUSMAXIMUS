@@ -68,13 +68,15 @@ def instantiate_chats_helper(settings, main_window=None, event_loop=None):
              os.getenv('TWITCH_KEY')):
         
         # create the irc client
-        irc_client = socket_protocols.create_irc_bot(twitch_settings['channel'], 
-                                                     twitch_settings['oauth_token'],
-                                                     nick=twitch_settings['nick'])
+        irc_client = socket_protocols.create_irc_bot(twitch_settings['nick'],
+                                                     twitch_settings['oauth_token'])
 
         if event_loop is not None:
             irc_client.loop = event_loop
             irc_client.create_connection()
+            irc_client.add_signal_handlers()
+            #irc_client.config['autojoin'] = ['#{}'.format(twitch_settings['channel']),]
+            irc_client.join('#{}'.format(twitch_settings['channel']))
 
         irc_chat_plugin = irc_client.get_plugin(socket_protocols.EchoToMessage)
 
