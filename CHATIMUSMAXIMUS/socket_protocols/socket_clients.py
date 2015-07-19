@@ -18,8 +18,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         self._streamer_name = streamer_name
         self.namespace = namespace 
         self._website_url = website_url 
-        key, heartbeat = self._connect_to_server_helper()
-        self._heartbeat = heartbeat/2 
+        self.key, heartbeat = self._connect_to_server_helper()
         
         # alters URL to be more websocket...ie
         self._website_socket = self._website_url.replace('http', 'ws') + 'websocket/'
