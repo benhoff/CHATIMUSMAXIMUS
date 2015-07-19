@@ -1,4 +1,4 @@
-import html, json
+import os
 from enum import Enum
 from datetime import datetime
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -49,13 +49,14 @@ class MainWindow(QtWidgets.QMainWindow):
         # sets name and text formats
         self.name_format = None
         self.text_format = None
+        self._file_dir = os.path.realpath(os.path.dirname(__file__))
         self._set_up_text_formats()
         self._status_widgets = []
         self._set_up_status_bar_helper()
 
     def _set_up_status_bar_helper(self):
         status_bar = QtWidgets.QStatusBar(parent=self)
-        red_button = 'gui/resources/red_button.png'
+        red_button = os.path.join(self._file_dir, 'resources', 'red_button.png')
         for platform in StatusBarSelector:
             button = QtWidgets.QPushButton(QtGui.QIcon(red_button), 
                                            ' ' + platform.name)
@@ -74,10 +75,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_service_icon(self, service_index, bool):
         button = self._status_widgets[service_index]
         if bool:
-            green_button = 'gui/resources/green_button.png'
+            green_button = os.path.join(self._file_dir, 'resources', 'green_button.png')
             button.setIcon(QtGui.QIcon(green_button))
         else:
-            red_button = 'gui/resources/red_button.png'
+            red_button = os.path.join(self._file_dir, 'resources', 'red_button.png')
             button.setIcon(red_button)
 
     @QtCore.pyqtSlot(str, str, int)
