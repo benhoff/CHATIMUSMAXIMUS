@@ -29,8 +29,8 @@ def _livecode_validations(json_object):
 def _youtube_validation(json_object):
     try:
         youtube_settings = json_object['youtube']
-        if youtube_settings['video_url'] == str():
-            print('No Youtube video url given!')
+        if youtube_settings['channel_id'] == str():
+            print('No Youtube channel id given!')
 
     except Exception as e:
         print(e)
