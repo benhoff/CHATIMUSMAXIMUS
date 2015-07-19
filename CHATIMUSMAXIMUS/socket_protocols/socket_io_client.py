@@ -23,7 +23,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         # alters URL to be more websocket...ie
         self._website_socket = self._website_url.replace('http', 'ws') + 'websocket/'
         super(ReadOnlyWebSocket, self).__init__(
-                self._website_socket + key,
+                self._website_socket + self.key,
                 on_open=self.on_open, on_close=self.on_close,
                 on_message=self.on_message, 
                 on_error=self.on_error)
