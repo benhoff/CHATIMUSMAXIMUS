@@ -41,6 +41,9 @@ def instantiate_chats_helper(settings, main_window=None, event_loop=None):
     returns a list of all instantiated chats
     """
     def set_status_helper(status_index):
+        """
+        inner loop helper
+        """
         if main_window:
             main_window.set_service_icon(status_index, 
                                          True)
@@ -71,12 +74,10 @@ def instantiate_chats_helper(settings, main_window=None, event_loop=None):
         irc_client = socket_protocols.create_irc_bot(twitch_settings['nick'],
                                                      twitch_settings['oauth_token'])
 
-        if event_loop is not None:
-            irc_client.loop = event_loop
-            irc_client.create_connection()
-            irc_client.add_signal_handlers()
-            #irc_client.config['autojoin'] = ['#{}'.format(twitch_settings['channel']),]
-            irc_client.join('#{}'.format(twitch_settings['channel']))
+        irc_client.create_connection()
+        irc_client.add_signal_handlers()
+        #irc_client.config['autojoin'] = ['#{}'.format(twitch_settings['channel']),]
+        irc_client.join('#{}'.format(twitch_settings['channel']))
 
         irc_chat_plugin = irc_client.get_plugin(socket_protocols.EchoToMessage)
 
