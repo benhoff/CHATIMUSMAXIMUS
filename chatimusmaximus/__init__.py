@@ -72,13 +72,11 @@ def instantiate_chats_helper(settings, main_window=None, event_loop=None):
         
         # create the irc client
         irc_client = socket_protocols.create_irc_bot(twitch_settings['nick'],
-                                                     twitch_settings['oauth_token'])
+                                                     twitch_settings['oauth_token'],
+                                                     channel=twitch_settings['channel'])
 
         irc_client.create_connection()
         irc_client.add_signal_handlers()
-        #irc_client.config['autojoin'] = ['#{}'.format(twitch_settings['channel']),]
-        irc_client.join('#{}'.format(twitch_settings['channel']))
-
         irc_chat_plugin = irc_client.get_plugin(socket_protocols.EchoToMessage)
 
         # append instantiated irc client to chat list
