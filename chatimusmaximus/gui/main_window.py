@@ -121,7 +121,7 @@ class MainWindow(QtWidgets.QMainWindow):
         `self.test_formater` is used for the messages
         """
         self.name_formats = []
-        for color in (Qt.red, Qt.darkMagenta, Qt.yellow, Qt.green):
+        for color in (Qt.red, Qt.blue, Qt.yellow, Qt.green):
             # name format is Demibold, blue, with size 13
             name_format = QtGui.QTextCharFormat()
             name_format.setFontWeight(QtGui.QFont.DemiBold)
