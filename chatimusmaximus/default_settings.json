@@ -21,6 +21,8 @@
 
 	"app_settings":{
 		"warn_user_about_settings": true
-	}
+	},
+
+	"version": "0.0.1"
 }
 
