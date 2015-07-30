@@ -30,10 +30,6 @@ def get_settings_helper():
     with open(filename) as setting_file:    
         settings = json.load(setting_file)
 
-    app_settings = settings['app_settings']
-    if app_settings['warn_user_about_settings']: 
-        utils.settings_warner(settings)
-
     return settings
 
 def instantiate_chats_helper(settings, main_window=None, event_loop=None):
