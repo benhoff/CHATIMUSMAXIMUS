@@ -1,28 +1,44 @@
 {
+	"version": "0.0.1",
+
 	"watchpeoplecode":{
-		"channel": ""
+		"channel": "",
+
+		"display_settings":{
+			"display_missing": true,
+			"text_color": "green"
+		}
 	},
 
 	"twitch": {
 		"oauth_token": "",
 		"channel": "",
-		"nick": ""
+		"nick": "",
+
+		"display_settings":{
+			"display_missing": true,
+			"text_color": "blue"
+		}
 	},
 
 	"livecode": {
 		"name": "",
 		"pass": "",
-		"bot_nick": ""
+		"bot_nick": "",
+
+		"display_settings":{
+			"display_missing": true,
+			"text_color": "yellow"
+		}
 	},
 
 	"youtube": {
-		"channel_id": ""
-	},
+		"channel_id": "",
+		"youtube_url": "",
 
-	"app_settings":{
-		"warn_user_about_settings": true
-	},
-
-	"version": "0.0.1"
+		"display_settings":{
+			"display_missing": true,
+			"text_color": "red"
+	}
 }
 
