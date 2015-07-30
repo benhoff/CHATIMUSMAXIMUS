@@ -3,7 +3,6 @@ import json
 import requests
 import html
 from threading import Thread, Event
-from PyQt5 import QtNetwork, QtCore
 import gui
 from utils import Messager
 
@@ -112,9 +111,3 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         callback = ''
         message = ':'.join([str(type_key), callback, self.namespace, data])
         self.send(message)
-    
-if __name__ == '__main__':
-    streamer_name = 'beohoff'
-    # this is default for the flask app
-    socket = Socket(streamer_name)
-    socket.run_forever()

@@ -37,7 +37,7 @@ _config = dict(
         )
 
 def create_irc_bot(nick, password,
-                   host='irc.twitch.tv', 
+                   host=None, 
                    port=6667, realname=None,
                    channel=None):
 
@@ -46,7 +46,7 @@ def create_irc_bot(nick, password,
     if channel is None:
         channel = nick
     _config['nick'] = nick
-    _config['password'] = 'oauth:{}'.format(password)
+    _config['password'] = password 
     _config['host'] = host
     _config['port'] = port
     _config['realname'] = realname

@@ -10,13 +10,11 @@ from utils import Messager
 import gui
 
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
-    def __init__(self, jid, password='', room=None, nick='ReadOnlyBot'):
-        if password == str():
-            password = os.getenv('LIVECODE_PASS')
-
+    def __init__(self, jid, password, room=None, nick='ReadOnlyBot'):
         super(ReadOnlyXMPPBot, self).__init__(jid, password)
         if room is None:
-            room = '{}@chat.livecoding.tv'.format(jid.user)
+            # FIXME: remove the livecoding reference
+            room = '{user}@chat.livecoding.tv'.format(jid.user)
         self.room = room
         self.nick = nick
         self._register_plugin_helper() 
@@ -48,16 +46,3 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self._messager.recieve_chat_data(msg['mucnick'], 
                                          msg['body'], 
                                          gui.StatusBarSelector.Livecoding.value)
-
-if __name__ == '__main__':
-    jid = sleekxmpp.JID(local='Benhoff', 
-                        domain='livecoding.tv', 
-                        resource='bot')
-
-    bot = ReadOnlyXMPPBot(jid, 
-                          os.getenv('LIVECODE_PASS'))
-
-    if bot.connect():
-        bot.process()
-    else:
-        print('error!')
