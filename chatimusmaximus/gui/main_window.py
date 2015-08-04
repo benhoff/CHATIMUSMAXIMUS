@@ -4,14 +4,16 @@ from datetime import datetime
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt
 
-class StatusBarSelector(Enum):
-    Youtube = 0
-    Twitch = 1
-    Livecoding = 2
-    WatchPeopleCode = 3
 
 class MainWindow(QtWidgets.QMainWindow):
     _time_signal = QtCore.pyqtSignal(str)
+
+    class StatusBarSelector(Enum):
+        Youtube = 0
+        Twitch = 1
+        Livecoding = 2
+        WatchPeopleCode = 3
+
     def __init__(self, parent=None):
         """
         MainWindow uses a QTextEdit to display chat
@@ -57,7 +59,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _set_up_status_bar_helper(self):
         status_bar = QtWidgets.QStatusBar(parent=self)
         red_button = os.path.join(self._file_dir, 'resources', 'red_button.png')
-        for platform in StatusBarSelector:
+        for platform in self.StatusBarSelector:
             button = QtWidgets.QPushButton(QtGui.QIcon(red_button), 
                                            ' ' + platform.name)
 
@@ -101,7 +103,7 @@ class MainWindow(QtWidgets.QMainWindow):
         formatted_datetime = datetime.now().strftime("%H:%M:%S")
         self._time_signal.emit(formatted_datetime)
         # the platform name and timestamp are in a bracket. Example: `[YT@12:54:00]:`
-        bracket_string = ' [{}]: '.format(StatusBarSelector(platform).name[0])
+        bracket_string = ' [{}]: '.format(self.StatusBarSelector(platform).name[0])
         # inserts the sender name next to the platform & timestamp
         cursor.insertText(sender + bracket_string)
         

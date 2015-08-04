@@ -5,8 +5,9 @@ class Messager(QtCore.QObject):
     PyQt
     """
     chat_signal = QtCore.pyqtSignal(str, str, int)
-    def __init__(self, parent=None):
+    def __init__(self, platform, parent=None):
+        self.platform = platform
         super(Messager, self).__init__(parent)
 
-    def recieve_chat_data(self, sender, message, platform):
-        self.chat_signal.emit(sender, message, platform)
+    def recieve_chat_data(self, sender, message):
+        self.chat_signal.emit(sender, message, self.platform.value)

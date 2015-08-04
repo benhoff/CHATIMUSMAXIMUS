@@ -3,8 +3,6 @@ import json
 import requests
 import html
 from threading import Thread, Event
-import gui
-from utils import Messager
 
 # TODO: switch to using the WebSocket and the asyncio lib
 class ReadOnlyWebSocket(websocket.WebSocketApp):
@@ -12,12 +10,14 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
 
     def __init__(self, 
                  streamer_name, 
-                 namespace='/chat', 
-                 website_url='http://www.watchpeoplecode.com/socket.io/1/'):
+                 namespace, 
+                 website_url,
+                 message_function=None):
 
         self._streamer_name = streamer_name
         self.namespace = namespace 
         self._website_url = website_url 
+        self.message_function = message_function
         self.key, heartbeat = self._connect_to_server_helper()
         
         # alters URL to be more websocket...ie
@@ -33,12 +33,6 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         self._thread.setDaemon(True)
         # pass this into belowping_interval=heartbeat/2
         self._thread.start()
-
-        # use the trivial instance `_messager` to get around multiple inheritance
-        # problems with PyQt
-        self._messager = Messager()
-        # Duck type the `chat_signal` onto the `Socket` instance/class
-        self.chat_signal = self._messager.chat_signal
 
     def _reconnect_to_server(self):
         self._thread.join()
@@ -84,9 +78,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 message = data['args'][0]
                 sender = html.unescape(message['sender'])
                 message = html.unescape(message['text'])
-                self._messager.recieve_chat_data(sender, 
-                                                 message, 
-                                                 gui.StatusBarSelector.WatchPeopleCode.value)
+                if self.message_function is not None:
+                    self.message_function(sender, message)
 
     def on_error(self, *args):
         print(args[1])
