@@ -29,7 +29,7 @@ def get_settings_helper():
 
     with open(filename) as setting_file:    
         settings = json.load(setting_file)
-
+    settings.pop('version')
     return settings
 
 def instantiate_chats_helper(settings, main_window=None, event_loop=None):
