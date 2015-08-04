@@ -1,6 +1,7 @@
 from plugins import IPlugin
-from communication_protocols import ReadOnlyWebSocket
 from gui import MainWindow
+from utils import Messager
+from communication_protocols import ReadOnlyWebSocket
 
 class WatchPeopleCodePlugin(IPlugin):
     def __init__(self, settings): 

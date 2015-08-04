@@ -3,7 +3,7 @@ import threading
 
 from PyQt5 import QtCore
 from irc3.plugins.command import command
-from gui import StatusBarSelector
+from gui import MainWindow
 from utils import Messager
 
 @irc3.plugin
@@ -15,14 +15,14 @@ class EchoToMessage(object):
 
     def __init__(self, bot):
         self.bot = bot
-        self._messager = Messager()
-        self.chat_signal = self._messager.chat_signal
+        self.recieve_chat_data = None 
 
     @irc3.event(irc3.rfc.PRIVMSG)
     def message(self, mask, event, target, data):
         nick = mask.split('!')[0]
         message = data
-        self.chat_signal.emit(nick, message, StatusBarSelector.Twitch.value)
+        if self.recieve_chat_data is not None:
+            self.recieve_chat_data(nick, message)
 
 _config = dict(
         ssl=False,
@@ -38,7 +38,8 @@ _config = dict(
 
 def create_irc_bot(nick, password,
                    host=None, 
-                   port=6667, realname=None,
+                   port=6667, 
+                   realname=None,
                    channel=None):
 
     if realname is None:
