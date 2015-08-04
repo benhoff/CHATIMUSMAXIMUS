@@ -2,6 +2,7 @@ version: "0.0.1"
 
 #watchpeoplecode:
 #    channel: ""
+#    connect: true
 
 #    display_settings:
 #        display_missing: true
@@ -12,6 +13,7 @@ version: "0.0.1"
 #    oauth_token: ""
 #    channel: ""
 #    nick: ""
+#    connect: true
 
 #    display_settings:
 #        display_missing: true
@@ -23,6 +25,7 @@ version: "0.0.1"
     # this can be your profile password
 #    password: ""
 #    bot_nick: ""
+#    connect: true
 
 #    display_settings:
 #        display_missing: true
@@ -31,6 +34,7 @@ version: "0.0.1"
 #youtube:
 #    channel_id: ""
 #    youtube_url: ""
+#    connect: true
 
 #    display_settings:
 #        display_missing: true
