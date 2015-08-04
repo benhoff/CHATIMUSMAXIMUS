@@ -1,0 +1,37 @@
+version: "0.0.1"
+
+#watchpeoplecode:
+#    channel: ""
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "green"
+
+#twitch:
+    # in the format `oauth:asdasd234asd234ad234asds23`
+#    oauth_token: ""
+#    channel: ""
+#    nick: ""
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "blue"
+
+#livecoding:
+    # this MUST be your livecode name
+#    name: ""
+    # this can be your profile password
+#    password: ""
+#    bot_nick: ""
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "yellow"
+
+#youtube:
+#    channel_id: ""
+#    youtube_url: ""
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "red"
