@@ -1,1 +1,1 @@
-from gui.main_window import MainWindow, StatusBarSelector
+from gui.main_window import MainWindow
