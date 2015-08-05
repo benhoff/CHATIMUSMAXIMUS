@@ -32,6 +32,8 @@ version: "0.0.1"
 #        text_color: "yellow"
 
 #youtube:
+     # NOTE: only pass in channel id if you want to connect chat to your 
+     # permenant landing page
 #    channel_id: ""
 #    youtube_url: ""
 #    connect: true
