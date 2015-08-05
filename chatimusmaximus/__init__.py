@@ -54,20 +54,11 @@ def instantiate_chats_helper(settings, main_window=None, event_loop=None):
     """
     # create the list to return
     chat_site_list = []
+    str_plugins = [s.split('.')[0].split('/')[-1] for s in IPluginRegistry.plugins]
     for chat_site in settings.keys:
-        if chat_site in IPluginRegistry.plugins:
-            #chat_site_list.append(plugin(settings))
-            pass
-
-    if 'youtube' in settings:
-        youtube_settings = settings['youtube']
-        # check for youtube video url, and create youtube scrapper if present
-        if youtube_settings['channel_id'] != str():
-            youtube_url = 'http://www.youtube.com/channel/{}/live'.format(youtube_settings['channel_id'])
-            youtube_scrapper = YoutubeScrapper(youtube_url)
-            # append instantiated yotuube scraper to chat list
-            chat_site_list.append(youtube_scrapper)
-            set_status_helper(gui.StatusBarSelector.Youtube.value)
-    
+        if chat_site in str_plugins:
+            index = str_plugins.index(chat_site)
+            class_instance = IpluginRegistry.plugins[index]
+            chat_site_list.append(class_indstance(settings))
 
     return chat_site_list
