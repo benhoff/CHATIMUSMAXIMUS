@@ -19,6 +19,7 @@ class TwitchPlugin(IPlugin):
         irc_client = communication_protocols.create_irc_bot(
                 settings['nick'],                                     
                 settings['oauth_token'],
+                'irc.twitch.tv',
                 channel=settings['channel'])
 
         irc_client.create_connection()

@@ -1,18 +1,7 @@
 import os
 import yaml
 
-import sleekxmpp
-
-import gui
-import utils
 import plugins
-
-def fake_verify(*args):
-    return
-
-# monkey patch to fix issues with either livecode or 
-# sleekxmpp. hard to tell where the problem is
-sleekxmpp.xmlstream.cert.verify = fake_verify
 
 def get_settings_helper():
     """
@@ -54,11 +43,12 @@ def instantiate_chats_helper(settings, main_window=None, event_loop=None):
     """
     # create the list to return
     chat_site_list = []
-    str_plugins = [s.split('.')[0].split('/')[-1] for s in IPluginRegistry.plugins]
-    for chat_site in settings.keys:
+    plugins.get_plugins()
+    str_plugins = [str(s).split('.')[0].split('/')[-1] for s in plugins.IPluginRegistry.plugins]
+    for chat_site in settings.keys():
         if chat_site in str_plugins:
             index = str_plugins.index(chat_site)
-            class_instance = IpluginRegistry.plugins[index]
-            chat_site_list.append(class_indstance(settings))
+            class_instance = plugins.IPluginRegistry.plugins[index]
+            chat_site_list.append(class_instance(settings[chat_site]))
 
     return chat_site_list

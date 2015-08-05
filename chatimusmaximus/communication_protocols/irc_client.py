@@ -36,7 +36,8 @@ _config = dict(
             ]
         )
 
-def create_irc_bot(nick, password,
+def create_irc_bot(nick, 
+                   password,
                    host=None, 
                    port=6667, 
                    realname=None,

@@ -9,6 +9,13 @@ import sleekxmpp
 from utils import Messager
 import gui
 
+def fake_verify(*args):
+    return
+
+# monkey patch to fix issues with either livecode or 
+# sleekxmpp. hard to tell where the problem is
+sleekxmpp.xmlstream.cert.verify = fake_verify
+
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
     def __init__(self, jid, password, room=None, nick='ReadOnlyBot'):
         super(ReadOnlyXMPPBot, self).__init__(jid, password)

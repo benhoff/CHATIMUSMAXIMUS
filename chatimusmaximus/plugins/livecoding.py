@@ -4,6 +4,7 @@ from plugins import IPlugin
 from gui import MainWindow
 from utils import Messager
 from communication_protocols import ReadOnlyXMPPBot
+
 class LivecodingPlugin(IPlugin):
     # FIXME: migrate to asyncio library
     def __init__(self, settings):
