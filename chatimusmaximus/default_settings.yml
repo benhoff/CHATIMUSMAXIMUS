@@ -20,6 +20,7 @@ version: "0.0.1"
 #        text_color: "blue"
 
 #livecoding:
+    # NOTE: Currently unsupported!
     # this MUST be your livecode name
 #    name: ""
     # this can be your profile password
