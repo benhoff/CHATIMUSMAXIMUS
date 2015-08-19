@@ -50,6 +50,8 @@ class JavascriptWebscraper(object):
         sleep(5)
 
         all_comments = driver.find_element_by_id(self.comment_element_id)
+        # TODO: add in a signal here that all is connected!
+
         # NOTE: make sure this is ok if using for anything other than youtube
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)

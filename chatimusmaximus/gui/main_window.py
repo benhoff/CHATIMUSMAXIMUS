@@ -3,8 +3,7 @@ from enum import Enum
 from datetime import datetime
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt
-
-from gui import MessageArea 
+from gui import MessageArea
 
 class MainWindow(QtWidgets.QMainWindow):
     _time_signal = QtCore.pyqtSignal(str)
@@ -74,7 +73,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_settings(self, settings):
         for settings_key in settings.keys():
             settings_key = settings_key.title()
-            settings_key = 'WatchPeopleCode' if settings_key == 'Watchpeoplecode'
+            if settings_key == 'Watchpeoplecode':
+                settings_key = 'WatchPeopleCode' 
 
             if settings_key in self.StatusBarSelector:
                 display_settings = settings[settings_key]['display_settings']

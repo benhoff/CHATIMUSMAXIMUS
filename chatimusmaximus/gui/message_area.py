@@ -1,6 +1,6 @@
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
-from gui import MainWindow
+from gui.main_window import MainWindow
 
 class _StandardTextFormat(QtGui.QTextCharFormat):
     """
@@ -24,11 +24,11 @@ class MessageArea(QtWidgets.QTextEdit):
         self.viewport().setAutoFillBackground(False)
 
         self.name_formats = []
-        for _ in MainWindow.StatusBarSelector:
+        for _ in gui.main_window.MainWindow.StatusBarSelector:
             self.name_formats.append(name_format)
 
     def set_color(self, platform, color):
-        if isinstance(platform, MainWindow.StatusBarSelector):
+        if isinstance(platform, gui.main_window.MainWindow.StatusBarSelector):
             platform = platform.value
 
         format = self.name_formats[platform]

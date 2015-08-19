@@ -1,9 +1,9 @@
-import websocket
 import json
 import requests
 import html
 from threading import Thread, Event
-
+import logging
+import websocket
 # TODO: switch to using the WebSocket and the asyncio lib
 class ReadOnlyWebSocket(websocket.WebSocketApp):
     # NOTE: chat_signal defined in `__init__`
@@ -34,11 +34,6 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         # pass this into belowping_interval=heartbeat/2
         self._thread.start()
 
-    def _reconnect_to_server(self):
-        self._thread.join()
-        thread = Thread()
-        pass
-
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
         params = r.text
@@ -49,10 +44,10 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         return key, heartbeat_timeout
 
     def on_open(self, *args):
-        print('Websocket open!')
+        logging.info('Websocket open!')
 
     def on_close(self, *args):
-        print('Websocket closed!')
+        logging.info('Websocket closed :(')
         self._thread.join()
 
     def on_message(self, *args):
@@ -70,6 +65,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             self.send_packet_helper(5, data={'name':'initialize'})
             data = {'name':'join', 'args':['{}'.format(self._streamer_name)]}
             self.send_packet_helper(5, data=data)
+            # TODO: Add in a signal here that all is connected!
         elif key == 2:
             self.send_packet_helper(2)
         elif key  == 5:

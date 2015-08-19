@@ -24,6 +24,8 @@ class EchoToMessage(object):
         if self.recieve_chat_data is not None:
             self.recieve_chat_data(nick, message)
 
+    @irc3.event(irc3.rfc.
+
 _config = dict(
         ssl=False,
         includes=[
