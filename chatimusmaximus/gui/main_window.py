@@ -4,7 +4,7 @@ from datetime import datetime
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt
 
-from gui.message_area import MessageArea 
+from gui import MessageArea 
 
 class MainWindow(QtWidgets.QMainWindow):
     _time_signal = QtCore.pyqtSignal(str)
@@ -65,33 +65,39 @@ class MainWindow(QtWidgets.QMainWindow):
         # set up the status widgets
         self._file_dir = os.path.realpath(os.path.dirname(__file__))
         self._status_widgets = []
-        self._set_up_status_bar_helper()
-
-    def _set_up_status_bar_helper(self):
-        status_bar = QtWidgets.QStatusBar(parent=self)
-        red_button = os.path.join(self._file_dir, 'resources', 'red_button.png')
-        gray_button = os.path.join(self._file_dir, 'resources', 'gray_button.png') 
-        for platform in self.StatusBarSelector:
-            # Livecoding support is depreciated
-            if platform == self.StatusBarSelector.Livecoding:
-                button = QtWidgets.QPushButton(QtGui.QIcon(gray_button),
-                                               ' ' + platform.name)
-            else: 
-                button = QtWidgets.QPushButton(QtGui.QIcon(red_button), 
-                                               ' ' + platform.name)
-
-            button.setFlat(True)
-            button.setAutoFillBackground(True)
-            button.setStyleSheet('color: white;')
-            status_bar.addPermanentWidget(button)
-            self._status_widgets.append(button)
-
         time_label = QtWidgets.QLabel()
         time_label.setStyleSheet('color: white;')
 
         self._time_signal.connect(time_label.setText)
-        status_bar.addPermanentWidget(time_label)
-        self.setStatusBar(status_bar)
+        self.statusBar().addPermanentWidget(time_label)
+
+    def set_settings(self, settings):
+        for settings_key in settings.keys():
+            settings_key = settings_key.title()
+            settings_key = 'WatchPeopleCode' if settings_key == 'Watchpeoplecode'
+
+            if settings_key in self.StatusBarSelector:
+                display_settings = settings[settings_key]['display_settings']
+                if display_settings['display_missing']:
+                    self._set_up_status_bar_helper(settings_key)
+                if display_settings['text_color']:
+                    self.message_area.set_color(
+                            self.StatusBarSelector[settings_key].value, 
+                            display_settings['text_color'])
+
+    def _set_up_status_bar_helper(self, platform_name):
+        status_bar = self.statusBar()
+        red_button = os.path.join(self._file_dir, 'resources', 'red_button.png')
+        button = QtWidgets.QPushButton(QtGui.QIcon(red_button), 
+                                       ' ' + platform_name)
+
+        button.setFlat(True)
+        button.setAutoFillBackground(True)
+        button.setStyleSheet('color: white;')
+        status_bar.addPermanentWidget(button)
+        self._status_widgets.append(button)
+
+        #self.setStatusBar(status_bar)
     
     @QtCore.pyqtSlot(int, bool)
     def set_status_widget_status(self, service_index, bool):

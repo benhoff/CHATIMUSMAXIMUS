@@ -19,8 +19,8 @@ version: "0.0.1"
 #        display_missing: true
 #        text_color: "blue"
 
+# NOTE: CURRENTLY UNSUPPORTED!
 #livecoding:
-    # NOTE: Currently unsupported!
     # this MUST be your livecode name
 #    name: ""
     # this can be your profile password

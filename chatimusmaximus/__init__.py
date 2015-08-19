@@ -36,7 +36,7 @@ def get_settings_helper():
         print('Settings file has changed, please update {}'.format(filename))
     return settings
 
-def instantiate_chats_helper(settings, main_window=None, event_loop=None):
+def instantiate_chats_helper(settings):
     """
     This helper parses through the settings and 
     and instantiates all of the used chats
@@ -44,11 +44,21 @@ def instantiate_chats_helper(settings, main_window=None, event_loop=None):
     # create the list to return
     chat_site_list = []
     plugins.get_plugins()
+    # parse the plugins to just get the names
     str_plugins = [str(s).split('.')[0].split('/')[-1] for s in plugins.IPluginRegistry.plugins]
-    for chat_site in settings.keys():
-        if chat_site in str_plugins:
-            index = str_plugins.index(chat_site)
-            class_instance = plugins.IPluginRegistry.plugins[index]
-            chat_site_list.append(class_instance(settings[chat_site]))
+
+    # now check the settings keys and if any keys are found
+    # that match the plugins, instantiate the plugin
+    for settings_key in settings.keys():
+        # check to see if  are registered in plugins
+        if settings_key in str_plugins:
+            # find the index
+            index = str_plugins.index(settings_key)
+            # grab the class instance
+            kls = plugins.IPluginRegistry.plugins[index]
+            # settings is a dict, so pass the key back in to get the settings
+            instantiate_plugin = kls(settings[settings_key])
+            # lastly, push the instantiated plugin onto list
+            chat_site_list.append(instantiate_plugin)
 
     return chat_site_list

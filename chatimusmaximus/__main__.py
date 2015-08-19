@@ -16,12 +16,16 @@ asyncio.set_event_loop(event_loop)
 
 main_window = gui.MainWindow()
 
+# need chat_slot to be able to add to add the chat signal
+chat_slot = main_window.message_area.chat_string_slot
+
 settings = get_settings_helper()
-chat_list = instantiate_chats_helper(settings, main_window)
+main_window.set_settings(settings)
+chat_list = instantiate_chats_helper(settings, name_formats)
 
 # connect the sockets signals to the GUI
 for chat in chat_list:
-    chat.chat_signal.connect(main_window.chat_string_slot)
+    chat.chat_signal.connect(chat_slot)
 
 main_window.show()
 with event_loop:

@@ -1,26 +1,39 @@
-from PyQt5 import QtWidgets, QtGui, Qt
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import Qt
 from gui import MainWindow
 
 class _StandardTextFormat(QtGui.QTextCharFormat):
     """
     Standard text format for `MessageArea`
     """
-    def __init__(self):
+    def __init__(self, text_color=Qt.white, font=QtGui.QFont.DemiBold):
         super(_StandardTextFormat, self).__init__()
-        self.setFontWeight(QtGui.QFont.DemiBold)
-        self.setForeground(Qt.blue)
+        self.setFontWeight(font)
+        self.setForeground(text_color)
         self.setFontPointSize(13)
 
 class MessageArea(QtWidgets.QTextEdit):
     def __init__(self, parent=None):
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
+        self.text_format = _StandardTextFormat(font=self.fontWeight())
         
         # styling
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.viewport().setAutoFillBackground(False)
 
+        self.name_formats = []
+        for _ in MainWindow.StatusBarSelector:
+            self.name_formats.append(name_format)
+
+    def set_color(self, platform, color):
+        if isinstance(platform, MainWindow.StatusBarSelector):
+            platform = platform.value
+
+        format = self.name_formats[platform]
+        format.setForeground(QtGui.QColor(color))
+    
     @QtCore.pyqtSlot(str, str, int)
     def chat_string_slot(self, sender, message, platform):
         self._chat_formater(sender, message, platform)
@@ -55,21 +68,3 @@ class MessageArea(QtWidgets.QTextEdit):
         cursor.insertBlock()
         cursor.movePosition(QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor)
         self.setTextCursor(cursor)
-
-    def _set_up_text_formats(self):
-        """
-        Helper method to create the name formater helpers
-        `self.name_format` is used for names
-        `self.test_formater` is used for the messages
-        """
-        self.name_formats = []
-        for color in (Qt.red, Qt.darkMagenta, Qt.yellow, Qt.green):
-            name_format = _StandardTextFormat()
-            name_format.set
-            self.name_formats.append(name_format)
-
-        #text format is black, normal fontweight, and size 13
-        self.text_format = QtGui.QTextCharFormat()
-        self.text_format.setFontWeight(self.fontWeight())
-        self.text_format.setForeground(Qt.white)
-        self.text_format.setFontPointSize(13)
