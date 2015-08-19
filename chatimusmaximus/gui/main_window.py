@@ -27,22 +27,31 @@ class MainWindow(QtWidgets.QMainWindow):
         # create the text edit used to display the text
         self.text_edit = QtWidgets.QTextEdit(parent=self)
         self.text_edit.setReadOnly(True)
+        
+        # tried to set the background to be transparent
+        # does not work without a compositor in Linux
         self.setAttribute(Qt.WA_NoSystemBackground)
         self.setStyleSheet('background: transparent;')
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.text_edit.setWindowFlags(Qt.FramelessWindowHint)
         self.text_edit.setAttribute(Qt.WA_TranslucentBackground)
         self.text_edit.viewport().setAutoFillBackground(False)
-
+        
+        # create vertical layout to stack the textedit on top
+        # of the `clear` button 
         vertical_layout = QtWidgets.QVBoxLayout()
-
+        
+        # create `clear` button
         button = QtWidgets.QPushButton("CLEAR")
         button.setStyleSheet('color: white;')
         button.clicked.connect(self.text_edit.clear)
-
+        
+        # add the text edit and button to vertical layout
         vertical_layout.addWidget(self.text_edit)
         vertical_layout.addWidget(button)
-
+        
+        # create a widget to set the layout to be 
+        # the vertical layout created above
         central_widget = QtWidgets.QWidget()
         central_widget.setLayout(vertical_layout)
 
@@ -51,17 +60,25 @@ class MainWindow(QtWidgets.QMainWindow):
         # sets name and text formats
         self.name_format = None
         self.text_format = None
-        self._file_dir = os.path.realpath(os.path.dirname(__file__))
         self._set_up_text_formats()
+
+        # set up the status widgets
+        self._file_dir = os.path.realpath(os.path.dirname(__file__))
         self._status_widgets = []
         self._set_up_status_bar_helper()
 
     def _set_up_status_bar_helper(self):
         status_bar = QtWidgets.QStatusBar(parent=self)
         red_button = os.path.join(self._file_dir, 'resources', 'red_button.png')
+        gray_button = os.path.join(self._file_dir, 'resources', 'gray_button.png') 
         for platform in self.StatusBarSelector:
-            button = QtWidgets.QPushButton(QtGui.QIcon(red_button), 
-                                           ' ' + platform.name)
+            # Livecoding support is depreciated
+            if platform == self.StatusBarSelector.Livecoding:
+                button = QtWidgets.QPushButton(QtGui.QIcon(gray_button),
+                                               ' ' + platform.name)
+            else: 
+                button = QtWidgets.QPushButton(QtGui.QIcon(red_button), 
+                                               ' ' + platform.name)
 
             button.setFlat(True)
             button.setAutoFillBackground(True)
