@@ -1,0 +1,44 @@
+version: "0.0.1"
+
+#watchpeoplecode:
+#    channel: ""
+#    connect: true
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "green"
+
+#twitch:
+    # in the format `oauth:asdasd234asd234ad234asds23`
+#    oauth_token: ""
+#    channel: ""
+#    nick: ""
+#    connect: true
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "blue"
+
+# NOTE: CURRENTLY UNSUPPORTED!
+#livecoding:
+    # this MUST be your livecode name
+#    name: ""
+    # this can be your profile password
+#    password: ""
+#    bot_nick: ""
+#    connect: true
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "yellow"
+
+#youtube:
+     # NOTE: only pass in channel id if you want to connect chat to your 
+     # permenant landing page
+#    channel_id: ""
+#    youtube_url: ""
+#    connect: true
+
+#    display_settings:
+#        display_missing: true
+#        text_color: "red"

@@ -1,24 +1,23 @@
-import websocket
 import json
 import requests
 import html
 from threading import Thread, Event
-from PyQt5 import QtNetwork, QtCore
-import gui
-from utils import Messager
-
+import logging
+import websocket
 # TODO: switch to using the WebSocket and the asyncio lib
 class ReadOnlyWebSocket(websocket.WebSocketApp):
     # NOTE: chat_signal defined in `__init__`
 
     def __init__(self, 
                  streamer_name, 
-                 namespace='/chat', 
-                 website_url='http://www.watchpeoplecode.com/socket.io/1/'):
+                 namespace, 
+                 website_url,
+                 message_function=None):
 
         self._streamer_name = streamer_name
         self.namespace = namespace 
         self._website_url = website_url 
+        self.message_function = message_function
         self.key, heartbeat = self._connect_to_server_helper()
         
         # alters URL to be more websocket...ie
@@ -35,17 +34,6 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         # pass this into belowping_interval=heartbeat/2
         self._thread.start()
 
-        # use the trivial instance `_messager` to get around multiple inheritance
-        # problems with PyQt
-        self._messager = Messager()
-        # Duck type the `chat_signal` onto the `Socket` instance/class
-        self.chat_signal = self._messager.chat_signal
-
-    def _reconnect_to_server(self):
-        self._thread.join()
-        thread = Thread()
-        pass
-
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
         params = r.text
@@ -56,10 +44,10 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         return key, heartbeat_timeout
 
     def on_open(self, *args):
-        print('Websocket open!')
+        logging.info('Websocket open!')
 
     def on_close(self, *args):
-        print('Websocket closed!')
+        logging.info('Websocket closed :(')
         self._thread.join()
 
     def on_message(self, *args):
@@ -77,6 +65,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             self.send_packet_helper(5, data={'name':'initialize'})
             data = {'name':'join', 'args':['{}'.format(self._streamer_name)]}
             self.send_packet_helper(5, data=data)
+            # TODO: Add in a signal here that all is connected!
         elif key == 2:
             self.send_packet_helper(2)
         elif key  == 5:
@@ -85,9 +74,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 message = data['args'][0]
                 sender = html.unescape(message['sender'])
                 message = html.unescape(message['text'])
-                self._messager.recieve_chat_data(sender, 
-                                                 message, 
-                                                 gui.StatusBarSelector.WatchPeopleCode.value)
+                if self.message_function is not None:
+                    self.message_function(sender, message)
 
     def on_error(self, *args):
         print(args[1])
@@ -112,9 +100,3 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         callback = ''
         message = ':'.join([str(type_key), callback, self.namespace, data])
         self.send(message)
-    
-if __name__ == '__main__':
-    streamer_name = 'beohoff'
-    # this is default for the flask app
-    socket = Socket(streamer_name)
-    socket.run_forever()

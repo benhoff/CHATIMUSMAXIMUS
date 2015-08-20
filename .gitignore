@@ -1,7 +1,7 @@
 __pycache__
 ENV*
 *.swp
-settings.json
+settings.yml
 ghostdriver.log
 client_secrets.json
 *py-oauth2.json
