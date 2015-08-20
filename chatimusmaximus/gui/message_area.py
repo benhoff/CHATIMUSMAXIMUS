@@ -1,3 +1,4 @@
+from datetime import datetime
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 
@@ -12,6 +13,7 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
         self.setFontPointSize(13)
 
 class MessageArea(QtWidgets.QTextEdit):
+    time_signal = QtCore.pyqtSignal(str)
     def __init__(self, parent=None):
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
@@ -22,17 +24,16 @@ class MessageArea(QtWidgets.QTextEdit):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.viewport().setAutoFillBackground(False)
 
-        self.name_formats = []
+        self.name_formats = {} 
 
-    def set_color(self, color, index=None):
-        if index is not None:
+    def set_color(self, color, platform):
+        if platform in self.name_formats:
             format = self.name_formats[platform]
             format.setForeground(QtGui.QColor(color))
         else:
-            self.name_formats.append(_StandardTextFormat(QtGui.QColor(color)))
-
+            self.name_formats[platform] = _StandardTextFormat(QtGui.QColor(color))
     
-    @QtCore.pyqtSlot(str, str, int)
+    @QtCore.pyqtSlot(str, str, str)
     def chat_string_slot(self, sender, message, platform):
         self._chat_formater(sender, message, platform)
 
@@ -52,9 +53,9 @@ class MessageArea(QtWidgets.QTextEdit):
         cursor.setCharFormat(self.name_formats[platform])
         # get the timestamp
         formatted_datetime = datetime.now().strftime("%H:%M:%S")
-        self._time_signal.emit(formatted_datetime)
+        self.time_signal.emit(formatted_datetime)
         # the platform name and timestamp are in a bracket. Example: `[YT@12:54:00]:`
-        bracket_string = ' [{}]: '.format(self.StatusBarSelector(platform).name[0])
+        bracket_string = ' [{}]: '.format(platform.title())
         # inserts the sender name next to the platform & timestamp
         cursor.insertText(sender + bracket_string)
         

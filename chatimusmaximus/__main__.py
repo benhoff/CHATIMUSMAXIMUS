@@ -21,7 +21,7 @@ chat_slot = main_window.message_area.chat_string_slot
 
 settings = get_settings_helper()
 main_window.set_settings(settings)
-chat_list = instantiate_chats_helper(settings, name_formats)
+chat_list = instantiate_chats_helper(settings)
 
 # connect the sockets signals to the GUI
 for chat in chat_list:

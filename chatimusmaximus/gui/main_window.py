@@ -6,13 +6,6 @@ from PyQt5.QtCore import Qt
 from gui import MessageArea
 
 class MainWindow(QtWidgets.QMainWindow):
-    _time_signal = QtCore.pyqtSignal(str)
-
-    class StatusBarSelector(Enum):
-        Youtube = 0
-        Twitch = 1
-        Livecoding = 2
-        WatchPeopleCode = 3
 
     def __init__(self, parent=None):
         """
@@ -56,27 +49,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(central_widget)
 
-        # sets name and text formats
-        self.name_format = None
-        self.text_format = None
-        self._set_up_text_formats()
-
         # set up the status widgets
         self._file_dir = os.path.realpath(os.path.dirname(__file__))
         self._status_widgets = []
         time_label = QtWidgets.QLabel()
         time_label.setStyleSheet('color: white;')
 
-        self._time_signal.connect(time_label.setText)
+        self.message_area.time_signal.connect(time_label.setText)
         self.statusBar().addPermanentWidget(time_label)
 
     def set_settings(self, settings):
-        for key, settings in settings.items():
-            display_setting = setting['display_setting']
+        for key, setting in settings.items():
+            display_settings = setting['display_settings']
             if display_settings['display_missing']:
-                self._set_up_status_bar_helper(key.title)
+                self._set_up_status_bar_helper(key.title())
             if display_settings['text_color']:
-                self.message_area.set_color(display_settings['text_color'])
+                self.message_area.set_color(display_settings['text_color'], key)
 
     def _set_up_status_bar_helper(self, platform_name):
         status_bar = self.statusBar()
