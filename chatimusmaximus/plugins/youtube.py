@@ -1,5 +1,4 @@
 from plugins import IPlugin
-from gui import MainWindow
 from utils import Messager
 from communication_protocols import JavascriptWebscraper
 
@@ -7,7 +6,7 @@ class YoutubePlugin(IPlugin):
     def __init__(self, settings):
         # use the trivial instance `_messager` to get around multiple inheritance
         # problems with PyQt
-        self._messager = Messager(MainWindow.StatusBarSelector.Youtube)
+        self._messager = Messager('youtube')
         # Duck type the `chat_signal` onto the `Socket` instance/class
         self.chat_signal = self._messager.chat_signal
 

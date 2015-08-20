@@ -1,5 +1,4 @@
 from plugins import IPlugin
-from gui import MainWindow
 from utils import Messager
 
 import communication_protocols
@@ -12,7 +11,7 @@ class TwitchPlugin(IPlugin):
         super(TwitchPlugin, self).__init__()
         # use the trivial instance `_messager` to get around multiple inheritance
         # problems with PyQt
-        self._messager = Messager(MainWindow.StatusBarSelector.Twitch)
+        self._messager = Messager('twitch')
         # Duck type the `chat_signal` onto the `Socket` instance/class
         self.chat_signal = self._messager.chat_signal
 

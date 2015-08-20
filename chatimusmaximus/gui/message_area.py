@@ -1,6 +1,5 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
-from gui.main_window import MainWindow
 
 class _StandardTextFormat(QtGui.QTextCharFormat):
     """
@@ -24,15 +23,14 @@ class MessageArea(QtWidgets.QTextEdit):
         self.viewport().setAutoFillBackground(False)
 
         self.name_formats = []
-        for _ in gui.main_window.MainWindow.StatusBarSelector:
-            self.name_formats.append(name_format)
 
-    def set_color(self, platform, color):
-        if isinstance(platform, gui.main_window.MainWindow.StatusBarSelector):
-            platform = platform.value
+    def set_color(self, color, index=None):
+        if index is not None:
+            format = self.name_formats[platform]
+            format.setForeground(QtGui.QColor(color))
+        else:
+            self.name_formats.append(_StandardTextFormat(QtGui.QColor(color)))
 
-        format = self.name_formats[platform]
-        format.setForeground(QtGui.QColor(color))
     
     @QtCore.pyqtSlot(str, str, int)
     def chat_string_slot(self, sender, message, platform):

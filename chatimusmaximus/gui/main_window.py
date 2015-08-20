@@ -71,19 +71,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().addPermanentWidget(time_label)
 
     def set_settings(self, settings):
-        for settings_key in settings.keys():
-            settings_key = settings_key.title()
-            if settings_key == 'Watchpeoplecode':
-                settings_key = 'WatchPeopleCode' 
-
-            if settings_key in self.StatusBarSelector:
-                display_settings = settings[settings_key]['display_settings']
-                if display_settings['display_missing']:
-                    self._set_up_status_bar_helper(settings_key)
-                if display_settings['text_color']:
-                    self.message_area.set_color(
-                            self.StatusBarSelector[settings_key].value, 
-                            display_settings['text_color'])
+        for key, settings in settings.items():
+            display_setting = setting['display_setting']
+            if display_settings['display_missing']:
+                self._set_up_status_bar_helper(key.title)
+            if display_settings['text_color']:
+                self.message_area.set_color(display_settings['text_color'])
 
     def _set_up_status_bar_helper(self, platform_name):
         status_bar = self.statusBar()
