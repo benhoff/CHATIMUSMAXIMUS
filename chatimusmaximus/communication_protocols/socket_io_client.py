@@ -34,6 +34,13 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         # pass this into belowping_interval=heartbeat/2
         self._thread.start()
 
+    def run_forever(self, *args, **kwargs):
+        while True:
+            try:
+                super(ReadOnlyWebSocket, self).run_forever(*args, **kwargs)
+            except:
+                pass
+
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
         params = r.text
