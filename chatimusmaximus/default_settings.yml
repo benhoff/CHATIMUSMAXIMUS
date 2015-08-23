@@ -6,7 +6,7 @@ version: "0.0.1"
 
 #    display_settings:
 #        display_missing: true
-#        text_color: "green"
+#        text_color: "lawngreen"
 
 #twitch:
     # in the format `oauth:asdasd234asd234ad234asds23`
@@ -17,7 +17,7 @@ version: "0.0.1"
 
 #    display_settings:
 #        display_missing: true
-#        text_color: "blue"
+#        text_color: "blueviolet"
 
 # NOTE: CURRENTLY UNSUPPORTED!
 #livecoding:
