@@ -36,6 +36,16 @@ def get_settings_helper():
         print('Settings file has changed, please update {}'.format(filename))
     return settings
 
+def validate_settings_not_blank(setting):
+    settings_have_values = False
+    for key, value in setting.items():
+        if value == str() or key == 'display_settings' or key == 'connect':
+            pass
+        else:
+            settings_have_values = True
+            break
+    return settings_have_values
+
 def instantiate_chats_helper(settings):
     """
     This helper parses through the settings and 
@@ -49,9 +59,15 @@ def instantiate_chats_helper(settings):
 
     # now check the settings keys and if any keys are found
     # that match the plugins, instantiate the plugin
-    for settings_key in settings.keys():
+    for settings_key, setting in settings.items():
+        has_values = validate_settings_not_blank(setting)
+        # NOTE: This removes the setting COMPLETELY if it doesn't have values and isn't meant to be displayed
+        # remove setting if it doesn't have values and not dispaly_missing
+        if not has_values and not setting['display_settings']['display_missing']:
+            settings.pop(settings_key)
+
         # check to see if  are registered in plugins
-        if settings_key in str_plugins:
+        if settings_key in str_plugins and has_values:
             # find the index
             index = str_plugins.index(settings_key)
             # grab the class instance
