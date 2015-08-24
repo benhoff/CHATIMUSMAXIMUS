@@ -34,7 +34,7 @@ class MessageArea(QtWidgets.QTextEdit):
             self.name_formats[platform] = _StandardTextFormat(QtGui.QColor(color))
     
     @QtCore.pyqtSlot(str, str, str)
-    def chat_string_slot(self, sender, message, platform):
+    def chat_slot(self, sender, message, platform):
         self._chat_formater(sender, message, platform)
 
         # get scroll bar and set to maximum
