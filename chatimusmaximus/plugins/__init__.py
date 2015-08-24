@@ -1,5 +1,6 @@
 import os
 import imp
+from PyQt5 import QtCore
 
 class IPluginRegistry(type):
     plugins = []
@@ -7,8 +8,30 @@ class IPluginRegistry(type):
         if name != 'IPlugin':
             IPluginRegistry.plugins.append(cls)
 
+class _PyQtCompat(QtCore.QObject):
+    """
+    Can't subclass from multiple classes with PyQt
+    """
+    chat_signal = QtCore.pyqtSignal(str, str, str)
+    connected_signal = QtCore.pyqtSignal(bool, str)
+
+    def __init__(self, parent=None):
+        super(_PyQtCompat, self).__init__(parent)
+
 class IPlugin(object, metaclass=IPluginRegistry):
-    pass
+    def __init__(self, platform):
+        super(IPlugin, self).__init__()
+        self.platform = platform
+
+        self._pyqt_compat = _PyQtCompat()
+        self.chat_signal = self._pyqt_compat.chat_signal
+        self.connected_signal = self._pyqt_compat.connected_signal
+
+    def recieve_chat_data(self, sender, message):
+        self.chat_signal.emit(sender, message, self.platform)
+
+    def connected_slot(self, bool):
+        self.connected_signal.emit(bool, self.platform)
 
 def get_plugins():
     directory = os.path.dirname(os.path.realpath(__file__))
