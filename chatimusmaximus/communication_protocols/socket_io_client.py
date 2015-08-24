@@ -4,6 +4,7 @@ import html
 from threading import Thread, Event
 import logging
 import websocket
+
 # TODO: switch to using the WebSocket and the asyncio lib
 class ReadOnlyWebSocket(websocket.WebSocketApp):
     # NOTE: chat_signal defined in `__init__`
@@ -12,13 +13,16 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                  streamer_name, 
                  namespace, 
                  website_url,
-                 message_function=None):
+                 message_function=None,
+                 connected_function=None):
 
         self._streamer_name = streamer_name
         self.namespace = namespace 
         self._website_url = website_url 
         self.message_function = message_function
         self.key, heartbeat = self._connect_to_server_helper()
+
+        self.connected_signal = connected_function
         
         # alters URL to be more websocket...ie
         self._website_socket = self._website_url.replace('http', 'ws') + 'websocket/'
@@ -39,8 +43,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             try:
                 self.run_forever()
             except:
-                # TODO: put some timing stuff here?
-                pass
+                if self.connected_signal is not None:
+                    self.connected_signal(False)
 
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
@@ -73,7 +77,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             self.send_packet_helper(5, data={'name':'initialize'})
             data = {'name':'join', 'args':['{}'.format(self._streamer_name)]}
             self.send_packet_helper(5, data=data)
-            # TODO: Add in a signal here that all is connected!
+            if self.connected_signal is not None:
+                self.connected_signal(True)
         elif key == 2:
             self.send_packet_helper(2)
         elif key  == 5:

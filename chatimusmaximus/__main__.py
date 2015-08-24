@@ -4,7 +4,7 @@ import asyncio
 from PyQt5 import QtWidgets, QtNetwork, QtCore
 from quamash import QEventLoop
 
-import gui
+from gui import MainWindow
 from __init__ import get_settings_helper, instantiate_chats_helper
 
 # create the GUI
@@ -14,10 +14,10 @@ app = QtWidgets.QApplication(sys.argv)
 event_loop = QEventLoop(app)
 asyncio.set_event_loop(event_loop)
 
-main_window = gui.MainWindow()
+main_window = MainWindow()
 
 # need chat_slot to be able to add to add the chat signal
-chat_slot = main_window.message_area.chat_string_slot
+chat_slot = main_window.central_widget.message_area.chat_slot
 
 settings = get_settings_helper()
 
@@ -29,6 +29,7 @@ main_window.set_settings(settings)
 # connect the sockets signals to the GUI
 for chat in chat_list:
     chat.chat_signal.connect(chat_slot)
+    chat.connected_signal.connect(main_window.status_bar.set_widget_status)
 
 main_window.show()
 with event_loop:

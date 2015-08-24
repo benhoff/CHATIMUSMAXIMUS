@@ -6,7 +6,6 @@ class StatusBar(QtWidgets.QStatusBar):
         super(StatusBar, self).__init__(parent)
         file_dir = os.path.dirname(__file__)
         resource_dir = os.path.join(file_dir, 'resources')
-        print(file_dir)
         red_button = os.path.join(resource_dir, 'red_button.png')
         green_button = os.path.join(resource_dir, 'green_button.png')
 
@@ -29,10 +28,10 @@ class StatusBar(QtWidgets.QStatusBar):
         button.setAutoFillBackground(True)
         button.setStyleSheet('color: white;')
         self.addPermanentWidget(button)
-        self._status_widgets[platform_name] = button
+        self._status_widgets[platform_name.lower()] = button
 
-    @QtCore.pyqtSlot(str, bool)
-    def set_widget_status(self, platform_name, bool):
+    @QtCore.pyqtSlot(bool, str)
+    def set_widget_status(self, bool, platform_name):
         # get the appropriate status widget
         button = self._status_widgets[platform_name]
         if bool:
