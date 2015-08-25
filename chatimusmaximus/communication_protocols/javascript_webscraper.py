@@ -35,7 +35,14 @@ class JavascriptWebscraper(object):
         self.author_class_name = author_class_name
         self.message_class_name = message_class_name
         self.plugin = plugin
-        asyncio.get_event_loop().run_in_executor(None, self.run)
+        asyncio.get_event_loop().run_in_executor(None, self.run_forever)
+
+    def run_forever(self):
+        while True:
+            try:
+                self.run()
+            except Exception:
+                pass
     
     def run(self):
         driver = webdriver.PhantomJS()
