@@ -1,8 +1,8 @@
 import json
 import requests
 import html
-from threading import Thread, Event
 import logging
+import asyncio
 import websocket
 
 # TODO: switch to using the WebSocket and the asyncio lib
@@ -29,12 +29,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 on_open=self.on_open, on_close=self.on_close,
                 on_message=self.on_message, 
                 on_error=self.on_error)
-        
-        # start a thread and set the socket to run forever
-        self._thread = Thread(target=self.run_forever)
-        self._thread.setDaemon(True)
-        # pass this into belowping_interval=heartbeat/2
-        self._thread.start()
+        asyncio.get_event_loop().run_in_executor(None, self.repeat_run_forever)
 
     def repeat_run_forever(self):
         while True:
