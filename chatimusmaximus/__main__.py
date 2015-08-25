@@ -7,30 +7,36 @@ from quamash import QEventLoop
 from gui import MainWindow
 from __init__ import get_settings_helper, instantiate_chats_helper
 
-# create the GUI
-app = QtWidgets.QApplication(sys.argv)
+def main():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    # create the GUI
+    app = QtWidgets.QApplication(sys.argv)
 
-# create the event loop
-event_loop = QEventLoop(app)
-asyncio.set_event_loop(event_loop)
+    # create the event loop
+    event_loop = QEventLoop(app)
+    asyncio.set_event_loop(event_loop)
 
-main_window = MainWindow()
+    main_window = MainWindow()
 
-# need chat_slot to be able to add to add the chat signal
-chat_slot = main_window.central_widget.message_area.chat_slot
+    # need chat_slot to be able to add to add the chat signal
+    chat_slot = main_window.central_widget.message_area.chat_slot
 
-settings = get_settings_helper()
+    settings = get_settings_helper()
 
-# NOTE: instantiate_chats_helper will COMPLETELY remove
-# settings if they are blank and `show_missing` is false
-chat_list = instantiate_chats_helper(settings)
-main_window.set_settings(settings)
+    # NOTE: instantiate_chats_helper will COMPLETELY remove
+    # settings if they are blank and `show_missing` is false
+    chat_list = instantiate_chats_helper(settings)
+    main_window.set_settings(settings)
 
-# connect the sockets signals to the GUI
-for chat in chat_list:
-    chat.chat_signal.connect(chat_slot)
-    chat.connected_signal.connect(main_window.status_bar.set_widget_status)
+    # connect the sockets signals to the GUI
+    for chat in chat_list:
+        chat.chat_signal.connect(chat_slot)
+        chat.connected_signal.connect(main_window.status_bar.set_widget_status)
 
-main_window.show()
-with event_loop:
-    event_loop.run_forever()
+    main_window.show()
+    with event_loop:
+        event_loop.run_forever()
+    sys.exit()
+
+if __name__ == '__main__':
+    main()
