@@ -3,6 +3,7 @@ from communication_protocols import JavascriptWebscraper
 
 class YoutubePlugin(IPlugin):
     def __init__(self, settings):
+        super(YoutubePlugin, self).__init__('youtube')
         url = None
         if 'youtube_url' in settings:
             url = settings['youtube_url']

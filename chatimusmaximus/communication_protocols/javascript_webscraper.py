@@ -2,7 +2,7 @@ import sys
 import os
 
 from time import sleep
-from threading import Thread
+import asyncio
 
 from selenium import webdriver
 
@@ -35,10 +35,7 @@ class JavascriptWebscraper(object):
         self.author_class_name = author_class_name
         self.message_class_name = message_class_name
         self.plugin = plugin
-
-        self._thread = Thread(target=self.run)
-        self._thread.setDaemon(True)
-        self._thread.start()
+        asyncio.get_event_loop().run_in_executor(None, self.run)
     
     def run(self):
         driver = webdriver.PhantomJS()
