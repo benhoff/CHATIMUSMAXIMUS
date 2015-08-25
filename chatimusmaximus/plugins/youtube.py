@@ -1,5 +1,4 @@
 from plugins import IPlugin
-from utils import Messager
 from communication_protocols import JavascriptWebscraper
 
 class YoutubePlugin(IPlugin):
@@ -15,4 +14,4 @@ class YoutubePlugin(IPlugin):
                 'all-comments',
                 'yt-user-name',
                 'comment-text',
-                self.recieve_chat_data)
+                self)

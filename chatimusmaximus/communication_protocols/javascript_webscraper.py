@@ -15,7 +15,7 @@ class JavascriptWebscraper(object):
             comment_element_id=None,
             author_class_name=None,
             message_class_name=None,
-            message_function=None):
+            plugin=None):
 
         """
         `comment_element_id` is the css element where all the comments are, 
@@ -34,7 +34,7 @@ class JavascriptWebscraper(object):
         self.comment_element_id = comment_element_id
         self.author_class_name = author_class_name
         self.message_class_name = message_class_name
-        self.message_function = message_function
+        self.plugin = plugin
 
         self._thread = Thread(target=self.run)
         self._thread.setDaemon(True)
@@ -55,6 +55,8 @@ class JavascriptWebscraper(object):
         # NOTE: make sure this is ok if using for anything other than youtube
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)
+        if self.plugin is not None:
+            self.plugin.connected_function(True)
 
         while True:
             comments = all_comments.find_elements_by_tag_name('li')
@@ -73,5 +75,8 @@ class JavascriptWebscraper(object):
                     message = comment.find_element_by_class_name(
                             self.message_class_name).text
 
-                    if self.message_function is not None:
-                        self.message_function(author, message)
+                    if self.plugin is not None:
+                        self.plugin.message_function(author, message)
+
+        if self.plugin is not None:
+            self.plugin.connected_function(False)

@@ -1,6 +1,4 @@
 from plugins import IPlugin
-from utils import Messager
-
 import communication_protocols
 
 class TwitchPlugin(IPlugin):
@@ -13,12 +11,8 @@ class TwitchPlugin(IPlugin):
                 settings['nick'],                                     
                 settings['oauth_token'],
                 'irc.twitch.tv',
-                channel=settings['channel'])
+                channel=settings['channel'],
+                plugin=self)
 
         irc_client.create_connection()
         irc_client.add_signal_handlers()
-        irc_chat_plugin = irc_client.get_plugin(
-                communication_protocols.EchoToMessage)
-        
-        # duck typing our `_messager` instance's `recieve_chat_data` onto plugin
-        irc_chat_plugin.recieve_chat_data = self.recieve_chat_data

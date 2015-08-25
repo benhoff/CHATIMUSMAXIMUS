@@ -1,5 +1,4 @@
 from plugins import IPlugin
-from utils import Messager
 from communication_protocols import ReadOnlyWebSocket
 
 class WatchPeopleCodePlugin(IPlugin):

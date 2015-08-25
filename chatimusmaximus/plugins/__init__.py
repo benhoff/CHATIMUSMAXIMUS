@@ -27,10 +27,10 @@ class IPlugin(object, metaclass=IPluginRegistry):
         self.chat_signal = self._pyqt_compat.chat_signal
         self.connected_signal = self._pyqt_compat.connected_signal
 
-    def recieve_chat_data(self, sender, message):
+    def message_function(self, sender, message):
         self.chat_signal.emit(sender, message, self.platform)
 
-    def connected_slot(self, bool):
+    def connected_function(self, bool):
         self.connected_signal.emit(bool, self.platform)
 
 def get_plugins():

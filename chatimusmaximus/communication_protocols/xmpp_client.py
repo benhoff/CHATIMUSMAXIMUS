@@ -7,7 +7,6 @@ logging.basicConfig(level=logging.ERROR)
 
 import sleekxmpp
 
-from utils import Messager
 import gui
 
 def fake_verify(*args):

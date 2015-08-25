@@ -13,7 +13,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                  streamer_name, 
                  namespace, 
                  website_url,
-                 plugin=None)
+                 plugin=None):
 
         self._streamer_name = streamer_name
         self.namespace = namespace 
@@ -42,7 +42,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 self.run_forever()
             except:
                 if self.plugin is not None:
-                    self.plugin.connected_signal(False)
+                    self.plugin.connected_function(False)
 
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
@@ -76,7 +76,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             data = {'name':'join', 'args':['{}'.format(self._streamer_name)]}
             self.send_packet_helper(5, data=data)
             if self.plugin is not None:
-                self.plugin.connected_signal(True)
+                self.plugin.connected_function(True)
         elif key == 2:
             self.send_packet_helper(2)
         elif key  == 5:
