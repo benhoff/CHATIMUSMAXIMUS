@@ -38,6 +38,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             except:
                 if self.plugin is not None:
                     self.plugin.connected_function(False)
+                key, _ = self._connect_to_server_helper()
+                self.url = self._website_socket + key
 
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
@@ -53,7 +55,6 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
 
     def on_close(self, *args):
         logging.info('Websocket closed :(')
-        self._thread.join()
 
     def on_message(self, *args):
         message = args[1].split(':', 3)
