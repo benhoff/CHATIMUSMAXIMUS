@@ -13,16 +13,14 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                  streamer_name, 
                  namespace, 
                  website_url,
-                 message_function=None,
-                 connected_function=None):
+                 plugin=None)
 
         self._streamer_name = streamer_name
         self.namespace = namespace 
         self._website_url = website_url 
-        self.message_function = message_function
         self.key, heartbeat = self._connect_to_server_helper()
+        self.plugin = plugin
 
-        self.connected_signal = connected_function
         
         # alters URL to be more websocket...ie
         self._website_socket = self._website_url.replace('http', 'ws') + 'websocket/'
@@ -43,8 +41,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             try:
                 self.run_forever()
             except:
-                if self.connected_signal is not None:
-                    self.connected_signal(False)
+                if self.plugin is not None:
+                    self.plugin.connected_signal(False)
 
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
@@ -77,8 +75,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             self.send_packet_helper(5, data={'name':'initialize'})
             data = {'name':'join', 'args':['{}'.format(self._streamer_name)]}
             self.send_packet_helper(5, data=data)
-            if self.connected_signal is not None:
-                self.connected_signal(True)
+            if self.plugin is not None:
+                self.plugin.connected_signal(True)
         elif key == 2:
             self.send_packet_helper(2)
         elif key  == 5:
@@ -87,8 +85,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 message = data['args'][0]
                 sender = html.unescape(message['sender'])
                 message = html.unescape(message['text'])
-                if self.message_function is not None:
-                    self.message_function(sender, message)
+                if self.plugin is not None:
+                    self.plugin.message_function(sender, message)
 
     def on_error(self, *args):
         print(args[1])

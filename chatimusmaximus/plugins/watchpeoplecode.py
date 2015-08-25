@@ -9,5 +9,4 @@ class WatchPeopleCodePlugin(IPlugin):
         self._websocket = ReadOnlyWebSocket(streamer_name,
                                             '/chat',
                                             'http://www.watchpeoplecode.com/socket.io/1/',
-                                            self.recieve_chat_data,
-                                            self.connected_slot)
+                                            self)
