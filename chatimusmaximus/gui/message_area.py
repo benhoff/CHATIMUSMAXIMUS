@@ -1,4 +1,5 @@
 from datetime import datetime
+import threading
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 
@@ -15,6 +16,7 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
 class MessageArea(QtWidgets.QTextEdit):
     time_signal = QtCore.pyqtSignal(str)
     def __init__(self, parent=None):
+        self._lock = threading.Lock()
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
         self.text_format = _StandardTextFormat(font=self.fontWeight())
@@ -35,7 +37,8 @@ class MessageArea(QtWidgets.QTextEdit):
     
     @QtCore.pyqtSlot(str, str, str)
     def chat_slot(self, sender, message, platform):
-        self._chat_formater(sender, message, platform)
+        with self._lock:
+            self._chat_formater(sender, message, platform)
 
         # get scroll bar and set to maximum
         scroll_bar = self.verticalScrollBar()
