@@ -1,4 +1,4 @@
-from plugins import IPlugin
+from plugins.websites import IPlugin
 import communication_protocols
 
 class TwitchPlugin(IPlugin):

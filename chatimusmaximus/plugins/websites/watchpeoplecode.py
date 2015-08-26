@@ -1,4 +1,4 @@
-from plugins import IPlugin
+from plugins.websites import IPlugin
 from communication_protocols import ReadOnlyWebSocket
 
 class WatchPeopleCodePlugin(IPlugin):

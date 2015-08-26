@@ -55,9 +55,9 @@ def instantiate_chats_helper(settings):
     log = logging.getLogger()
     # create the list to return
     chat_site_list = []
-    plugins.get_plugins()
+    plugins.get_website_plugins()
     # parse the plugins to just get the names
-    str_plugins = [str(s).split('.')[0].split('/')[-1] for s in plugins.IPluginRegistry.plugins]
+    str_plugins = [str(s).split('.')[0].split('/')[-1] for s in plugins.IWebsitePluginRegistry.plugins]
 
     # now check the settings keys and if any keys are found
     # that match the plugins, instantiate the plugin
@@ -75,7 +75,7 @@ def instantiate_chats_helper(settings):
             # find the index
             index = str_plugins.index(settings_key)
             # grab the class instance
-            kls = plugins.IPluginRegistry.plugins[index]
+            kls = plugins.IWebsitePluginRegistry.plugins[index]
             # settings is a dict, so pass the key back in to get the settings
             instantiate_plugin = kls(settings[settings_key])
             # lastly, push the instantiated plugin onto list
