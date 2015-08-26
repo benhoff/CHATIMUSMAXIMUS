@@ -33,8 +33,11 @@ def main():
         chat.connected_signal.connect(main_window.status_bar.set_widget_status)
 
     main_window.show()
-    with event_loop:
+    try:
         event_loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    event_loop.close()
     sys.exit()
 
 if __name__ == '__main__':
