@@ -35,17 +35,15 @@ class JavascriptWebscraper(object):
         self.author_class_name = author_class_name
         self.message_class_name = message_class_name
         self.plugin = plugin
-        asyncio.Task(self.run_forever())
+        asyncio.get_event_loop().run_in_executor(None, run_forever)
     
-    @asyncio.coroutine
     def run_forever(self):
         while True:
             try:
-                yield from self.run()
+                self.run()
             except Exception:
                 pass
 
-    @asyncio.coroutine    
     def run(self):
         driver = webdriver.PhantomJS()
         # TODO: see if this is needed or not
@@ -65,6 +63,7 @@ class JavascriptWebscraper(object):
             self.plugin.connected_function(True)
 
         while True:
+            yield from asyncio.sleep(1)
             comments = all_comments.find_elements_by_tag_name('li')
             comments_length = len(comments)
 
