@@ -2,7 +2,7 @@ import json
 import requests
 import html
 import logging
-import asyncio
+import threading
 import websocket
 
 # TODO: switch to using the WebSocket and the asyncio lib
@@ -14,11 +14,14 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                  namespace, 
                  website_url,
                  plugin=None):
-
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(0)
         self._streamer_name = streamer_name
         self.namespace = namespace 
         self._website_url = website_url 
+        self.log.info('Getting Socket IO key!')
         self.key, heartbeat = self._connect_to_server_helper()
+        self.log.info('Socket IO key got!')
         self.plugin = plugin
 
         
@@ -29,14 +32,17 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 on_open=self.on_open, on_close=self.on_close,
                 on_message=self.on_message, 
                 on_error=self.on_error)
-        asyncio.get_event_loop().run_in_executor(None, self.repeat_run_forever)
 
-    @asyncio.coroutine
+        self._thread = threading.Thread(target=self.repeat_run_forever)
+        self._thread.setDaemon(True)
+        self._thread.start()
+
     def repeat_run_forever(self):
         while True:
             try:
                 self.run_forever()
-            except:
+            except Exception as e:
+                self.log.info('Socket IO errors: {}'.format(e))
                 if self.plugin is not None:
                     self.plugin.connected_function(False)
                 key, _ = self._connect_to_server_helper()
@@ -72,6 +78,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             self.send_packet_helper(5, data={'name':'initialize'})
             data = {'name':'join', 'args':['{}'.format(self._streamer_name)]}
             self.send_packet_helper(5, data=data)
+            self.log.info('Connected to channel with socket io!')
             if self.plugin is not None:
                 self.plugin.connected_function(True)
         elif key == 2:

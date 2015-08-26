@@ -1,5 +1,6 @@
 import os
 import yaml
+import logging
 
 import plugins
 
@@ -51,6 +52,7 @@ def instantiate_chats_helper(settings):
     This helper parses through the settings and 
     and instantiates all of the used chats
     """
+    log = logging.getLogger()
     # create the list to return
     chat_site_list = []
     plugins.get_plugins()
@@ -65,7 +67,8 @@ def instantiate_chats_helper(settings):
         # NOTE: This removes the setting COMPLETELY if it doesn't have values and isn't meant to be displayed
         # remove setting if it doesn't have values and not dispaly_missing
         if not has_values and not setting['display_settings']['display_missing']:
-            settings.pop(settings_key)
+            removed_plugin = settings.pop(settings_key)
+            log.info('Plugin {} not being used'.format(removed_plugin))
 
         # check to see if  are registered in plugins
         if settings_key in str_plugins and has_values and setting['connect']:

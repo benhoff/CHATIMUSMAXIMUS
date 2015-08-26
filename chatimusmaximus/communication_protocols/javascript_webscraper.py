@@ -1,8 +1,8 @@
 import sys
 import os
-
+import logging
 from time import sleep
-import asyncio
+import threading
 
 from selenium import webdriver
 
@@ -27,6 +27,8 @@ class JavascriptWebscraper(object):
         `message_class_name` is the css class which holds the comment test
         ie., 'comment-text' for youtube
         """
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.NOTSET)
 
         self.url = url
         self._number_of_messages = 0
@@ -35,23 +37,31 @@ class JavascriptWebscraper(object):
         self.author_class_name = author_class_name
         self.message_class_name = message_class_name
         self.plugin = plugin
-        asyncio.get_event_loop().run_in_executor(None, run_forever)
+
+        self._thread = threading.Thread(target=self.run_forever)
+        self._thread.setDaemon(True)
+        self._thread.start()
     
     def run_forever(self):
         while True:
             try:
+                self.log.info('Starting javascript scraper!')
                 self.run()
-            except Exception:
-                pass
+            except Exception as e:
+                self.log.exception('Javascript error!', e)
 
     def run(self):
+        self.log.info('starting up phantom javascript!')
         driver = webdriver.PhantomJS()
         # TODO: see if this is needed or not
         driver.set_window_size(1000, 1000)
         driver.get(self.url)
 
         # NOTE: need some time for comments to load
-        yield from asyncio.sleep(5)
+        self.log.info('youtube sleeping for 5 seconds!')
+        sleep(5)
+        self.log.info('youtube done sleeping')
+        
 
         all_comments = driver.find_element_by_id(self.comment_element_id)
         # TODO: add in a signal here that all is connected!
@@ -63,7 +73,7 @@ class JavascriptWebscraper(object):
             self.plugin.connected_function(True)
 
         while True:
-            yield from asyncio.sleep(1)
+            sleep(1)
             comments = all_comments.find_elements_by_tag_name('li')
             comments_length = len(comments)
 

@@ -5,6 +5,10 @@ from PyQt5 import QtWidgets, QtNetwork, QtCore
 from quamash import QEventLoop
 
 from gui import MainWindow
+import logging
+log = logging.getLogger()
+log.setLevel(logging.INFO)
+log.addHandler(logging.StreamHandler())
 from __init__ import get_settings_helper, instantiate_chats_helper
 
 def main():
