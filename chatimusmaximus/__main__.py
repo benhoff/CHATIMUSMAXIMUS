@@ -8,7 +8,6 @@ from gui import MainWindow
 from __init__ import get_settings_helper, instantiate_chats_helper
 
 def main():
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
     # create the GUI
     app = QtWidgets.QApplication(sys.argv)
 

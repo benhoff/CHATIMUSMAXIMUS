@@ -31,6 +31,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 on_error=self.on_error)
         asyncio.get_event_loop().run_in_executor(None, self.repeat_run_forever)
 
+    @asyncio.coroutine
     def repeat_run_forever(self):
         while True:
             try:

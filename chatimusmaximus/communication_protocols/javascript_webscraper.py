@@ -35,15 +35,17 @@ class JavascriptWebscraper(object):
         self.author_class_name = author_class_name
         self.message_class_name = message_class_name
         self.plugin = plugin
-        asyncio.get_event_loop().run_in_executor(None, self.run_forever)
-
+        asyncio.Task(self.run_forever())
+    
+    @asyncio.coroutine
     def run_forever(self):
         while True:
             try:
-                self.run()
+                yield from self.run()
             except Exception:
                 pass
-    
+
+    @asyncio.coroutine    
     def run(self):
         driver = webdriver.PhantomJS()
         # TODO: see if this is needed or not
@@ -51,7 +53,7 @@ class JavascriptWebscraper(object):
         driver.get(self.url)
 
         # NOTE: need some time for comments to load
-        sleep(5)
+        yield from asyncio.sleep(5)
 
         all_comments = driver.find_element_by_id(self.comment_element_id)
         # TODO: add in a signal here that all is connected!
