@@ -62,6 +62,10 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
 
     def on_close(self, *args):
         logging.info('Websocket closed :(')
+        if self.plugin is not None:
+            self.plugin.connected_function(False)
+        key, _ = self._connect_to_server_helper()
+        self.url = self._website_socket + key
 
     def on_message(self, *args):
         message = args[1].split(':', 3)
