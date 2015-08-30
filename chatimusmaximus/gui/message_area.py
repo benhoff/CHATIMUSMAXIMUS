@@ -1,5 +1,5 @@
 from datetime import datetime
-import threading
+import queue
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 
@@ -13,13 +13,32 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
         self.setForeground(text_color)
         self.setFontPointSize(13)
 
+class _Reciever(QtCore.QObject):
+    text_signal = QtCore.pyqtSignal(str, str, str)
+    def __init__(self, parent=None):
+        super(_Reciever, self).__init__(parent)
+        self.queue = queue.Queue()
+
+    @QtCore.pyqtSlot(str, str, str)
+    def chat_slot(self, sender, message, platform):
+        self.queue.put([sender, message, platform])
+        self.run()
+    
+    def run(self):
+        item = self.queue.get()
+        self.text_signal.emit(*item)
+
+
 class MessageArea(QtWidgets.QTextEdit):
     time_signal = QtCore.pyqtSignal(str)
     def __init__(self, parent=None):
-        self._lock = threading.Lock()
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
         self.text_format = _StandardTextFormat(font=self.fontWeight())
+
+        self._reciever = _Reciever()
+        self._reciever.text_signal.connect(self.insert_text)
+        self.chat_slot = self._reciever.chat_slot
         
         # styling
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -36,32 +55,28 @@ class MessageArea(QtWidgets.QTextEdit):
             self.name_formats[platform] = _StandardTextFormat(QtGui.QColor(color))
     
     @QtCore.pyqtSlot(str, str, str)
-    def chat_slot(self, sender, message, platform):
-        with self._lock:
-            self._chat_formater(sender, message, platform)
+    def insert_text(self, sender, message, platform):
+        # get the timestamp
+        formatted_datetime = datetime.now().strftime("%H:%M:%S")
+        self.time_signal.emit(formatted_datetime)
 
+        self._insert_and_format(sender, message, platform)
         # get scroll bar and set to maximum
         scroll_bar = self.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
 
-    # FIXME: poor method name, not descriptive of what it does
-    def _chat_formater(self, sender, message, platform):
+    def _insert_and_format(self, sender, message, platform):
         """
         Helper method to handle the text display logic
         """
         # get cursor
         cursor = self.textCursor()
-
         # set the format to the name format
         cursor.setCharFormat(self.name_formats[platform])
-        # get the timestamp
-        formatted_datetime = datetime.now().strftime("%H:%M:%S")
-        self.time_signal.emit(formatted_datetime)
-        # the platform name and timestamp are in a bracket. Example: `[YT@12:54:00]:`
+        # the platform name is in a bracket. Example: `[Youtube]:`
         bracket_string = ' [{}]: '.format(platform.title())
         # inserts the sender name next to the platform & timestamp
         cursor.insertText(sender + bracket_string)
-        
         # sets format to text format
         cursor.setCharFormat(self.text_format)
         # inserts message
