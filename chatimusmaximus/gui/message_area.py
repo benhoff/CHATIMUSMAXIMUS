@@ -68,5 +68,4 @@ class MessageArea(QtWidgets.QTextEdit):
         cursor.insertText(message)
         # inserts newline
         cursor.insertBlock()
-        cursor.movePosition(QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor)
         self.setTextCursor(cursor)
