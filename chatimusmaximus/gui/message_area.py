@@ -13,22 +13,6 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
         self.setForeground(text_color)
         self.setFontPointSize(13)
 
-class _Reciever(QtCore.QObject):
-    text_signal = QtCore.pyqtSignal(str, str, str)
-    def __init__(self, parent=None):
-        super(_Reciever, self).__init__(parent)
-        self.queue = queue.Queue()
-
-    @QtCore.pyqtSlot(str, str, str)
-    def chat_slot(self, sender, message, platform):
-        self.queue.put([sender, message, platform])
-        self.run()
-    
-    def run(self):
-        item = self.queue.get()
-        self.text_signal.emit(*item)
-
-
 class MessageArea(QtWidgets.QTextEdit):
     time_signal = QtCore.pyqtSignal(str)
     def __init__(self, parent=None):
@@ -36,10 +20,6 @@ class MessageArea(QtWidgets.QTextEdit):
         self.setReadOnly(True)
         self.text_format = _StandardTextFormat(font=self.fontWeight())
 
-        self._reciever = _Reciever()
-        self._reciever.text_signal.connect(self.insert_text)
-        self.chat_slot = self._reciever.chat_slot
-        
         # styling
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -55,7 +35,7 @@ class MessageArea(QtWidgets.QTextEdit):
             self.name_formats[platform] = _StandardTextFormat(QtGui.QColor(color))
     
     @QtCore.pyqtSlot(str, str, str)
-    def insert_text(self, sender, message, platform):
+    def chat_slot(self, sender, message, platform):
         # get the timestamp
         formatted_datetime = datetime.now().strftime("%H:%M:%S")
         self.time_signal.emit(formatted_datetime)
