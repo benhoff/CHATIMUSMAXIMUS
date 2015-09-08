@@ -1,0 +1,8 @@
+[Core]
+Name = Twitch
+Module = twitch
+ 
+[Documentation]
+Description = This plugin interfaces with Twitch's IRC Chat
+Author = Ben Hoff
+Version = 1.0 

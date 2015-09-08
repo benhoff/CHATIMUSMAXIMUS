@@ -1,12 +1,8 @@
 import os
 import imp
 from PyQt5 import QtCore
-
-class IWebsitePluginRegistry(type):
-    plugins = []
-    def __init__(cls, name, bases, attrs):
-        if name != 'IPlugin':
-            IWebsitePluginRegistry.plugins.append(cls)
+from yapsy.IPlugin import IPlugin
+from yapsy.PluginManager import 
 
 class _PyQtCompat(QtCore.QObject):
     """
@@ -18,9 +14,9 @@ class _PyQtCompat(QtCore.QObject):
     def __init__(self, parent=None):
         super(_PyQtCompat, self).__init__(parent)
 
-class IPlugin(object, metaclass=IWebsitePluginRegistry):
+class WebsitePlugin(IPlugin):
     def __init__(self, platform):
-        super(IPlugin, self).__init__()
+        super(WebsitePlugin, self).__init__()
         self.platform = platform
 
         self._pyqt_compat = _PyQtCompat()
@@ -32,14 +28,3 @@ class IPlugin(object, metaclass=IWebsitePluginRegistry):
 
     def connected_function(self, bool):
         self.connected_signal.emit(bool, self.platform)
-
-def get_website_plugins():
-    directory = os.path.dirname(os.path.realpath(__file__))
-    for filename in os.listdir(directory):
-        # TODO: Figure out cleaner way to do this
-        filename = os.path.join(directory, filename)
-        modname, ext  = os.path.splitext(filename)
-        if ext == '.py' and modname != 'base_plugin' and modname != '__init__':
-            file_, path, descr = imp.find_module(modname, [dir])
-            if file_:
-                mod = imp.load_module(modname, file_, path, descr)
