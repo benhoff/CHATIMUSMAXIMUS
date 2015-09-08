@@ -1,5 +1,5 @@
 from datetime import datetime
-import threading
+import queue
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 
@@ -16,11 +16,10 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
 class MessageArea(QtWidgets.QTextEdit):
     time_signal = QtCore.pyqtSignal(str)
     def __init__(self, parent=None):
-        self._lock = threading.Lock()
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
         self.text_format = _StandardTextFormat(font=self.fontWeight())
-        
+
         # styling
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -37,36 +36,31 @@ class MessageArea(QtWidgets.QTextEdit):
     
     @QtCore.pyqtSlot(str, str, str)
     def chat_slot(self, sender, message, platform):
-        with self._lock:
-            self._chat_formater(sender, message, platform)
+        # get the timestamp
+        formatted_datetime = datetime.now().strftime("%H:%M:%S")
+        self.time_signal.emit(formatted_datetime)
 
+        self._insert_and_format(sender, message, platform)
         # get scroll bar and set to maximum
         scroll_bar = self.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
 
-    # FIXME: poor method name, not descriptive of what it does
-    def _chat_formater(self, sender, message, platform):
+    def _insert_and_format(self, sender, message, platform):
         """
         Helper method to handle the text display logic
         """
         # get cursor
         cursor = self.textCursor()
-
         # set the format to the name format
         cursor.setCharFormat(self.name_formats[platform])
-        # get the timestamp
-        formatted_datetime = datetime.now().strftime("%H:%M:%S")
-        self.time_signal.emit(formatted_datetime)
-        # the platform name and timestamp are in a bracket. Example: `[YT@12:54:00]:`
+        # the platform name is in a bracket. Example: `[Youtube]:`
         bracket_string = ' [{}]: '.format(platform.title())
         # inserts the sender name next to the platform & timestamp
         cursor.insertText(sender + bracket_string)
-        
         # sets format to text format
         cursor.setCharFormat(self.text_format)
         # inserts message
         cursor.insertText(message)
         # inserts newline
         cursor.insertBlock()
-        cursor.movePosition(QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor)
         self.setTextCursor(cursor)

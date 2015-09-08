@@ -3,6 +3,7 @@ import requests
 import html
 import logging
 import threading
+from time import sleep
 import websocket
 
 # TODO: switch to using the WebSocket and the asyncio lib
@@ -43,10 +44,11 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 self.run_forever()
             except Exception as e:
                 self.log.info('Socket IO errors: {}'.format(e))
-                if self.plugin is not None:
-                    self.plugin.connected_function(False)
-                key, _ = self._connect_to_server_helper()
-                self.url = self._website_socket + key
+            sleep(3)
+            if self.plugin is not None:
+                self.plugin.connected_function(False)
+            key, _ = self._connect_to_server_helper()
+            self.url = self._website_socket + key
 
     def _connect_to_server_helper(self):
         r = requests.post(self._website_url)
