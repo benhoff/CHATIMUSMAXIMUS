@@ -51,13 +51,13 @@ class MessageArea(QtWidgets.QTextEdit):
         """
         # get cursor
         cursor = self.textCursor()
-        # set the format to the name format
+        # set the format to the name format, i.e. Bold and colored
         cursor.setCharFormat(self.name_formats[platform])
         # the platform name is in a bracket. Example: `[Youtube]:`
         bracket_string = ' [{}]: '.format(platform.title())
-        # inserts the sender name next to the platform & timestamp
+        # inserts the sender name next to the platform
         cursor.insertText(sender + bracket_string)
-        # sets format to text format
+        # sets format to text format, i.e. normal and white
         cursor.setCharFormat(self.text_format)
         # inserts message
         cursor.insertText(message)
