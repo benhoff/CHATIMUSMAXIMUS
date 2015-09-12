@@ -9,9 +9,12 @@ class YoutubePlugin(IPlugin):
             url = settings['youtube_url']
         elif 'channel_id' in settings:
             url = settings['channel_id']
+        self.url = url
 
+    def activate(self):
+        super(YoutubePlugin, self).activate()
         self._javascript_webscraper = JavascriptWebscraper(
-                url,
+                self.url,
                 'all-comments',
                 'yt-user-name',
                 'comment-text',

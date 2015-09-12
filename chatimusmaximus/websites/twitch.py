@@ -7,11 +7,15 @@ class TwitchPlugin(IPlugin):
         This class is a convince/internal api wrapper around another plugin
         """
         super(TwitchPlugin, self).__init__(platform='twitch')
+        self._settings = settings
+
+    def activate(self):
+        super(TwitchPlugin, self).activate()
         irc_client = communication_protocols.create_irc_bot(
-                settings['nick'],                                     
-                settings['oauth_token'],
+                self._settings['nick'],                                     
+                self._settings['oauth_token'],
                 'irc.twitch.tv',
-                channel=settings['channel'],
+                channel=self._settings['channel'],
                 plugin=self)
 
         irc_client.create_connection()
