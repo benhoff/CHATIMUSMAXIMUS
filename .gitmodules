@@ -1,3 +1,6 @@
 [submodule "chatimusmaximus/plugins/listeners"]
 	path = chatimusmaximus/plugins/listeners
 	url = https://github.com/benhoff/plugins
+[submodule "chatimusmaximus/listeners"]
+	path = chatimusmaximus/listeners
+	url = https://github.com/benhoff/plugins

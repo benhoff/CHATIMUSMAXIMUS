@@ -2,7 +2,18 @@ import os
 import yaml
 import logging
 
+import yapsy.ConfigurablePluginManager import ConfigurablePluginManager
 import plugins
+
+def get_lisetners():
+    plugin_manager = ConfigurablePluginManager(yaml.load, categories_filter={'Listeners': plugins.listeners.base_plugin.Base})
+
+    file_dir = os.path.dirname(os.path.dirname(__file__))
+    plugin_path = os.path.join(file_dir, '..', 'plugin', 'listeners')
+    plugin_manager.setPluginPlaces([plugin_path])
+    plugin_manager.collectPlugins()
+    result = []
+    for plugin_info in plugin_manager.getAllPlugins():
 
 def get_settings_helper():
     """
