@@ -9,7 +9,7 @@ import logging
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
-from __init__ import get_settings_helper, instantiate_chats_helper
+from __init__ import get_settings_helper, instantiate_plugin_manager
 
 def main():
     # create the GUI
@@ -25,9 +25,8 @@ def main():
     chat_slot = main_window.central_widget.message_area.chat_slot
 
     settings = get_settings_helper()
+    plugin_manager = instantiate_plugin_manager()
 
-    # NOTE: instantiate_chats_helper will COMPLETELY remove
-    # settings if they are blank and `show_missing` is false
     chat_list = instantiate_chats_helper(settings)
     main_window.set_settings(settings)
 

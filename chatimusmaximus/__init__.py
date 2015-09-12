@@ -2,18 +2,35 @@ import os
 import yaml
 import logging
 
-import yapsy.ConfigurablePluginManager import ConfigurablePluginManager
-import plugins
+import .listeners.yapsy as yapsy
+from .websites import WebsitePlugin
+from .listeners import ListenerPlugin
 
-def get_lisetners():
-    plugin_manager = ConfigurablePluginManager(yaml.load, categories_filter={'Listeners': plugins.listeners.base_plugin.Base})
-
-    file_dir = os.path.dirname(os.path.dirname(__file__))
-    plugin_path = os.path.join(file_dir, '..', 'plugin', 'listeners')
-    plugin_manager.setPluginPlaces([plugin_path])
+def instantiate_plugin_manager(settings):
+    file_dir = os.path.dirname(os.path.realpath(__file__))
+    listeners_path = os.path.join(file_dir, 'listeners')
+    website_path = os.path.join(file_dir, 'websites')
+    plugin_manager = yapsy.PluginManager({'website':WebsitePlugin, 'listeners':ListenerPlugin}, [listeners_path, website_path])
+    # Initializes everything
     plugin_manager.collectPlugins()
-    result = []
-    for plugin_info in plugin_manager.getAllPlugins():
+
+    for website_plugin_info in plugin_manager.getPluginsOfCategory('website'):
+        website_setting = settings[webiste_plugin_info]
+        has_values = validate_settings_not_blank(website_setting)
+    
+        # NOTE: HACK
+        if not has_values and not setting['display_settings']['display_missing']:
+            removed_plugin = settings.pop(settings_key)
+            log.info('Plugin {} not being used'.format(removed_plugin))
+            break
+
+        # check to see if  are registered in plugins
+        if has_values and setting['connect']:
+            website_plugin_info.activatePluginByName(website_plugin_info.name)
+            website_plugins.append(website_plugin_info.plugin_object)
+
+    for listener_plugin_info in plugin_manager.getPluginsOfCategory('listener'):
+
 
 def get_settings_helper():
     """
@@ -57,39 +74,3 @@ def validate_settings_not_blank(setting):
             settings_have_values = True
             break
     return settings_have_values
-
-def instantiate_chats_helper(settings):
-    """
-    This helper parses through the settings and 
-    and instantiates all of the used chats
-    """
-    log = logging.getLogger()
-    # create the list to return
-    chat_site_list = []
-    plugins.get_website_plugins()
-    # parse the plugins to just get the names
-    str_plugins = [str(s).split('.')[0].split('/')[-1] for s in plugins.IWebsitePluginRegistry.plugins]
-
-    # now check the settings keys and if any keys are found
-    # that match the plugins, instantiate the plugin
-    for settings_key, setting in settings.items():
-        has_values = validate_settings_not_blank(setting)
-
-        # NOTE: This removes the setting COMPLETELY if it doesn't have values and isn't meant to be displayed
-        # remove setting if it doesn't have values and not dispaly_missing
-        if not has_values and not setting['display_settings']['display_missing']:
-            removed_plugin = settings.pop(settings_key)
-            log.info('Plugin {} not being used'.format(removed_plugin))
-
-        # check to see if  are registered in plugins
-        if settings_key in str_plugins and has_values and setting['connect']:
-            # find the index
-            index = str_plugins.index(settings_key)
-            # grab the class instance
-            kls = plugins.IWebsitePluginRegistry.plugins[index]
-            # settings is a dict, so pass the key back in to get the settings
-            instantiate_plugin = kls(settings[settings_key])
-            # lastly, push the instantiated plugin onto list
-            chat_site_list.append(instantiate_plugin)
-
-    return chat_site_list
