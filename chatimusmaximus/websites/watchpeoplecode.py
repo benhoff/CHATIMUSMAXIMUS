@@ -1,14 +1,14 @@
-from plugins.websites import IPlugin
+from . import WebsitePlugin
 from communication_protocols import ReadOnlyWebSocket
 
-class WatchPeopleCodePlugin(IPlugin):
-    def __init__(self, settings): 
-        super(WatchPeopleCodePlugin, self).__init__(platform='watchpeoplecode')
-        self.streamer_name = settings['channel']
+class WatchPeopleCode(WebsitePlugin):
+    def __init__(self): 
+        super(WatchPeopleCode, self).__init__(platform='watchpeoplecode')
 
-    def activate(self):
-        super(WatchPeopleCodePlugin, self).activate()
-        self._websocket = ReadOnlyWebSocket(self.streamer_name,
+    def activate(self, settings):
+        super(WatchPeopleCode, self).activate()
+        streamer_name = settings['channel']
+        self._websocket = ReadOnlyWebSocket(streamer_name,
                                             '/chat',
                                             'http://www.watchpeoplecode.com/socket.io/1/',
                                             self)

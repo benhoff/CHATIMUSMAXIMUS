@@ -1,16 +1,15 @@
-from plugins.websites import IPlugin
+from . import WebsitePlugin
 import communication_protocols
 
-class TwitchPlugin(IPlugin):
-    def __init__(self, settings):
+class Twitch(WebsitePlugin):
+    def __init__(self):
         """
         This class is a convince/internal api wrapper around another plugin
         """
-        super(TwitchPlugin, self).__init__(platform='twitch')
-        self._settings = settings
+        super(Twitch, self).__init__(platform='twitch')
 
-    def activate(self):
-        super(TwitchPlugin, self).activate()
+    def activate(self, settings):
+        super(Twitch, self).activate()
         irc_client = communication_protocols.create_irc_bot(
                 self._settings['nick'],                                     
                 self._settings['oauth_token'],

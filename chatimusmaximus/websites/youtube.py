@@ -1,20 +1,19 @@
-from plugins.websites import IPlugin
+from . import WebsitePlugin
 from communication_protocols import JavascriptWebscraper
 
-class YoutubePlugin(IPlugin):
-    def __init__(self, settings):
-        super(YoutubePlugin, self).__init__('youtube')
+class Youtube(WebsitePlugin):
+    def __init__(self):
+        super(Youtube, self).__init__('youtube')
+
+    def activate(self, settings):
+        super(Youtube, self).activate()
         url = None
         if 'youtube_url' in settings:
             url = settings['youtube_url']
         elif 'channel_id' in settings:
             url = settings['channel_id']
-        self.url = url
-
-    def activate(self):
-        super(YoutubePlugin, self).activate()
         self._javascript_webscraper = JavascriptWebscraper(
-                self.url,
+                url,
                 'all-comments',
                 'yt-user-name',
                 'comment-text',
