@@ -25,15 +25,19 @@ def main():
     chat_slot = main_window.central_widget.message_area.chat_slot
 
     settings = get_settings_helper()
-    plugin_manager = instantiate_plugin_manager()
-
-    chat_list = instantiate_chats_helper(settings)
+    # this methods also handles passing in values to websites
+    plugin_manager = instantiate_plugin_manager(settings)
     main_window.set_settings(settings)
+    chat_list = [info.plugin_object for info in plugin_manager.getPluginsOfCategory('website')]
 
+    listener_list = [info.plugin_object for info in plugin_manager.getPluginsOfCategory('listener')]
+    print(chat_list, listener_list)
     # connect the sockets signals to the GUI
     for chat in chat_list:
         chat.chat_signal.connect(chat_slot)
         chat.connected_signal.connect(main_window.status_bar.set_widget_status)
+    
+    main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()
     try:

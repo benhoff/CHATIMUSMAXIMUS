@@ -1,7 +1,7 @@
 import os
 import imp
 from PyQt5 import QtCore
-from yapsy import IPlugin
+from simpleyapsy import IPlugin
 
 class _PyQtCompat(QtCore.QObject):
     """

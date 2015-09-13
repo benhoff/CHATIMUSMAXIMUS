@@ -2,20 +2,32 @@ import os
 import yaml
 import logging
 
-import .listeners.yapsy as yapsy
-from .websites import WebsitePlugin
-from .listeners import ListenerPlugin
+from websites import WebsitePlugin
+import simpleyapsy
+import plugins
+
+def validate_settings_not_blank(setting):
+    settings_have_values = False
+    for key, value in setting.items():
+        if value == str() or key == 'display_settings' or key == 'connect':
+            pass
+        else:
+            settings_have_values = True
+            break
+    return settings_have_values
 
 def instantiate_plugin_manager(settings):
     file_dir = os.path.dirname(os.path.realpath(__file__))
-    listeners_path = os.path.join(file_dir, 'listeners')
     website_path = os.path.join(file_dir, 'websites')
-    plugin_manager = yapsy.PluginManager({'website':WebsitePlugin, 'listeners':ListenerPlugin}, [listeners_path, website_path])
-    # Initializes everything
+
+    plugin_manager = simpleyapsy.PluginManager({'website':WebsitePlugin, 
+                                                'listener':plugins.ListenerPlugin}, 
+                                               [plugins.__path__[0], website_path])
+
     plugin_manager.collectPlugins()
 
     for website_plugin_info in plugin_manager.getPluginsOfCategory('website'):
-        website_setting = settings[webiste_plugin_info]
+        website_setting = settings[website_plugin_info.name]
         has_values = validate_settings_not_blank(website_setting)
     
         # NOTE: HACK
@@ -26,11 +38,9 @@ def instantiate_plugin_manager(settings):
 
         # check to see if  are registered in plugins
         if has_values and setting['connect']:
-            website_plugin_info.activatePluginByName(website_plugin_info.name)
-            website_plugins.append(website_plugin_info.plugin_object)
+            website_plugin_info.plugin_object.activate(setting)
 
-    for listener_plugin_info in plugin_manager.getPluginsOfCategory('listener'):
-
+    return plugin_manager
 
 def get_settings_helper():
     """
@@ -65,12 +75,3 @@ def get_settings_helper():
         print('Settings file has changed, please update {}'.format(filename))
     return settings
 
-def validate_settings_not_blank(setting):
-    settings_have_values = False
-    for key, value in setting.items():
-        if value == str() or key == 'display_settings' or key == 'connect':
-            pass
-        else:
-            settings_have_values = True
-            break
-    return settings_have_values

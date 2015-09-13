@@ -15,6 +15,7 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
 
 class MessageArea(QtWidgets.QTextEdit):
     time_signal = QtCore.pyqtSignal(str)
+    _listeners_signal = QtCore.pyqtSignal(str, str)
     def __init__(self, parent=None):
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
@@ -26,6 +27,7 @@ class MessageArea(QtWidgets.QTextEdit):
         self.viewport().setAutoFillBackground(False)
 
         self.name_formats = {} 
+        self.listeners = []
 
     def set_color(self, color, platform):
         if platform in self.name_formats:
@@ -33,6 +35,10 @@ class MessageArea(QtWidgets.QTextEdit):
             format.setForeground(QtGui.QColor(color))
         else:
             self.name_formats[platform] = _StandardTextFormat(QtGui.QColor(color))
+
+    @QtCore.pyqtSlot(str, str)
+    def _listeners_slot(self, message, sender):
+        pass
     
     @QtCore.pyqtSlot(str, str, str)
     def chat_slot(self, sender, message, platform):
@@ -44,6 +50,9 @@ class MessageArea(QtWidgets.QTextEdit):
         # get scroll bar and set to maximum
         scroll_bar = self.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
+        if message[0] == '!' and self.listeners != []:
+            self._listeners_signal.emit(sender, message)
+
 
     def _insert_and_format(self, sender, message, platform):
         """
