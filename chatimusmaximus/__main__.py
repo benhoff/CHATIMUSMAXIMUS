@@ -28,10 +28,10 @@ def main():
     # this methods also handles passing in values to websites
     plugin_manager = instantiate_plugin_manager(settings)
     main_window.set_settings(settings)
-    chat_list = [info.plugin_object for info in plugin_manager.getPluginsOfCategory('website')]
+    chat_list = plugin_manager.get_plugins()
 
-    listener_list = [info.plugin_object for info in plugin_manager.getPluginsOfCategory('listener')]
-    print(chat_list, listener_list)
+    #listener_list = [info.plugin_object for info in plugin_manager.getPluginsOfCategory('listener')]
+    print(chat_list)
     # connect the sockets signals to the GUI
     for chat in chat_list:
         chat.chat_signal.connect(chat_slot)
