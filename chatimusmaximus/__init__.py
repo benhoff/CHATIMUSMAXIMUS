@@ -4,7 +4,6 @@ import logging
 
 from websites import WebsitePlugin
 import simpleyapsy
-import plugins
 
 def validate_settings_not_blank(setting):
     settings_have_values = False
@@ -19,26 +18,23 @@ def validate_settings_not_blank(setting):
 def instantiate_plugin_manager(settings):
     file_dir = os.path.dirname(os.path.realpath(__file__))
     website_path = os.path.join(file_dir, 'websites')
+    plugin_manager = simpleyapsy.Interface()
+    plugin_manager.add_plugin_directories(website_path)
+    plugins = plugin_manager.get_plugins()
 
-    plugin_manager = simpleyapsy.PluginManager({'website':WebsitePlugin, 
-                                                'listener':plugins.ListenerPlugin}, 
-                                               [plugins.__path__[0], website_path])
-
-    plugin_manager.collectPlugins()
-
-    for website_plugin_info in plugin_manager.getPluginsOfCategory('website'):
-        website_setting = settings[website_plugin_info.name]
+    for plugin in plugins:
+        website_setting = settings[plugin.platform]
         has_values = validate_settings_not_blank(website_setting)
     
         # NOTE: HACK
         if not has_values and not setting['display_settings']['display_missing']:
-            removed_plugin = settings.pop(settings_key)
-            log.info('Plugin {} not being used'.format(removed_plugin))
+            removed_plugin = settings.pop(plugin.platfrom)
+            log.info('Plugin {} not being used'.format(plugin_platform))
             break
 
         # check to see if  are registered in plugins
         if has_values and setting['connect']:
-            website_plugin_info.plugin_object.activate(setting)
+            plugin.activate()
 
     return plugin_manager
 
