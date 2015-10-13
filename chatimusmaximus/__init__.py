@@ -30,8 +30,8 @@ def instantiate_plugin_manager(settings):
     plugins = plugin_manager.get_instances()
 
     for plugin in plugins:
-        website_setting = settings[plugin.platform]
-        has_values = validate_settings_not_blank(website_setting)
+        setting = settings[plugin.platform]
+        has_values = validate_settings_not_blank(setting)
     
         # NOTE: HACK
         if not has_values and not setting['display_settings']['display_missing']:
@@ -41,7 +41,7 @@ def instantiate_plugin_manager(settings):
 
         # check to see if  are registered in plugins
         if has_values and setting['connect']:
-            plugin.activate()
+            plugin.activate(setting)
 
     return plugin_manager
 
