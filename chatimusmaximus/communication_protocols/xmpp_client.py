@@ -50,10 +50,11 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.register_plugin('xep_0060') # PubSub
 
         # XMPP Ping
-        self.register_plugin('xep_0199', 
+        self.register_plugin('xep_0199',
                              {'keepalive': True, 'frequency': 60})
 
-        self.register_plugin('xep_0045') # MUC
+        # MUC
+        self.register_plugin('xep_0045')
 
     def start(self, event):
         self.get_roster()

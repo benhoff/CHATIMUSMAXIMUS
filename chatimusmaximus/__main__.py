@@ -30,12 +30,11 @@ def main():
     main_window.set_settings(settings)
     chat_list = plugin_manager.get_instances()
 
-    #listener_list = [info.plugin_object for info in plugin_manager.getPluginsOfCategory('listener')]
     # connect the sockets signals to the GUI
     for chat in chat_list:
         chat.chat_signal.connect(chat_slot)
         chat.connected_signal.connect(main_window.status_bar.set_widget_status)
-    
+
     main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()

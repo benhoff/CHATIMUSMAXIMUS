@@ -1,7 +1,6 @@
-import os
-import imp
 from PyQt5 import QtCore
 from simpleyapsy import IPlugin
+
 
 class _PyQtCompat(QtCore.QObject):
     """
@@ -12,6 +11,7 @@ class _PyQtCompat(QtCore.QObject):
 
     def __init__(self, parent=None):
         super(_PyQtCompat, self).__init__(parent)
+
 
 class WebsitePlugin(IPlugin):
     def __init__(self, platform):
