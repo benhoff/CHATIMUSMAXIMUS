@@ -11,10 +11,10 @@ class Twitch(WebsitePlugin):
     def activate(self, settings):
         super(Twitch, self).activate()
         irc_client = communication_protocols.create_irc_bot(
-                self._settings['nick'],                                     
-                self._settings['oauth_token'],
+                settings['nick'],                                     
+                settings['oauth_token'],
                 'irc.twitch.tv',
-                channel=self._settings['channel'],
+                channel=settings['channel'],
                 plugin=self)
 
         irc_client.create_connection()
