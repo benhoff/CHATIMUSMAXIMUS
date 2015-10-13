@@ -4,6 +4,8 @@ import logging
 
 from websites import WebsitePlugin
 import simpleyapsy
+from simpleyapsy.file_getters import FilenameFileGetter
+from simpleyapsy.module_parsers import KeywordParser
 
 def validate_settings_not_blank(setting):
     settings_have_values = False
@@ -18,9 +20,14 @@ def validate_settings_not_blank(setting):
 def instantiate_plugin_manager(settings):
     file_dir = os.path.dirname(os.path.realpath(__file__))
     website_path = os.path.join(file_dir, 'websites')
-    plugin_manager = simpleyapsy.Interface()
-    plugin_manager.add_plugin_directories(website_path)
-    plugins = plugin_manager.get_plugins()
+    yapsy_file_locator = simpleyapsy.FileLocator(FilenameFileGetter())
+    yapsy_module_loader = simpleyapsy.ModuleLoader(KeywordParser())
+    plugin_manager = simpleyapsy.Interface(yapsy_file_locator,
+                                           yapsy_module_loader)
+
+    plugin_manager.set_plugin_directories(website_path)
+    plugin_manager.collect_plugins()
+    plugins = plugin_manager.get_instances()
 
     for plugin in plugins:
         website_setting = settings[plugin.platform]

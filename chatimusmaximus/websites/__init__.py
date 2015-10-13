@@ -27,3 +27,9 @@ class WebsitePlugin(IPlugin):
 
     def connected_function(self, bool):
         self.connected_signal.emit(bool, self.platform)
+
+from .twitch import Twitch
+from .watchpeoplecode import WatchPeopleCode
+from .youtube import Youtube
+
+plugins = [Twitch, Youtube, WatchPeopleCode]
