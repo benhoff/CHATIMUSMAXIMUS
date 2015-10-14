@@ -32,4 +32,4 @@ from .twitch import Twitch
 from .watchpeoplecode import WatchPeopleCode
 from .youtube import Youtube
 
-plugins = [Twitch, Youtube, WatchPeopleCode]
+PLUGINS = [Twitch, Youtube, WatchPeopleCode]
