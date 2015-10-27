@@ -1,4 +1,4 @@
-from . import WebsitePlugin
+from .website_plugin import WebsitePlugin
 from communication_protocols import ReadOnlyWebSocket
 
 

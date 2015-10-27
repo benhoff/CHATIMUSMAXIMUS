@@ -1,11 +1,10 @@
 import os
 import yaml
 import logging
+import websites
 
-from websites import WebsitePlugin
-import simpleyapsy
-from simpleyapsy.file_getters import FilenameFileGetter
-from simpleyapsy.module_parsers import KeywordParser
+import pluginmanager
+
 
 def validate_settings_not_blank(setting):
     settings_have_values = False
@@ -18,16 +17,11 @@ def validate_settings_not_blank(setting):
     return settings_have_values
 
 def instantiate_plugin_manager(settings):
-    file_dir = os.path.dirname(os.path.realpath(__file__))
-    website_path = os.path.join(file_dir, 'websites')
-    yapsy_file_locator = simpleyapsy.FileLocator(FilenameFileGetter())
-    yapsy_module_loader = simpleyapsy.ModuleLoader(KeywordParser())
-    plugin_manager = simpleyapsy.Interface(yapsy_file_locator,
-                                           yapsy_module_loader)
-
-    plugin_manager.set_plugin_directories(website_path)
-    plugin_manager.collect_plugins()
-    plugins = plugin_manager.get_instances()
+    website_interface = pluginmanager.Interface()
+    website_interface.collect_plugins(websites)
+    # TODO: fix api when this method is added to interface
+    plugins = website_interface.plugin_manager.get_instances()
+    print(plugins)
 
     for plugin in plugins:
         setting = settings[plugin.platform]
@@ -43,7 +37,7 @@ def instantiate_plugin_manager(settings):
         if has_values and setting['connect']:
             plugin.activate(setting)
 
-    return plugin_manager
+    return website_interface 
 
 def get_settings_helper():
     """

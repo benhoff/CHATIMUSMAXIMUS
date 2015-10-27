@@ -1,8 +1,0 @@
-[Core]
-Name = Youtube
-Module = youtube
- 
-[Documentation]
-Description = This plugin interfaces with Youtube's chat through a javascript scrapper
-Author = Ben Hoff
-Version = 1.0 

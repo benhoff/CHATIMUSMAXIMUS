@@ -1,8 +1,0 @@
-[Core]
-Name = Watchpeoplecode
-Module = watchpeoplecode 
- 
-[Documentation]
-Description = This plugin interfaces with Watchpeoplecode's socket.io chat
-Author = Ben Hoff
-Version = 1.0 
