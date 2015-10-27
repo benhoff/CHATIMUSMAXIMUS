@@ -22,4 +22,4 @@ venusian==1.0
 websocket-client==0.32.0
 wheel==0.24.0
 zope.interface==4.1.2
-git+https://github.com/benhoff/simpleyapsy.git
+pluginmanager
