@@ -21,7 +21,6 @@ def instantiate_plugin_manager(settings):
     website_interface.collect_plugins(websites)
     # TODO: fix api when this method is added to interface
     plugins = website_interface.plugin_manager.get_instances()
-    print(plugins)
 
     for plugin in plugins:
         setting = settings[plugin.platform]

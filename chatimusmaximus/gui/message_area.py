@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 import queue
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -28,6 +29,8 @@ class MessageArea(QtWidgets.QTextEdit):
 
         self.name_formats = {} 
         self.listeners = []
+        self._listeners_signal.connect(self._listeners_slot)
+        self.listener_commands = ['!']
 
     def set_color(self, color, platform):
         if platform in self.name_formats:
@@ -37,8 +40,26 @@ class MessageArea(QtWidgets.QTextEdit):
             self.name_formats[platform] = _StandardTextFormat(QtGui.QColor(color))
 
     @QtCore.pyqtSlot(str, str)
-    def _listeners_slot(self, message, sender):
-        pass
+    def _listeners_slot(self, sender, message):
+        # strip the first word off of the message
+        # keep the trailing sentence intact
+        try:
+            cmd, message = message.split(' ', maxsplit=1)
+        except ValueError:
+            cmd = message.rstrip()
+            message = None
+        for arg in self.listener_commands:
+            cmd = cmd.replace(arg, '')
+        cmd = re.compile(cmd)
+        result = None
+        for listener in self.listeners:
+            if cmd in listener._matches:
+                # result = listener(message)
+                result, _ = listener.call(cmd, message)
+                break
+
+        if result:
+            self._insert_and_format('Vex', result, 'youtube')
     
     @QtCore.pyqtSlot(str, str, str)
     def chat_slot(self, sender, message, platform):
@@ -46,13 +67,13 @@ class MessageArea(QtWidgets.QTextEdit):
         formatted_datetime = datetime.now().strftime("%H:%M:%S")
         self.time_signal.emit(formatted_datetime)
 
+        message = message.lstrip()
         self._insert_and_format(sender, message, platform)
         # get scroll bar and set to maximum
         scroll_bar = self.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
-        if message[0] == '!' and self.listeners != []:
+        if message[0] in self.listener_commands and self.listeners != []:
             self._listeners_signal.emit(sender, message)
-
 
     def _insert_and_format(self, sender, message, platform):
         """

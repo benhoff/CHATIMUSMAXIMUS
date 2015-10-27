@@ -43,7 +43,6 @@ def main():
 
     # TODO: fix api once updated upstream
     listener_list = listener_interface.plugin_manager.get_instances()
-    print(listener_list)
     main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()
