@@ -23,3 +23,4 @@ websocket-client==0.32.0
 wheel==0.24.0
 zope.interface==4.1.2
 pluginmanager
+git+https://github.com/benhoff/plugins.git@add_yapsy`

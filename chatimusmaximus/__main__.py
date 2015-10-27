@@ -3,6 +3,9 @@ import asyncio
 
 from PyQt5 import QtWidgets, QtNetwork, QtCore
 from quamash import QEventLoop
+import pluginmanager
+# TODO: Change to `listener-plugins` once repo name is changed
+import plugins
 
 from gui import MainWindow
 import logging
@@ -35,6 +38,12 @@ def main():
         chat.chat_signal.connect(chat_slot)
         chat.connected_signal.connect(main_window.status_bar.set_widget_status)
 
+    listener_interface = pluginmanager.Interface()
+    listener_interface.collect_plugins(plugins)
+
+    # TODO: fix api once updated upstream
+    listener_list = listener_interface.plugin_manager.get_instances()
+    print(listener_list)
     main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()
