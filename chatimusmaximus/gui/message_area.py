@@ -54,9 +54,11 @@ class MessageArea(QtWidgets.QTextEdit):
         cmd = re.compile(cmd)
         result = None
         for listener in self.listeners:
-            if cmd in listener._matches:
-                # result = listener(message)
-                result, _ = listener.call(cmd, message)
+            if cmd in listener.matches:
+                try:
+                    result = listener(cmd, message)
+                except Exception as e:
+                    result = str(e)
                 break
 
         if result:
