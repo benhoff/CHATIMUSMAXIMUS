@@ -17,10 +17,9 @@ def validate_settings_not_blank(setting):
     return settings_have_values
 
 def instantiate_plugin_manager(settings):
-    website_interface = pluginmanager.Interface()
+    website_interface = pluginmanager.PluginInterface()
     website_interface.collect_plugins(websites)
-    # TODO: fix api when this method is added to interface
-    plugins = website_interface.plugin_manager.get_instances()
+    plugins = website_interface.get_instances()
 
     for plugin in plugins:
         setting = settings[plugin.platform]

@@ -26,8 +26,9 @@ class MessageArea(QtWidgets.QTextEdit):
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.viewport().setAutoFillBackground(False)
+        listener_color = _StandardTextFormat(QtGui.QColor('blue'))
+        self.name_formats = {'listener': listener_color}
 
-        self.name_formats = {} 
         self.listeners = []
         self._listeners_signal.connect(self._listeners_slot)
         self.listener_commands = ['!']
@@ -59,7 +60,7 @@ class MessageArea(QtWidgets.QTextEdit):
                 break
 
         if result:
-            self._insert_and_format('Vex', result, 'youtube')
+            self._insert_and_format('Vex', result, 'listener')
     
     @QtCore.pyqtSlot(str, str, str)
     def chat_slot(self, sender, message, platform):
@@ -83,8 +84,13 @@ class MessageArea(QtWidgets.QTextEdit):
         cursor = self.textCursor()
         # set the format to the name format
         cursor.setCharFormat(self.name_formats[platform])
-        # the platform name is in a bracket. Example: `[Youtube]:`
-        bracket_string = ' [{}]: '.format(platform.title())
+        if not platform == 'listener':
+            # the platform name is in a bracket. Example: `[Youtube]:`
+            bracket_string = ' [{}]: '.format(platform.title())
+        else:
+            bracket_string = ': '
+        if not cursor.atEnd():
+            cursor.movePosition(QtGui.QTextCursor.End)
         # inserts the sender name next to the platform & timestamp
         cursor.insertText(sender + bracket_string)
         # sets format to text format

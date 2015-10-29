@@ -31,18 +31,18 @@ def main():
     # this methods also handles passing in values to websites
     plugin_manager = instantiate_plugin_manager(settings)
     main_window.set_settings(settings)
-    chat_list = plugin_manager.plugin_manager.get_instances()
+    chat_list = plugin_manager.get_instances()
+    print(chat_list)
 
     # connect the sockets signals to the GUI
     for chat in chat_list:
         chat.chat_signal.connect(chat_slot)
         chat.connected_signal.connect(main_window.status_bar.set_widget_status)
 
-    listener_interface = pluginmanager.Interface()
+    listener_interface = pluginmanager.PluginInterface()
     listener_interface.collect_plugins(plugins)
 
-    # TODO: fix api once updated upstream
-    listener_list = listener_interface.plugin_manager.get_instances()
+    listener_list = listener_interface.get_instances()
     main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()
