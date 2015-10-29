@@ -1,9 +1,0 @@
-[submodule "chatimusmaximus/plugins/listeners"]
-	path = chatimusmaximus/plugins/listeners
-	url = https://github.com/benhoff/plugins
-[submodule "chatimusmaximus/listeners"]
-	path = chatimusmaximus/listeners
-	url = https://github.com/benhoff/plugins
-[submodule "chatimusmaximus/yapsy"]
-	path = chatimusmaximus/yapsy
-	url = https://github.com/benhoff/yapsy
