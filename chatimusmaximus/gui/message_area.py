@@ -1,8 +1,8 @@
 import re
 from datetime import datetime
-import queue
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
+
 
 class _StandardTextFormat(QtGui.QTextCharFormat):
     """
@@ -14,9 +14,11 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
         self.setForeground(text_color)
         self.setFontPointSize(13)
 
+
 class MessageArea(QtWidgets.QTextEdit):
     time_signal = QtCore.pyqtSignal(str)
     _listeners_signal = QtCore.pyqtSignal(str, str)
+
     def __init__(self, parent=None):
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
@@ -34,11 +36,12 @@ class MessageArea(QtWidgets.QTextEdit):
         self.listener_commands = ['!']
 
     def set_color(self, color, platform):
+        QColor = QtGui.QColor
         if platform in self.name_formats:
             format = self.name_formats[platform]
-            format.setForeground(QtGui.QColor(color))
+            format.setForeground(QColor(color))
         else:
-            self.name_formats[platform] = _StandardTextFormat(QtGui.QColor(color))
+            self.name_formats[platform] = _StandardTextFormat(QColor(color))
 
     @QtCore.pyqtSlot(str, str)
     def _listeners_slot(self, sender, message):
@@ -63,7 +66,7 @@ class MessageArea(QtWidgets.QTextEdit):
 
         if result:
             self._insert_and_format('Vex', result, 'listener')
-    
+
     @QtCore.pyqtSlot(str, str, str)
     def chat_slot(self, sender, message, platform):
         # get the timestamp

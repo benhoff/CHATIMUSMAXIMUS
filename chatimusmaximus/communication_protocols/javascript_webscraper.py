@@ -1,28 +1,25 @@
-import sys
-import os
 import logging
 from time import sleep
 import threading
 
 from selenium import webdriver
 
-from PyQt5 import QtCore
-import gui
 
 class JavascriptWebscraper(object):
 
-    def __init__(self, url=None, 
-            comment_element_id=None,
-            author_class_name=None,
-            message_class_name=None,
-            plugin=None):
+    def __init__(self,
+                 url=None,
+                 comment_element_id=None,
+                 author_class_name=None,
+                 message_class_name=None,
+                 plugin=None):
 
         """
-        `comment_element_id` is the css element where all the comments are, 
-        i.e., 'all-comments' for youtube 
+        `comment_element_id` is the css element where all the comments are,
+        i.e., 'all-comments' for youtube
 
-        `author_class_name` is the css class which holds the comment author username
-        i.e., 'yt-user-name' for youtube
+        `author_class_name` is the css class which holds the comment author
+        username i.e., 'yt-user-name' for youtube
 
         `message_class_name` is the css class which holds the comment test
         ie., 'comment-text' for youtube
@@ -41,7 +38,7 @@ class JavascriptWebscraper(object):
         self._thread = threading.Thread(target=self.run_forever)
         self._thread.setDaemon(True)
         self._thread.start()
-    
+
     def run_forever(self):
         while True:
             try:
@@ -61,7 +58,6 @@ class JavascriptWebscraper(object):
         self.log.info('youtube sleeping for 5 seconds!')
         sleep(5)
         self.log.info('youtube done sleeping')
-        
 
         all_comments = driver.find_element_by_id(self.comment_element_id)
         # TODO: add in a signal here that all is connected!
@@ -79,16 +75,15 @@ class JavascriptWebscraper(object):
 
             if comments_length > self._number_of_messages:
                 # NOTE: this number is intentionally NEGATIVE
-                messages_not_parsed = self._number_of_messages - comments_length
+                msgs_not_parsed = self._number_of_messages - comments_length
 
                 self._number_of_messages = len(comments)
-                comments = comments[messages_not_parsed:]
+                comments = comments[msgs_not_parsed:]
                 for comment in comments:
-                    author = comment.find_element_by_class_name(
-                            self.author_class_name).text
+                    find_elem = comment.find_element_by_class_name
+                    author = find_elem(self.author_class_name).text
 
-                    message = comment.find_element_by_class_name(
-                            self.message_class_name).text
+                    message = find_elem(self.message_class_name).text
 
                     if self.plugin is not None:
                         self.plugin.message_function(author, message)

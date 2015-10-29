@@ -1,7 +1,7 @@
-import sys 
+import sys
 import asyncio
 
-from PyQt5 import QtWidgets, QtNetwork, QtCore
+from PyQt5 import QtWidgets
 from quamash import QEventLoop
 import pluginmanager
 # TODO: Change to `listener-plugins` once repo name is changed
@@ -13,6 +13,7 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
 from __init__ import get_settings_helper, instantiate_plugin_manager
+
 
 def main():
     # create the GUI

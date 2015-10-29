@@ -1,16 +1,10 @@
 import irc3
 from irc3.plugins.autojoins import AutoJoins
-import threading
 
-from PyQt5 import QtCore
-from irc3.plugins.command import command
-from gui import MainWindow
 
 @irc3.plugin
 class AutoJoinMessage(AutoJoins):
-    requires = [
-            'irc3.plugins.core',
-            ]
+    requires = ['irc3.plugins.core', ]
 
     def __init__(self, bot):
         super(AutoJoinMessage, self).__init__(bot)
@@ -38,17 +32,15 @@ class AutoJoinMessage(AutoJoins):
             self.plugin.connected_function(False)
         super(AutoJoinMessage, self).on_err_join(channel, **kwargs)
 
+
 @irc3.plugin
 class EchoToMessage(object):
-    requires = [
-            'irc3.plugins.core',
-            'irc3.plugins.command'
-            ]
+    requires = ['irc3.plugins.core',
+                'irc3.plugins.command']
 
     def __init__(self, bot):
         self.bot = bot
         self.plugin = self.bot.config.get('plugin', None)
-
 
     @irc3.event(irc3.rfc.PRIVMSG)
     def message(self, mask, event, target, data):
@@ -58,30 +50,27 @@ class EchoToMessage(object):
             self.plugin.message_function(nick, message)
 
 
-def create_irc_bot(nick, 
+def create_irc_bot(nick,
                    password,
-                   host=None, 
-                   port=6667, 
+                   host=None,
+                   port=6667,
                    realname=None,
                    channel=None,
                    plugin=None):
 
-    config = dict(
-            ssl=False,
-            includes=[
-                'irc3.plugins.core',
-                'irc3.plugins.command',
-                'irc3.plugins.human',
-                'irc3.plugins.log',
-                __name__,
-                ]
-            )
+    config = dict(ssl=False,
+                  includes=['irc3.plugins.core',
+                            'irc3.plugins.command',
+                            'irc3.plugins.human',
+                            'irc3.plugins.log',
+                            __name__])
+
     if realname is None:
         realname = nick
     if channel is None:
         channel = nick
     config['nick'] = nick
-    config['password'] = password 
+    config['password'] = password
     config['host'] = host
     config['port'] = port
     config['realname'] = realname

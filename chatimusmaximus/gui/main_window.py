@@ -1,7 +1,7 @@
-import os
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from gui import CentralWidget, StatusBar
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -24,7 +24,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status_bar = StatusBar(parent=self)
         self.setStatusBar(self.status_bar)
 
-        self.central_widget.message_area.time_signal.connect(self.status_bar.time_label.setText)
+        # alias for pep8
+        msg_area = self.central_widget.message_area
+        msg_area.time_signal.connect(self.status_bar.time_label.setText)
 
     def set_settings(self, settings):
         for key, setting in settings.items():
@@ -32,4 +34,6 @@ class MainWindow(QtWidgets.QMainWindow):
             if display_settings['display_missing']:
                 self.status_bar.set_up_helper(key.title())
             if display_settings['text_color']:
-                self.central_widget.message_area.set_color(display_settings['text_color'], key)
+                # alias for pep8
+                msg_area = self.central_widget.message_area
+                msg_area.set_color(display_settings['text_color'], key)
