@@ -1,18 +1,6 @@
-from PyQt5 import QtWidgets, QtCore
-from gui import MessageArea
-
-
-class LineEdit(QtWidgets.QLineEdit):
-    listener_signal = QtCore.pyqtSignal(str, str)
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.returnPressed.connect(self.return_pressed_slot)
-        self.setStyleSheet('border: 1px solid white; text_color: white')
-
-    @QtCore.pyqtSlot()
-    def return_pressed_slot(self):
-        self.listener_signal.emit('', self.text())
-        self.clear()
+from PyQt5 import QtWidgets
+from .message_area import MessageArea
+from .command_line import CommandLine
 
 
 class CentralWidget(QtWidgets.QWidget):
@@ -24,8 +12,8 @@ class CentralWidget(QtWidgets.QWidget):
         # duck type the slot onto the MainWindow for ease of access
         self.chat_slot = self.message_area.chat_slot
 
-        line_edit = LineEdit(parent=self)
-        line_edit.listener_signal.connect(self.message_area.listeners_slot)
+        command_line = CommandLine(parent=self)
+        command_line.listener_signal.connect(self.message_area.listeners_slot)
 
         # create vertical layout to stack the textedit on top
         # of the `clear` button
@@ -33,5 +21,6 @@ class CentralWidget(QtWidgets.QWidget):
 
         # add the text edit and button to vertical layout
         vertical_layout.addWidget(self.message_area)
-        vertical_layout.addWidget(line_edit)
+        vertical_layout.addWidget(command_line)
+        vertical_layout.setContentsMargins(-1, -1, -1, 0)
         self.setLayout(vertical_layout)
