@@ -17,7 +17,7 @@ class _StandardTextFormat(QtGui.QTextCharFormat):
 
 class MessageArea(QtWidgets.QTextEdit):
     time_signal = QtCore.pyqtSignal(str)
-    _listeners_signal = QtCore.pyqtSignal(str, str)
+    listeners_signal = QtCore.pyqtSignal(str, str)
 
     def __init__(self, parent=None):
         super(MessageArea, self).__init__(parent)
@@ -32,7 +32,7 @@ class MessageArea(QtWidgets.QTextEdit):
         self.name_formats = {'listener': listener_color}
 
         self.listeners = []
-        self._listeners_signal.connect(self._listeners_slot)
+        self.listeners_signal.connect(self.listeners_slot)
         self.listener_commands = ['!']
 
     def set_color(self, color, platform):
@@ -44,7 +44,7 @@ class MessageArea(QtWidgets.QTextEdit):
             self.name_formats[platform] = _StandardTextFormat(QColor(color))
 
     @QtCore.pyqtSlot(str, str)
-    def _listeners_slot(self, sender, message):
+    def listeners_slot(self, sender, message):
         # strip the first word off of the message
         # keep the trailing sentence intact
         try:
@@ -79,7 +79,7 @@ class MessageArea(QtWidgets.QTextEdit):
         scroll_bar = self.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
         if message[0] in self.listener_commands and self.listeners != []:
-            self._listeners_signal.emit(sender, message)
+            self.listeners_signal.emit(sender, message)
 
     def _insert_and_format(self, sender, message, platform):
         """

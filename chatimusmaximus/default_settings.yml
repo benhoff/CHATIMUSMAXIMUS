@@ -1,23 +1,23 @@
 version: "0.0.1"
 
-#watchpeoplecode:
-#    channel: ""
-#    connect: true
+watchpeoplecode:
+    channel: ""
+    connect: false
 
-#    display_settings:
-#        display_missing: true
-#        text_color: "lawngreen"
+    display_settings:
+        display_missing: true
+        text_color: "lawngreen"
 
-#twitch:
+twitch:
     # in the format `oauth:asdasd234asd234ad234asds23`
-#    oauth_token: ""
-#    channel: ""
-#    nick: ""
-#    connect: true
+    oauth_token: ""
+    channel: ""
+    nick: ""
+    connect: false
 
-#    display_settings:
-#        display_missing: true
-#        text_color: "blueviolet"
+    display_settings:
+        display_missing: true
+        text_color: "blueviolet"
 
 # NOTE: CURRENTLY UNSUPPORTED!
 #livecoding:
@@ -32,13 +32,13 @@ version: "0.0.1"
 #        display_missing: true
 #        text_color: "yellow"
 
-#youtube:
+youtube:
      # NOTE: only pass in channel id if you want to connect chat to your 
      # permenant landing page
-#    channel_id: ""
-#    youtube_url: ""
-#    connect: true
+    channel_id: ""
+    youtube_url: ""
+    connect: false
 
-#    display_settings:
-#        display_missing: true
-#        text_color: "red"
+    display_settings:
+        display_missing: true
+        text_color: "red"

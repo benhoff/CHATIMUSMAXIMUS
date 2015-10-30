@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets
 from quamash import QEventLoop
 import pluginmanager
 # TODO: Change to `listener-plugins` once repo name is changed
-import plugins
+#import plugins
 
 from gui import MainWindow
 import logging
@@ -33,7 +33,6 @@ def main():
     plugin_manager = instantiate_plugin_manager(settings)
     main_window.set_settings(settings)
     chat_list = plugin_manager.get_instances()
-    print(chat_list)
 
     # connect the sockets signals to the GUI
     for chat in chat_list:
@@ -41,7 +40,7 @@ def main():
         chat.connected_signal.connect(main_window.status_bar.set_widget_status)
 
     listener_interface = pluginmanager.PluginInterface()
-    listener_interface.collect_plugins(plugins)
+    #listener_interface.collect_plugins(plugins)
 
     listener_list = listener_interface.get_instances()
     main_window.central_widget.message_area.listeners = listener_list
