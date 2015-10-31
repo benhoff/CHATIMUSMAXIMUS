@@ -87,7 +87,7 @@ class MessageArea(QtWidgets.QTextEdit):
         """
         # get cursor
         cursor = self.textCursor()
-        # set the format to the name format
+        # set the format to the name format, i.e. Bold and colored
         cursor.setCharFormat(self.name_formats[platform])
         if not platform == 'listener':
             # the platform name is in a bracket. Example: `[Youtube]:`
@@ -98,7 +98,7 @@ class MessageArea(QtWidgets.QTextEdit):
             cursor.movePosition(QtGui.QTextCursor.End)
         # inserts the sender name next to the platform & timestamp
         cursor.insertText(sender + bracket_string)
-        # sets format to text format
+        # sets format to text format, i.e. normal and white
         cursor.setCharFormat(self.text_format)
         # inserts message
         cursor.insertText(message)
