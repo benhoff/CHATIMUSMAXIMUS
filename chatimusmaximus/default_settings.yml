@@ -19,18 +19,18 @@ twitch:
         display_missing: true
         text_color: "blueviolet"
 
-# NOTE: CURRENTLY UNSUPPORTED!
-#livecoding:
+livecoding:
     # this MUST be your livecode name
-#    name: ""
+    name: ""
     # this can be your profile password
-#    password: ""
-#    bot_nick: ""
-#    connect: true
+    password: ""
+    bot_nick: ""
+    room: ""
+    connect: true
 
-#    display_settings:
-#        display_missing: true
-#        text_color: "yellow"
+    display_settings:
+        display_missing: true
+        text_color: "yellow"
 
 youtube:
      # NOTE: only pass in channel id if you want to connect chat to your 

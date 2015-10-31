@@ -1,34 +1,30 @@
-import asyncio
 import sleekxmpp
 
 from .website_plugin import WebsitePlugin
 from communication_protocols import ReadOnlyXMPPBot
 
-class LivecodingPlugin(IPlugin):
+class Livecoding(WebsitePlugin):
     # FIXME: migrate to asyncio library
-    def __init__(self, settings):
+    def __init__(self):
         super().__init__('livecoding')
-
-
-        jid = sleekxmpp.JID(local=settings['name'], 
-                            domain='livecoding.tv', 
-                            resource='CHATIMUSMAXIMUS')
-
-        self._livecode = ReadOnlyXMPPBot(jid, password, nick=bot_nick)
-        self._livecode.connect()
-        loop = asyncio.get_event_loop()
-        loop.run_in_executor(None, self._livecode.process)
+        self._xmpp_echo = None
 
     def activate(self, settings):
-        setting_nick = settings['bot_nick']
+        settings_nick = settings['bot_nick']
         bot_nick = settings_nick if settings_nick != str() else 'EchoBot'
         password = settings['password']
 
         jid = sleekxmpp.JID(local=settings['name'],
                             domain='livecoding.tv',
                             resource='CHATIMUSMAXIMUS')
+        room = settings['room']
+        if room == str():
+            room = '{}@chat.livecoding.tv'.format(jid.name)
 
-        self._xmpp_echo = ReadOnlyXMPPBot(jid, password, nick=bot_nick)
-        loop = asyncio.get_event_loop()
-        loop.run_in_executor(None, self._xmpp_echo.start_echo)
-
+        self._xmpp_echo = ReadOnlyXMPPBot(jid,
+                                          password,
+                                          room,
+                                          nick=bot_nick,
+                                          plugin=self)
+        self._xmpp_echo.connect()
+        self._xmpp_echo.process()

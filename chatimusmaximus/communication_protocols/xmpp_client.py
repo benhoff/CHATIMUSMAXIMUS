@@ -1,34 +1,45 @@
 import asyncio
 from queue import Queue, Empty
+import logging
 
 import sleekxmpp
 from sleekxmpp.xmlstream import scheduler
 
-# https://gist.github.com/mborho/55be89eead0b0e19e051
+
+def fake_verify(*args):
+    return
+
+sleekxmpp.xmlstream.cert.verify = fake_verify
+
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
     def __init__(self,
                  jid,
                  password,
-                 message_function=None,
-                 room='{user}@chat.livecoding.tv',
-                 nick='ReadOnlyBot'):
+                 room,
+                 nick='EchoBot',
+                 plugin=None):
         
         # Initialize the parent class
         super().__init__(jid, password)
 
-        # if the there's a format option in the room, add in the user
-        if room[0:5] == '{user}':
-            room = room.format(jid.user)
-
         self.room = room
         self.nick = nick
-        self.queue = Queue()
+        self.communication_plugin = plugin
+        self.log = logging.getLogger(__file__)
 
         # One-shot helper method used to register all the plugins
         self._register_plugin_helper() 
 
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("groupchat_message", self.muc_message)
+        self.add_event_handler('connected', self._connected)
+        self.add_event_handler('disconnected', self._disconnected)
+    
+    def _disconnected(self, *args):
+        self.communication_plugin.connected_function(False)
+
+    def _connected(self, *args):
+        self.communication_plugin.connected_function(True)
 
     def _register_plugin_helper(self):
         """
@@ -38,29 +49,18 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.register_plugin('xep_0030')
         # XMPP Ping
         self.register_plugin('xep_0199')
-
-        # MUC
+        # Multiple User Chatroom
         self.register_plugin('xep_0045')
 
-    def from_main_thread_nonblocking(self):
-        try:
-            msg = self.queue.get(False)
-        except Empty:
-            pass
-
     def start(self, event):
+        self.log.info('starting xmpp')
         self.send_presence()
         self.plugin['xep_0045'].joinMUC(self.room,
-                                        self.nick,
-                                        wait=True)
+                                        self.nick, wait=True)
 
         self.get_roster()
-        self.scheduler.add('asyncio_queue',
-                           2, 
-                           self.from_main_thread_nonblocking,
-                           repeat=True,
-                           qpointer=self.event_queue)
 
     def muc_message(self, msg):
-        if self.message_function:
-            self.message_function(msg['mucnick'], msg['body'])
+        if self.communication_plugin:
+            self.communication_plugin.message_function(msg['mucnick'],
+                                                       msg['body'])
