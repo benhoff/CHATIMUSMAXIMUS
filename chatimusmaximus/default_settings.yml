@@ -1,4 +1,6 @@
-version: "0.0.1"
+version: "0.0.2"
+display:
+    command_line: "user@chatimus ~$"
 
 watchpeoplecode:
     channel: ""

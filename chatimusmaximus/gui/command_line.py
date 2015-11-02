@@ -7,8 +7,7 @@ class LineEdit(QtWidgets.QLineEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.returnPressed.connect(self.return_pressed_slot)
-        self.setStyleSheet('color: white; font: demibold')
-        self.setAttribute(QtCore.Qt.WA_MacShowFocusRect, 0)
+        self.setStyleSheet('color: white; font: demibold; font-size: 18px; border: 0px solid black;')
 
     @QtCore.pyqtSlot()
     def return_pressed_slot(self):
@@ -18,17 +17,25 @@ class LineEdit(QtWidgets.QLineEdit):
 class CommandLine(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.prompt = 'user@chatimus ~$'
-        label = QtWidgets.QPushButton(self.prompt)
-        label.setStyleSheet('color: white; font: demibold')
+        prompt = 'user@chatimus ~$'
+
+        self.label = QtWidgets.QPushButton(prompt)
+        self.label.setStyleSheet('color: white; font: bold; font-size: 18px;')
+
         self.line_edit = LineEdit()
         layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(label)
+        layout.addWidget(self.label)
         layout.addWidget(self.line_edit)
-        layout.setContentsMargins(-1, -1, -1, 0)
+        layout.setSpacing(0)
         self.setLayout(layout)
+
         self.listener_signal = self.line_edit.listener_signal
-        label.clicked.connect(self.give_focus)
+        self.label.clicked.connect(self.give_focus)
+
+    def set_settings(self, settings):
+        prompt = settings['command_line']
+        if not prompt == str():
+            self.label.setText(prompt)
 
     def give_focus(self):
         self.line_edit.setFocus()
