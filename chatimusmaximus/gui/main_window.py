@@ -12,11 +12,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(parent)
         # set title window to `CHATIMUSMAXIMUS`
         self.setWindowTitle("CHATIMUSMAXIMUS")
-        # tried to set the background to be transparent
-        # does not work without a compositor in Linux
-        self.setAttribute(Qt.WA_NoSystemBackground)
-        self.setStyleSheet('background: transparent;')
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setStyleSheet('background: black;')
         # Create the central widget
         self.central_widget = CentralWidget(parent=self)
         self.setCentralWidget(self.central_widget)
@@ -29,6 +25,8 @@ class MainWindow(QtWidgets.QMainWindow):
         msg_area.time_signal.connect(self.status_bar.time_label.setText)
 
     def set_settings(self, settings):
+        display = settings.pop('display')
+        self.central_widget.set_settings(display)
         for key, setting in settings.items():
             display_settings = setting['display_settings']
             if display_settings['display_missing']:
