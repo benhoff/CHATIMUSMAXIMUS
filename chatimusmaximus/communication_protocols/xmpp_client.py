@@ -1,24 +1,24 @@
-import asyncio
-from queue import Queue, Empty
 import logging
 
-import sleekxmpp
-from sleekxmpp.xmlstream import scheduler
+import slixmpp 
+from slixmpp.xmlstream import XMLStream
 
 
 def fake_verify(*args):
     return
 
-sleekxmpp.xmlstream.cert.verify = fake_verify
 
-class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
+# slixmpp.xmlstream.cert.verify = fake_verify
+
+
+class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
     def __init__(self,
                  jid,
                  password,
                  room,
                  nick='EchoBot',
                  plugin=None):
-        
+
         # Initialize the parent class
         super().__init__(jid, password)
 
@@ -28,18 +28,24 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.log = logging.getLogger(__file__)
 
         # One-shot helper method used to register all the plugins
-        self._register_plugin_helper() 
+        self._register_plugin_helper()
 
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("groupchat_message", self.muc_message)
         self.add_event_handler('connected', self._connected)
         self.add_event_handler('disconnected', self._disconnected)
-    
+
     def _disconnected(self, *args):
-        self.communication_plugin.connected_function(False)
+        if self.communication_plugin:
+            self.communication_plugin.connected_function(False)
 
     def _connected(self, *args):
-        self.communication_plugin.connected_function(True)
+        if self.communication_plugin:
+            self.communication_plugin.connected_function(True)
+
+    def process(self):
+        self.init_plugins()
+        super().process()
 
     def _register_plugin_helper(self):
         """
@@ -56,8 +62,7 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.log.info('starting xmpp')
         self.send_presence()
         self.plugin['xep_0045'].joinMUC(self.room,
-                                        self.nick, wait=True)
-
+                                        self.nick)
         self.get_roster()
 
     def muc_message(self, msg):

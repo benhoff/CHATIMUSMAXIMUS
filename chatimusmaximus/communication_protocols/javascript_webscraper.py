@@ -65,7 +65,7 @@ class JavascriptWebscraper(object):
         # NOTE: make sure this is ok if using for anything other than youtube
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)
-        if self.plugin is not None:
+        if self.plugin:
             self.plugin.connected_function(True)
 
         while True:
@@ -85,8 +85,8 @@ class JavascriptWebscraper(object):
 
                     message = find_elem(self.message_class_name).text
 
-                    if self.plugin is not None:
+                    if self.plugin:
                         self.plugin.message_function(author, message)
 
-        if self.plugin is not None:
+        if self.plugin:
             self.plugin.connected_function(False)

@@ -15,6 +15,7 @@ class LineEdit(QtWidgets.QLineEdit):
         self.listener_signal.emit('', self.text())
         self.clear()
 
+
 class CommandLine(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
