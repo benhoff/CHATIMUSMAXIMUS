@@ -1,14 +1,14 @@
 import logging
-
-import slixmpp 
-from slixmpp.xmlstream import XMLStream
+import argparse
+import slixmpp
+# from slixmpp.xmlstream import XMLStream
 
 
 def fake_verify(*args):
     return
 
 
-# slixmpp.xmlstream.cert.verify = fake_verify
+# sleekxmpp.xmlstream.cert.verify = fake_verify
 
 
 class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
@@ -69,3 +69,26 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         if self.communication_plugin:
             self.communication_plugin.message_function(msg['mucnick'],
                                                        msg['body'])
+
+        if __name__ == '__main__':
+            print('MSG: NICK: {} BODY: {}'.format(msg['mucnick'],
+                                                  msg['body']))
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('local', help='local arg for string parsing')
+    parser.add_argument('domain', help='domain for xmpp')
+    parser.add_argument('room', help='room!')
+    parser.add_argument('resource', help='resource')
+    parser.add_argument('password', help='password')
+    parser.parse_args()
+    print(parser.local, parser.domain, parser.resource, parser.room)
+    jid = slixmpp.JID(local=parser.local,
+                      domain=parser.domain,
+                      resource=parser.resource)
+
+    xmpp_bot = ReadOnlyXMPPBot(jid, parser.password, parser.room)
+    xmpp_bot.connect()
+    xmpp_box.process()
+if __name__ == '__main__':
+    main()

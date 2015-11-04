@@ -36,6 +36,9 @@ def instantiate_plugin_manager(settings):
 
         # check to see if  are registered in plugins
         if has_values and setting['connect']:
+            print(plugin)
+            if 'room' in setting:
+                print(setting['room'], setting['name'])
             plugin.activate(setting)
 
     return website_interface
