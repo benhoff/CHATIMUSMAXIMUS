@@ -71,8 +71,8 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
                                                        msg['body'])
 
         if __name__ == '__main__':
-            print('MSG: NICK: {} BODY: {}'.format(msg['mucnick'],
-                                                  msg['body']))
+            print('MSG NICK: {} BODY: {}'.format(msg['mucnick'],
+                                                 msg['body']))
 
 def main():
     parser = argparse.ArgumentParser()
@@ -81,14 +81,13 @@ def main():
     parser.add_argument('room', help='room!')
     parser.add_argument('resource', help='resource')
     parser.add_argument('password', help='password')
-    parser.parse_args()
-    print(parser.local, parser.domain, parser.resource, parser.room)
-    jid = slixmpp.JID(local=parser.local,
-                      domain=parser.domain,
-                      resource=parser.resource)
+    args = parser.parse_args()
+    jid = '{}@{}/{}'.format(args.local, args.domain, args.resource)
+    # jid = slixmpp.JID(jid)
 
-    xmpp_bot = ReadOnlyXMPPBot(jid, parser.password, parser.room)
+    xmpp_bot = ReadOnlyXMPPBot(jid, args.password, args.room)
     xmpp_bot.connect()
-    xmpp_box.process()
+    xmpp_bot.process()
+
 if __name__ == '__main__':
     main()
