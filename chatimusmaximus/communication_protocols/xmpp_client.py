@@ -1,14 +1,6 @@
 import logging
 import argparse
 import slixmpp
-# from slixmpp.xmlstream import XMLStream
-
-
-def fake_verify(*args):
-    return
-
-
-# sleekxmpp.xmlstream.cert.verify = fake_verify
 
 
 class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
@@ -16,15 +8,13 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
                  jid,
                  password,
                  room,
-                 nick='EchoBot',
-                 plugin=None):
+                 nick='EchoBot'):
 
         # Initialize the parent class
         super().__init__(jid, password)
 
         self.room = room
         self.nick = nick
-        self.communication_plugin = plugin
         self.log = logging.getLogger(__file__)
 
         # One-shot helper method used to register all the plugins
@@ -36,12 +26,10 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         self.add_event_handler('disconnected', self._disconnected)
 
     def _disconnected(self, *args):
-        if self.communication_plugin:
-            self.communication_plugin.connected_function(False)
+        print('DISCONNECTED')
 
     def _connected(self, *args):
-        if self.communication_plugin:
-            self.communication_plugin.connected_function(True)
+        print('CONNECTED')
 
     def process(self):
         self.init_plugins()
@@ -66,13 +54,8 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         self.get_roster()
 
     def muc_message(self, msg):
-        if self.communication_plugin:
-            self.communication_plugin.message_function(msg['mucnick'],
-                                                       msg['body'])
-
-        if __name__ == '__main__':
-            print('MSG NICK: {} BODY: {}'.format(msg['mucnick'],
-                                                 msg['body']))
+        print('MSG NICK: {} BODY: {}'.format(msg['mucnick'],
+                                             msg['body']))
 
 def main():
     parser = argparse.ArgumentParser()

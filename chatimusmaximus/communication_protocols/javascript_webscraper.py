@@ -1,3 +1,4 @@
+import argparse
 import logging
 from time import sleep
 import threading
@@ -11,8 +12,7 @@ class JavascriptWebscraper(object):
                  url=None,
                  comment_element_id=None,
                  author_class_name=None,
-                 message_class_name=None,
-                 plugin=None):
+                 message_class_name=None):
 
         """
         `comment_element_id` is the css element where all the comments are,
@@ -33,11 +33,6 @@ class JavascriptWebscraper(object):
         self.comment_element_id = comment_element_id
         self.author_class_name = author_class_name
         self.message_class_name = message_class_name
-        self.plugin = plugin
-
-        self._thread = threading.Thread(target=self.run_forever)
-        self._thread.setDaemon(True)
-        self._thread.start()
 
     def run_forever(self):
         while True:
@@ -65,8 +60,7 @@ class JavascriptWebscraper(object):
         # NOTE: make sure this is ok if using for anything other than youtube
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)
-        if self.plugin:
-            self.plugin.connected_function(True)
+        print('CONNECTED')
 
         while True:
             sleep(1)
@@ -84,9 +78,21 @@ class JavascriptWebscraper(object):
                     author = find_elem(self.author_class_name).text
 
                     message = find_elem(self.message_class_name).text
+                    print('MSG NICK: {} BODY: {}'.format(author, message))
+        
+        print('DISCONNECTED')
 
-                    if self.plugin:
-                        self.plugin.message_function(author, message)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('url')
+    parser.add_argument('comment_element_id')
+    parser.add_argument('author_class_name')
+    parser.add_argument('message_class_name')
 
-        if self.plugin:
-            self.plugin.connected_function(False)
+    args = parser.parse_args()
+    webscraper = JavascriptWebscraper(args.url,
+                                      args.comment_element_id,
+                                      args.author_class_name,
+                                      args.message_class_name)
+
+    webscraper.run_forever()

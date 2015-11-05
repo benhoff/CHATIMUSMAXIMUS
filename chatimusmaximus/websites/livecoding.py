@@ -12,16 +12,6 @@ class Livecoding(WebsitePlugin):
     def __init__(self):
         super().__init__('livecoding')
         self._xmpp_echo = None
-        self.process = None
-
-    @asyncio.coroutine
-    def _reoccuring(self):
-        while True:
-            if self.process is not None:
-                yield from asyncio.sleep(5)
-            else:
-                print(self.process.communicate())
-                yield from asyncio.sleep(1)
 
     def activate(self, settings):
         settings_nick = settings['bot_nick']
@@ -30,12 +20,6 @@ class Livecoding(WebsitePlugin):
         local = settings['name']
         domain = 'livecoding.tv'
         resource = 'CHATIMUSMAXIMUS'
-        """
-        jid = sleekxmpp.JID(local=settings['name'],
-                            domain='livecoding.tv',
-                            resource='CHATIMUSMAXIMUS')
-        """
-
         room = settings['room']
         if not room:
             room = '{}@chat.livecoding.tv'.format(jid.name)

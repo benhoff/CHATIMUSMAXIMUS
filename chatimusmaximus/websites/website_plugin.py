@@ -1,29 +1,44 @@
+import re
+import asyncio
+from parse import parse
 from PyQt5 import QtCore
 from pluginmanager import IPlugin
 
 
-class _PyQtCompat(QtCore.QObject):
-    """
-    Can't subclass from multiple classes with PyQt
-    """
+class WebsitePlugin(QtCore.QObject):
     chat_signal = QtCore.pyqtSignal(str, str, str)
     connected_signal = QtCore.pyqtSignal(bool, str)
 
-    def __init__(self, parent=None):
-        super(_PyQtCompat, self).__init__(parent)
-
-
-class WebsitePlugin(IPlugin):
-    def __init__(self, platform):
-        super(WebsitePlugin, self).__init__()
+    def __init__(self, platform, parent=None):
+        super().__init__(parent)
         self.platform = platform
+        # TODO: change from `process` to `subprocess`
+        self.process = None
 
-        self._pyqt_compat = _PyQtCompat()
-        self.chat_signal = self._pyqt_compat.chat_signal
-        self.connected_signal = self._pyqt_compat.connected_signal
+    @asyncio.coroutine
+    def _reoccuring(self):
+        while True:
+            if self.process is not None:
+                yield from asyncio.sleep(5)
+            else:
+                std_out = self.process.communicate()[0]
+                self._parse_communication(std_out)
+                yield from asyncio.sleep(1)
 
-    def message_function(self, sender, message):
-        self.chat_signal.emit(sender, message, self.platform)
+    def _parse_communication(self, comms):
+        for comm in comms:
+            command, body = comm.split(sep=' ', maxsplit=1)
+            if command == 'MSG':
+                nick, message = parse('NICK: {} BODY: {}', body)
+                self.chat_signal.emit(nick, message, self.platform)
+            elif command == 'CONNECTED':
+                self.connected_signal.emit(True, self.platform)
+            elif command == 'DISCONNECTED':
+                self.connected_signal.emit(False, self.platform)
 
-    def connected_function(self, bool):
-        self.connected_signal.emit(bool, self.platform)
+
+# NOTE: Forcing `WebsitePlugin` to be subclass of IPlugin
+# for ease of parsing
+IPlugin.register(WebsitePlugin)
+
+

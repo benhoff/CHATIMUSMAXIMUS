@@ -1,3 +1,4 @@
+import argparse
 import irc3
 from irc3.plugins.autojoins import AutoJoins
 
@@ -8,28 +9,23 @@ class AutoJoinMessage(AutoJoins):
 
     def __init__(self, bot):
         super(AutoJoinMessage, self).__init__(bot)
-        self.plugin = self.bot.config.get('plugin', None)
 
     def connection_lost(self):
-        if self.plugin is not None:
-            self.plugin.connected_function(False)
+        print('DISCONNECTED')
         super(AutoJoinMessage, self).connection_lost()
 
     def join(self, channel=None):
         super(AutoJoinMessage, self).join(channel)
-        if self.plugin is not None:
-            self.plugin.connected_function(True)
+        print('CONNECTED')
 
     @irc3.event(irc3.rfc.KICK)
     def on_kick(self, mask, channel, target, **kwargs):
-        if self.plugin is not None:
-            self.plugin.connected_function(False)
+        print('DISCONNECTED')
         super(AutoJoinMessage, self).on_kick(mask, channel, target, **kwargs)
 
     @irc3.event("^:\S+ 47[1234567] \S+ (?P<channel>\S+).*")
     def on_err_join(self, channel, **kwargs):
-        if self.plugin is not None:
-            self.plugin.connected_function(False)
+        print('DISCONNECTED')
         super(AutoJoinMessage, self).on_err_join(channel, **kwargs)
 
 
@@ -40,14 +36,12 @@ class EchoToMessage(object):
 
     def __init__(self, bot):
         self.bot = bot
-        self.plugin = self.bot.config.get('plugin', None)
 
     @irc3.event(irc3.rfc.PRIVMSG)
     def message(self, mask, event, target, data):
         nick = mask.split('!')[0]
         message = data
-        if self.plugin is not None:
-            self.plugin.message_function(nick, message)
+        print('MSG NICK: {} BODY: {}'.format(nick, message))
 
 
 def create_irc_bot(nick,
@@ -55,8 +49,7 @@ def create_irc_bot(nick,
                    host=None,
                    port=6667,
                    realname=None,
-                   channel=None,
-                   plugin=None):
+                   channel=None):
 
     config = dict(ssl=False,
                   includes=['irc3.plugins.core',
@@ -75,8 +68,20 @@ def create_irc_bot(nick,
     config['port'] = port
     config['realname'] = realname
     config['autojoins'] = channel
-    config['plugin'] = plugin
 
     bot = irc3.IrcBot.from_config(config)
 
     return bot
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('nick')
+    parser.add_argument('oauth_token')
+    parser.add_argument('host')
+    parser.add_argument('channel')
+
+    args = parser.parse_args()
+
+    irc_client = create_irc_bot(args.nick, args.password, args.host, channel=args.channel)
+    irc_client.create_connection()
+    irc_client.add_signal_handlers()
