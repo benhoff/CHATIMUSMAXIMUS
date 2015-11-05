@@ -1,3 +1,4 @@
+import asyncio
 import argparse
 import irc3
 from irc3.plugins.autojoins import AutoJoins
@@ -76,7 +77,7 @@ def create_irc_bot(nick,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('nick')
-    parser.add_argument('oauth_token')
+    parser.add_argument('password')
     parser.add_argument('host')
     parser.add_argument('channel')
 
@@ -85,3 +86,5 @@ if __name__ == '__main__':
     irc_client = create_irc_bot(args.nick, args.password, args.host, channel=args.channel)
     irc_client.create_connection()
     irc_client.add_signal_handlers()
+    event = asyncio.get_event_loop()
+    event.run_forever()
