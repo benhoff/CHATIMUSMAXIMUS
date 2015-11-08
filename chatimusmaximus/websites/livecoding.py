@@ -30,13 +30,9 @@ class Livecoding(WebsitePlugin):
                                           'communication_protocols',
                                           'xmpp_client.py')))
 
-        self.process = asyncio.ensure_future(asyncio.create_subprocess_exec(sys.executable,
-                                                                            xmpp_bot_path,
-                                                                            local,
-                                                                            domain,
-                                                                            room,
-                                                                            resource,
-                                                                            password,
-                                                                            stderr=sys.stderr))
-
-        asyncio.ensure_future(self._reoccuring())
+        self.start_subprocess(xmpp_bot_path,
+                              local,
+                              domain,
+                              room,
+                              resource,
+                              password)

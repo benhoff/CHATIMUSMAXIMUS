@@ -20,12 +20,5 @@ class Youtube(WebsitePlugin):
                                                         '..',
                                                         'communication_protocols',
                                                         'javascript_webscraper.py'))
-
-        self.process = asyncio.ensure_future(asyncio.create_subprocess_exec(sys.executable,
-                                                                            webscraper_path,
-                                                                            url,
-                                                                            'all-comments',
-                                                                            'yt-user-name',
-                                                                            'comment-text'))
-
-        asyncio.ensure_future(self._reoccuring())
+        
+        self.start_subprocess(webscraper_path, url, 'all-comments', 'yt-user-name', 'comment-text')

@@ -18,17 +18,8 @@ class Twitch(WebsitePlugin):
         channel =  settings['channel']
         password = settings['oauth_token'],
         host = 'irc.twitch.tv'
-        irc_client_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                                        '..',
-                                                        'communication_protocols',
-                                                        'irc_client.py'))
-
-
-        self.process = asyncio.ensure_future(asyncio.create_subprocess_exec(sys.executable,
-                                                                            irc_client_path, 
-                                                                            nick,
-                                                                            password,
-                                                                            host,
-                                                                            channel))
-
-        asyncio.ensure_future(self._reoccuring())
+        self.start_subprocess(communication_protocols.PATHS['irc_path'],
+                              nick,
+                              password,
+                              host,
+                              channel)

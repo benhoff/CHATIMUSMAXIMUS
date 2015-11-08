@@ -18,12 +18,5 @@ class WatchPeopleCode(WebsitePlugin):
                                                            '..',
                                                            'communication_protocols',
                                                            'socket_io_client.py'))
-        
-        # break into helper method in parent class
-        self.process = asyncio.ensure_future(asyncio.create_subprocess_exec(sys.executable,
-                                                                            socket_client_path,
-                                                                            streamer_name,
-                                                                            namespace,
-                                                                            name))
 
-        asyncio.ensure_future(self._reoccuring())
+        self.start_subprocess(socket_client_path, streamer_name, namespace, name)

@@ -86,5 +86,3 @@ if __name__ == '__main__':
     irc_client = create_irc_bot(args.nick, args.password, args.host, channel=args.channel)
     irc_client.create_connection()
     irc_client.add_signal_handlers()
-    event = asyncio.get_event_loop()
-    event.run_forever()
