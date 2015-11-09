@@ -19,4 +19,4 @@ class WatchPeopleCode(WebsitePlugin):
                                                            'communication_protocols',
                                                            'socket_io_client.py'))
 
-        self.start_subprocess(socket_client_path, streamer_name, namespace, name)
+        asyncio.ensure_future(self.start_subprocess(socket_client_path, streamer_name, namespace, name))

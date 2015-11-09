@@ -14,12 +14,12 @@ class Twitch(WebsitePlugin):
         super().__init__(platform='twitch')
 
     def activate(self, settings):
-        nick = settings['nick'],
+        nick = settings['nick']
         channel =  settings['channel']
-        password = settings['oauth_token'],
+        password = settings['oauth_token']
         host = 'irc.twitch.tv'
-        self.start_subprocess(communication_protocols.PATHS['irc_path'],
+        asyncio.ensure_future(self.start_subprocess(communication_protocols.PATHS['irc_path'],
                               nick,
                               password,
                               host,
-                              channel)
+                              channel))

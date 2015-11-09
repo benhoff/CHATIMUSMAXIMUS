@@ -50,6 +50,9 @@ def main():
         event_loop.run_forever()
     except KeyboardInterrupt:
         pass
+    for chat in chat_list:
+        if chat.process:
+            chat.process.terminate()
     event_loop.close()
     sys.exit()
 
