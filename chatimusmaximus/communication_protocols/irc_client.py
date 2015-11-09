@@ -1,3 +1,4 @@
+import sys
 import asyncio
 import argparse
 import irc3
@@ -86,3 +87,9 @@ if __name__ == '__main__':
     irc_client = create_irc_bot(args.nick, args.password, args.host, channel=args.channel)
     irc_client.create_connection()
     irc_client.add_signal_handlers()
+    try:
+        asyncio.get_event_loop().run_forever()
+    except KeyboradInterrupt:
+        pass
+    event_loop.close()
+    sys.exit()
