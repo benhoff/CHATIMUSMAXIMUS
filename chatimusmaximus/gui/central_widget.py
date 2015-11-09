@@ -13,7 +13,8 @@ class CentralWidget(QtWidgets.QWidget):
         self.chat_slot = self.message_area.chat_slot
 
         self.command_line = CommandLine(parent=self)
-        self.command_line.listener_signal.connect(self.message_area.listeners_slot)
+        list_signal = self.command_line.listener_signal
+        list_signal.connect(self.message_area.listeners_slot)
 
         # create vertical layout to stack the textedit on top
         # of the `clear` button
@@ -26,4 +27,3 @@ class CentralWidget(QtWidgets.QWidget):
 
     def set_settings(self, settings):
         self.command_line.set_settings(settings)
-

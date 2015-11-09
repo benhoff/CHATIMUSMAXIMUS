@@ -1,5 +1,4 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
 from gui import CentralWidget, StatusBar
 
 

@@ -1,9 +1,7 @@
-import os
-import sys
 import asyncio
 
 from .website_plugin import WebsitePlugin
-import communication_protocols
+from communication_protocols import PATHS
 
 
 class Twitch(WebsitePlugin):
@@ -15,11 +13,11 @@ class Twitch(WebsitePlugin):
 
     def activate(self, settings):
         nick = settings['nick']
-        channel =  settings['channel']
+        channel = settings['channel']
         password = settings['oauth_token']
         host = 'irc.twitch.tv'
-        asyncio.ensure_future(self.start_subprocess(communication_protocols.PATHS['irc_path'],
-                              nick,
-                              password,
-                              host,
-                              channel))
+        asyncio.ensure_future(self.start_subprocess(PATHS['irc_path'],
+                                                    nick,
+                                                    password,
+                                                    host,
+                                                    channel))

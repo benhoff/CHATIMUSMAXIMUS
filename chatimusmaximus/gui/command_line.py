@@ -7,7 +7,9 @@ class LineEdit(QtWidgets.QLineEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.returnPressed.connect(self.return_pressed_slot)
-        self.setStyleSheet('color: white; font: demibold; font-size: 18px; border: 0px solid black;')
+        self.setStyleSheet("""color: white; font: demibold;
+                              font-size: 18px;
+                              border: 0px solid black;""")
 
     @QtCore.pyqtSlot()
     def return_pressed_slot(self):
@@ -22,8 +24,10 @@ class CommandLine(QtWidgets.QWidget):
         prompt = 'user@chatimus ~$'
 
         self.button = QtWidgets.QPushButton(prompt)
-        self.button.setStyleSheet('color: white; font: bold; outline: none; font-size: 18px;')
+        self.button.setStyleSheet("""color: white; font: bold;
+                                     font-size: 18px;""")
         # TODO: intergrate into stylesheet
+        # NOTE: setting `outline: None` did not work
         self.button.setFlat(True)
 
         self.line_edit = LineEdit()

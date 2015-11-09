@@ -1,10 +1,7 @@
-import os
-import sys
 import asyncio
-import subprocess
 
 from .website_plugin import WebsitePlugin
-from communication_protocols import ReadOnlyXMPPBot
+from communication_protocols import PATHS
 
 
 class Livecoding(WebsitePlugin):
@@ -21,18 +18,14 @@ class Livecoding(WebsitePlugin):
         domain = 'livecoding.tv'
         resource = 'CHATIMUSMAXIMUS'
         room = settings['room']
+        """
         if not room:
             room = '{}@chat.livecoding.tv'.format(jid.name)
-        path = os.path
+        """
 
-        xmpp_bot_path = path.realpath((os.path.join(os.path.dirname(__file__),
-                                          '..',
-                                          'communication_protocols',
-                                          'xmpp_client.py')))
-
-        asyncio.ensure_future(self.start_subprocess(xmpp_bot_path,
-                              local,
-                              domain,
-                              room,
-                              resource,
-                              password))
+        asyncio.ensure_future(self.start_subprocess(PATHS['xmpp_path'],
+                                                    local,
+                                                    domain,
+                                                    room,
+                                                    resource,
+                                                    password))
