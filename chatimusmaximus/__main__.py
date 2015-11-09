@@ -43,7 +43,7 @@ def main():
     listener_interface.collect_plugins(plugins)
 
     listener_list = listener_interface.get_instances()
-    main_window.central_widget.message_area.listeners = listener_list
+    #main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()
     try:
