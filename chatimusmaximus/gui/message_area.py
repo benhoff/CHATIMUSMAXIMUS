@@ -46,6 +46,9 @@ class MessageArea(QtWidgets.QTextEdit):
     def listeners_slot(self, sender, message):
         # strip the first word off of the message
         # keep the trailing sentence intact
+        if sender == 'command_line':
+            self._insert_and_format('User', message, 'listener')
+
         try:
             cmd, message = message.split(' ', maxsplit=1)
         except ValueError:

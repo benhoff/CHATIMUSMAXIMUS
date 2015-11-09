@@ -12,7 +12,7 @@ class LineEdit(QtWidgets.QLineEdit):
     @QtCore.pyqtSlot()
     def return_pressed_slot(self):
         # TODO: emit a platform
-        self.listener_signal.emit('', self.text())
+        self.listener_signal.emit('command_line', self.text())
         self.clear()
 
 
