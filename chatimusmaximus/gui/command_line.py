@@ -21,23 +21,25 @@ class CommandLine(QtWidgets.QWidget):
         super().__init__(parent)
         prompt = 'user@chatimus ~$'
 
-        self.label = QtWidgets.QPushButton(prompt)
-        self.label.setStyleSheet('color: white; font: bold; font-size: 18px;')
+        self.button = QtWidgets.QPushButton(prompt)
+        self.button.setStyleSheet('color: white; font: bold; outline: none; font-size: 18px;')
+        # TODO: intergrate into stylesheet
+        self.button.setFlat(True)
 
         self.line_edit = LineEdit()
         layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.label)
+        layout.addWidget(self.button)
         layout.addWidget(self.line_edit)
         layout.setSpacing(0)
         self.setLayout(layout)
 
         self.listener_signal = self.line_edit.listener_signal
-        self.label.clicked.connect(self.give_focus)
+        self.button.clicked.connect(self.give_focus)
 
     def set_settings(self, settings):
         prompt = settings['command_line']
         if not prompt == str():
-            self.label.setText(prompt)
+            self.button.setText(prompt)
 
     def give_focus(self):
         self.line_edit.setFocus()
