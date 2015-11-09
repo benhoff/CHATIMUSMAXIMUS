@@ -28,8 +28,7 @@ class MessageArea(QtWidgets.QTextEdit):
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.viewport().setAutoFillBackground(False)
-        listener_color = _StandardTextFormat(QtGui.QColor('blue'))
-        self.name_formats = {'listener': listener_color}
+        self.name_formats = {}
 
         self.listeners = []
         self.listeners_signal.connect(self.listeners_slot)

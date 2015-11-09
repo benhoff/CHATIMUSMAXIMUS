@@ -25,7 +25,12 @@ class MainWindow(QtWidgets.QMainWindow):
         msg_area.time_signal.connect(self.status_bar.time_label.setText)
 
     def set_settings(self, settings):
+        # alias for pep8
+        msg_area = self.central_widget.message_area
+
         display = settings.pop('display')
+        message_color = display.get('text_color', 'blue')
+        msg_area.set_color(message_color, 'listener')
         self.central_widget.set_settings(display)
         for key, setting in settings.items():
             display_settings = setting['display_settings']
