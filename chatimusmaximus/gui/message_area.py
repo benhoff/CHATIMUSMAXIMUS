@@ -1,6 +1,7 @@
+from os import path
 import re
 from datetime import datetime
-from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5 import QtWidgets, QtGui, QtCore, QtMultimedia
 from PyQt5.QtCore import Qt
 
 
@@ -33,6 +34,17 @@ class MessageArea(QtWidgets.QTextEdit):
         self.listeners = []
         self.listeners_signal.connect(self.listeners_slot)
         self.listener_commands = ['!']
+        sound_filepath = path.join(path.dirname(__file__),
+                                   'resources',
+                                   'click.wav')
+
+        # sound_filepath = path.abspath(sound_filepath)
+        sound_filepath = QtCore.QUrl.fromLocalFile(sound_filepath)
+        
+        self.sound = QtMultimedia.QSoundEffect()
+        self.sound.setSource(sound_filepath)
+        self.sound.setVolume(0.5)
+        self.sound.setLoopCount(1)
 
     def set_color(self, color, platform):
         QColor = QtGui.QColor
@@ -77,6 +89,7 @@ class MessageArea(QtWidgets.QTextEdit):
 
         message = message.lstrip()
         self._insert_and_format(sender, message, platform)
+        self.sound.play()
         # get scroll bar and set to maximum
         scroll_bar = self.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
