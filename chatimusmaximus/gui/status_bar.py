@@ -1,6 +1,7 @@
 import os
 from PyQt5 import QtWidgets, QtGui, QtCore
 
+
 class StatusBar(QtWidgets.QStatusBar):
     def __init__(self, parent=None):
         super(StatusBar, self).__init__(parent)

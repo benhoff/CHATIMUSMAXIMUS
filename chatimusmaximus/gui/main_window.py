@@ -1,7 +1,7 @@
-import os
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from gui import CentralWidget, StatusBar
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -12,11 +12,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(parent)
         # set title window to `CHATIMUSMAXIMUS`
         self.setWindowTitle("CHATIMUSMAXIMUS")
-        # tried to set the background to be transparent
-        # does not work without a compositor in Linux
-        self.setAttribute(Qt.WA_NoSystemBackground)
-        self.setStyleSheet('background: transparent;')
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setStyleSheet('background: black;')
         # Create the central widget
         self.central_widget = CentralWidget(parent=self)
         self.setCentralWidget(self.central_widget)
@@ -24,12 +20,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status_bar = StatusBar(parent=self)
         self.setStatusBar(self.status_bar)
 
-        self.central_widget.message_area.time_signal.connect(self.status_bar.time_label.setText)
+        # alias for pep8
+        msg_area = self.central_widget.message_area
+        msg_area.time_signal.connect(self.status_bar.time_label.setText)
 
     def set_settings(self, settings):
+        display = settings.pop('display')
+        self.central_widget.set_settings(display)
         for key, setting in settings.items():
             display_settings = setting['display_settings']
             if display_settings['display_missing']:
                 self.status_bar.set_up_helper(key.title())
             if display_settings['text_color']:
-                self.central_widget.message_area.set_color(display_settings['text_color'], key)
+                # alias for pep8
+                msg_area = self.central_widget.message_area
+                msg_area.set_color(display_settings['text_color'], key)

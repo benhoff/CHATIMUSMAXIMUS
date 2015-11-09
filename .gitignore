@@ -1,6 +1,6 @@
 __pycache__
 scratch.py
-ENV*
+env
 *.swp
 settings.yml
 ghostdriver.log
