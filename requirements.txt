@@ -13,7 +13,7 @@ oauth2client==1.4.11
 parse==1.6.6
 pep8==1.5.7
 pluginmanager
-git+https://github.com/benhoff/plugins.git
+listenerplugins
 pyasn1==0.1.7
 pyasn1-modules==0.0.5
 pycares==1.0.0
