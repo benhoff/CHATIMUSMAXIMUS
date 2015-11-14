@@ -1,5 +1,6 @@
 import asyncio
 from PyQt5 import QtCore
+# import auth here
 
 class ListenerHandler(QtCore.QObject):
     listeners_signal = QtCore.pyqtSignal(str, str)
@@ -12,12 +13,18 @@ class ListenerHandler(QtCore.QObject):
     def handle_messages(self):
         while True:
             sender, message, platform = yield from self.queue.get()
-            if listeners:
-                # TODO: handle stuff
-                pass
+            # user = AUTH(sender, platform)
+            result = None
+            if self.listeners:
+                for listener in self.listeners:
+                    try:
+                        result = listener(message, user, self.authentication_function)
+                    except:
+                        pass
 
+            if result:
+                pass
     
     @QtCore.pyqtSlot(str, str)
     def listener_slot(self, sender, message, platform=None):
         self.queue.put((sender, message, platform))
-
