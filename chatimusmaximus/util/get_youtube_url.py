@@ -4,7 +4,7 @@ import httplib2
 from apiclient.discovery import build
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
-from oauth2client.tools import run_flow
+from oauth2client.tools import run_flow, argparser
 
 _YOUTUBE_API_SERVICE_NAME = 'youtube'
 _YOUTUBE_API_VERSION = 'v3'
@@ -20,7 +20,7 @@ def _youtube_authentication(client_filepath):
     storage = Storage("{}-oauth2.json".format(sys.argv[0]))
     credentials = storage.get()
     if credentials is None or credentials.invalid:
-        credentials = run_flow(flow, storage)
+        credentials = run_flow(flow, storage, argparser.parse_args())
         return build(_YOUTUBE_API_SERVICE_NAME,
                      _YOUTUBE_API_VERSION,
                      http=credentials.authorize(httplib2.Http()))
