@@ -12,7 +12,7 @@ import logging
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
-from __init__ import get_settings_helper, instantiate_plugin_manager
+from util import get_settings_helper, instantiate_plugin_manager
 
 
 def main():

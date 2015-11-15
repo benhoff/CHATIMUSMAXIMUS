@@ -1,4 +1,4 @@
-version: "0.0.3"
+version: "0.0.4"
 
 display:
     command_line: "user@chatimus ~$ "
@@ -41,6 +41,7 @@ youtube:
      # permenant landing page
     channel_id: ""
     youtube_url: ""
+    client_secrets_file: ""
     connect: false
 
     display_settings:
