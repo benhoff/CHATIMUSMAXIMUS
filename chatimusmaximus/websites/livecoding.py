@@ -11,8 +11,8 @@ class Livecoding(WebsitePlugin):
         self._xmpp_echo = None
 
     def activate(self, settings):
-        settings_nick = settings['bot_nick']
-        bot_nick = settings_nick if settings_nick != str() else 'EchoBot'
+        # settings_nick = settings['bot_nick']
+        # bot_nick = settings_nick if settings_nick != str() else 'EchoBot'
         password = settings['password']
         local = settings['name']
         domain = 'livecoding.tv'

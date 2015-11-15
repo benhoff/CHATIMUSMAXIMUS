@@ -42,7 +42,7 @@ def main():
     listener_interface = pluginmanager.PluginInterface()
     listener_interface.collect_plugins(plugins)
 
-    listener_list = listener_interface.get_instances()
+    listener_list = listener_interface.get_instances()  # flake8: noqa
     # main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()
