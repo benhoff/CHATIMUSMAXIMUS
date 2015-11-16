@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from gui import CentralWidget, StatusBar
+from gui import CentralWidget, StatusBar, MenuBar
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -22,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # alias for pep8
         msg_area = self.central_widget.message_area
         msg_area.time_signal.connect(self.status_bar.time_label.setText)
+        self.setMenuBar(MenuBar(parent=self))
 
     def set_settings(self, settings):
         # alias for pep8
