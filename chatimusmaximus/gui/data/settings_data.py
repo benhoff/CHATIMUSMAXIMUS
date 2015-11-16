@@ -6,6 +6,7 @@ def _to_list(object):
     else:
         return [object]
 
+
 class TreeItem(object):
     def __init__(self, data, parent=None, children=None):
         super().__init__()
@@ -30,15 +31,18 @@ class TreeItem(object):
             return self.parent.children.index(self)
         else:
             return 0
-def _return_tree(value, parent=None):
+
+
+def _return_tree(value, parent):
     if isinstance(value, dict):
         for key, val in value.items():
             top_level = TreeItem(key, parent)
-            child = _return_tree(value, top_level)
-            top_level.appendChild(child)
-            return top_level
+            parent.appendChild(top_level)
+
+            _return_tree(value, top_level)
     else:
-        return TreeItem(value, parent)
+        child = TreeItem(value, parent)
+        parent.appendChild(child)
 
 
 class SettingsData(TreeItem):
@@ -46,4 +50,4 @@ class SettingsData(TreeItem):
         super().__init__(None)
         self.root = self
         self.data = 'Settings'
-        self.appendChild(_return_tree(dictionary, self))
+        _return_tree(dictionary, self)
