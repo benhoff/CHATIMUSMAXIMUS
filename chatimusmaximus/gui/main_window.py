@@ -1,9 +1,10 @@
 from PyQt5 import QtWidgets
 from gui import CentralWidget, StatusBar, MenuBar
+from .models.settings_model import SettingsModel
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, settings: dict=None, parent=None):
         """
         MainWindow uses a QTextEdit to display chat
         """
@@ -22,9 +23,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # alias for pep8
         msg_area = self.central_widget.message_area
         msg_area.time_signal.connect(self.status_bar.time_label.setText)
-        self.setMenuBar(MenuBar(parent=self))
+        self.menu_bar = MenuBar(None, parent=self)
+        self.setMenuBar(self.menu_bar)
 
     def set_settings(self, settings):
+        # Store reference to settings in menu bar
+        self.menu_bar.settings = settings
+        self.settings = SettingsModel(settings_dict)
         # alias for pep8
         msg_area = self.central_widget.message_area
 

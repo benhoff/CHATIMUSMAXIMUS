@@ -1,5 +1,5 @@
 def _to_list(object):
-    if isinstance(object, basestring):
+    if isinstance(object, str):
         return [object]
     elif hasattr(object, '__iter__'):
         return [x for x in object]
@@ -33,13 +33,13 @@ class TreeItem(object):
             return 0
 
 
-def _return_tree(value, parent):
+def _populate_tree(value, parent):
     if isinstance(value, dict):
         for key, val in value.items():
             top_level = TreeItem(key, parent)
             parent.appendChild(top_level)
 
-            _return_tree(value, top_level)
+            _populate_tree(val, top_level)
     else:
         child = TreeItem(value, parent)
         parent.appendChild(child)
@@ -47,7 +47,6 @@ def _return_tree(value, parent):
 
 class SettingsData(TreeItem):
     def __init__(self, dictionary: dict):
-        super().__init__(None)
+        super().__init__('Settings')
         self.root = self
-        self.data = 'Settings'
-        _return_tree(dictionary, self)
+        _populate_tree(dictionary, self)

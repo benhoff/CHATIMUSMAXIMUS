@@ -18,6 +18,10 @@ class WebsitePlugin(QtCore.QObject):
         # TODO: change from `process` to `subprocess`
         self.process = None
 
+    def deactivate(self):
+        if self.process:
+            self.process.kill()
+
     async def start_subprocess(self, path_script, *args, **kwargs):
         self.process = await asyncio.create_subprocess_exec(
             sys.executable,

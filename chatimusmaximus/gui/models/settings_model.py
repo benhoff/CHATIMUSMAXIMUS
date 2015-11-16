@@ -4,7 +4,7 @@ from PyQt5 import QtCore
 class SettingsModel(QtCore.QAbstractItemModel):
     def __init__(self, data=None, parent=None):
         super().__init__(parent)
-        self._data = data
+        self.data_ = data
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if not self.hasIndex(row, column, parent):

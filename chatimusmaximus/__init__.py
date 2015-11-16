@@ -25,15 +25,6 @@ def instantiate_plugin_manager(settings):
         setting = settings[plugin.platform]
         has_values = validate_settings_not_blank(setting)
 
-        # NOTE: HACK
-        if (not has_values and
-                not setting['display_settings']['display_missing']):
-
-            # NOTE: plugin setting value is removed here
-            settings.pop(plugin.platfrom)
-            # log.info('Plugin {} not being used'.format(plugin_platform))
-            break
-
         # check to see if  are registered in plugins
         if has_values and setting['connect']:
             plugin.activate(setting)
