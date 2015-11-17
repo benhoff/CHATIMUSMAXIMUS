@@ -9,6 +9,7 @@ def _filter_website(platform_name, websites):
     for website in websites:
         if websites.platfrom == platform_name:
             return website
+    return None
 
 class PluginManager(QtCore.QObject):
     def __init__(self, parent=None):
@@ -23,7 +24,7 @@ class PluginManager(QtCore.QObject):
 
     def _get_website(self, website_name):
         website_filter = lambda x: _filter_website(website_name, x)
-        return self.website_plugins.get_instances(website_filter)[0]
+        return self.website_plugins.get_instances(website_filter)
     
     def activate_website(self, website_name: str, *args):
         website = self._get_website(website_name)
@@ -35,3 +36,13 @@ class PluginManager(QtCore.QObject):
             website.activate()
         else:
             website.deactivate()
+
+    def register_main_window(self, main_window):
+        websites = self.website_plugins.get_instances()
+        for website in websites:
+            website.chat_signal.connect(main_winow.chat_slot)
+
+    def terminate_plugins(self):
+        for chat in self.website_plugins.get_instances():
+            if chat.process:
+                chat.process.terminate()

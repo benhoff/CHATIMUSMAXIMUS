@@ -9,7 +9,6 @@ class SettingsManager(object):
         self.settings_model = SettingsModel(self.settings)
 
     def _get_settings_helper(self):
-
         main_dir = path.dirname(path.realpath(__file__))
         default_filepath = path.join(main_dir, 'default_settings.yml')
         user_filepath = path.join(main_dir, 'settings.yml')
@@ -34,3 +33,12 @@ class SettingsManager(object):
                 not settings_version[1] == default_version[1]):
             # TODO: add in logic to help user migrate changes
             print('Settings file has changed, please update {}'.format(filename))
+
+    def register_plugin_manager(self, plugin_manager):
+        self.settings_model.instantiate_website.connect(plugin_manager.activate_website)
+        self.settings_model.manage_website_state.connect(plugin_manager.change_website_state)
+
+    def register_main_window(self, main_window):
+        main_window.set_settings(self.settings_model)
+        self.settings_model.set_text_color_signal.connect(main_window.set_color)
+        self.settings_model.command_prompt_signal.connect(main_window.set_command_prompt)

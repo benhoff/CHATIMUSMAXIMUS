@@ -26,6 +26,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu_bar = MenuBar(parent=self)
         self.setMenuBar(self.menu_bar)
 
+    def set_color(self, platform, text_color):
+        pass
+
+    def set_command_prompt(self, prompt):
+        pass
+
     def set_settings(self, settings):
         settings_model = SettingsModel(settings)
         self.menu_bar.settings_model = settings_model 

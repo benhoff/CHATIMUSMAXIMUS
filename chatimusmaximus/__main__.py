@@ -29,20 +29,15 @@ def main():
     main_window = MainWindow()
     # plugins to include different websites (and listeners?)
     plugin_manager = PluginManager()
+    plugin_manager.register_main_window(main_window)
+
     # User Settings
     settings_manager = SettingsManager()
+    settings_manager.register_main_window(main_window)
+    settings_manager.register_plugin_manager(plugin_manager)
 
-    # need chat_slot to be able to add to add the chat signal
-    chat_slot = main_window.central_widget.message_area.chat_slot
 
-    settings = get_settings_helper()
-    # this methods also handles passing in values to websites
-
-    # connect the sockets signals to the GUI
-    for chat in chat_list:
-        chat.chat_signal.connect(chat_slot)
-        chat.connected_signal.connect(main_window.status_bar.set_widget_status)
-
+    # listeners handeled separatly for now
     listener_interface = pluginmanager.PluginInterface()
     listener_interface.collect_plugins(plugins)
 
@@ -54,9 +49,7 @@ def main():
         event_loop.run_forever()
     except KeyboardInterrupt:
         pass
-    for chat in chat_list:
-        if chat.process:
-            chat.process.terminate()
+    plugin_manager.terminate_plugins()
     event_loop.close()
     sys.exit()
 

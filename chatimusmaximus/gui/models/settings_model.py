@@ -9,6 +9,7 @@ class SettingsModel(QtCore.QAbstractItemModel):
     instantiate_website = QtCore.pyqtSignal(str, list)
     # website name, activate/deactivate
     manage_website_state = QtCore.pyqtSignal(str, bool)
+    show_website_missing(str, bool)
 
     def __init__(self, data=None, parent=None):
         super().__init__(parent)
