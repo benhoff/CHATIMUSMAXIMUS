@@ -23,20 +23,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # alias for pep8
         msg_area = self.central_widget.message_area
         msg_area.time_signal.connect(self.status_bar.time_label.setText)
-        self.menu_bar = MenuBar(None, parent=self)
+        self.menu_bar = MenuBar(parent=self)
         self.setMenuBar(self.menu_bar)
 
     def set_settings(self, settings):
-        # Store reference to settings in menu bar
-        self.menu_bar.settings = settings
-        self.settings = SettingsModel(settings_dict)
+        settings_model = SettingsModel(settings)
+        self.menu_bar.settings_model = settings_model 
+
         # alias for pep8
         msg_area = self.central_widget.message_area
 
-        display = settings.pop('display')
-        message_color = display.get('text_color', 'blue')
-        msg_area.set_color(message_color, 'listener')
-        self.central_widget.set_settings(display)
+        # message_color = display.get('text_color', 'blue')
+        # msg_area.set_color(message_color, 'listener')
+        # self.central_widget.set_settings(display)
         for key, setting in settings.items():
             display_settings = setting['display_settings']
             if display_settings['display_missing']:

@@ -2,6 +2,9 @@ from PyQt5 import QtCore
 
 
 class SettingsModel(QtCore.QAbstractItemModel):
+    command_prompt_signal = QtCore.pyqtSignal(str)
+    # color, website 
+    create_website = QtCore.pyqtSignal(str, str)
     def __init__(self, data=None, parent=None):
         super().__init__(parent)
         self.data_ = data

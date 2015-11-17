@@ -14,7 +14,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
 
 class MenuBar(QtWidgets.QMenuBar):
-    def __init__(self, settings_model, parent=None):
+    def __init__(self, settings_model=None, parent=None):
         super(MenuBar, self).__init__(parent)
         self.setStyleSheet('color: white;')
         file_menu = QtWidgets.QMenu('File', parent=self)

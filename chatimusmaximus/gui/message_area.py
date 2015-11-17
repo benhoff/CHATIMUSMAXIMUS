@@ -34,6 +34,9 @@ class MessageArea(QtWidgets.QTextEdit):
         self.listeners_signal.connect(self.listeners_slot)
         self.listener_commands = ['!']
 
+    def set_settings(self, settings_model):
+        settings_model.create_platform.connect(self.set_color)
+
     def set_color(self, color, platform):
         QColor = QtGui.QColor
         if platform in self.name_formats:

@@ -25,5 +25,5 @@ class CentralWidget(QtWidgets.QWidget):
         vertical_layout.addWidget(self.command_line)
         self.setLayout(vertical_layout)
 
-    def set_settings(self, settings):
-        self.command_line.set_settings(settings)
+    def set_settings(self, settings_model):
+        self.command_line.set_settings(settings_model)
