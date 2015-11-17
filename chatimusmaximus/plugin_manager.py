@@ -1,16 +1,37 @@
 from PyQt5 import QtCore
 import pluginmanager
-import websites
+from pluginmanager import module_filters
 
+import websites
+from websites.website_plugin import WebsitePlugin
+
+def _filter_website(platform_name, websites):
+    for website in websites:
+        if websites.platfrom == platform_name:
+            return website
 
 class PluginManager(QtCore.QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.website_interface = pluginmanager.PluginInterface()
-        self.website_interface.collect_plugins(websites)
+        # create the website plugin manager
+        self.website_plugins = pluginmanager.PluginInterface()
+        # website plugins only `WebsitePlugin` class
+        subclass_filter = module_filters.SubclassParser(WebsitePlugin)
+        self.website_plugins.module_manager.set_module_filters(subclass_filter)
+
+        self.website_plugins.collect_plugins(websites)
+
+    def _get_website(self, website_name):
+        website_filter = lambda x: _filter_website(website_name, x)
+        return self.website_plugins.get_instances(website_filter)[0]
     
     def activate_website(self, website_name: str, *args):
-        pass
+        website = self._get_website(website_name)
+        website.activate(*args)
 
     def change_website_state(self, website_name: str, state: bool):
-        pass
+        website = self._get_website(website_name)
+        if state:
+            website.activate()
+        else:
+            website.deactivate()

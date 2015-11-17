@@ -8,6 +8,8 @@ import pluginmanager
 import plugins
 
 from gui import MainWindow
+from .plugin_manager import PluginManager
+from .settings_manager import SettingsManager
 import logging
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -16,23 +18,25 @@ from __init__ import get_settings_helper, instantiate_plugin_manager
 
 
 def main():
-    # create the GUI
+    # create the Application
     app = QtWidgets.QApplication(sys.argv)
 
     # create the event loop
     event_loop = QEventLoop(app)
     asyncio.set_event_loop(event_loop)
 
+    # Create the Gui
     main_window = MainWindow()
+    # plugins to include different websites (and listeners?)
+    plugin_manager = PluginManager()
+    # User Settings
+    settings_manager = SettingsManager()
 
     # need chat_slot to be able to add to add the chat signal
     chat_slot = main_window.central_widget.message_area.chat_slot
 
     settings = get_settings_helper()
     # this methods also handles passing in values to websites
-    plugin_manager = instantiate_plugin_manager(settings)
-    main_window.set_settings(settings)
-    chat_list = plugin_manager.get_instances()
 
     # connect the sockets signals to the GUI
     for chat in chat_list:
