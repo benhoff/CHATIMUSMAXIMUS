@@ -37,7 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
     @settings_model.setter
     def settings_model(self, model):
         self._settings_model = model
-        self.menu_bar.settings_model = settings_model 
+        self.menu_bar.settings_model = model
 
     def set_color(self, platform, text_color):
         msg = self.central_widget.message_area

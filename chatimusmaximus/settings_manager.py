@@ -14,7 +14,7 @@ class SettingsManager(object):
         user_filepath = path.join(main_dir, 'settings.yml')
 
         # open the default file and get version information
-        with open(default_filename) as default_filestream:
+        with open(default_filepath) as default_filestream:
             default_filesettings = yaml.load(default_filestream)
 
         current_version = default_filesettings['version'].split('.')
@@ -28,9 +28,9 @@ class SettingsManager(object):
             self.settings = yaml.load(setting_file)
 
         # get the settings version out and split on the `.` operator
-        settings_version = settings.pop('version').split('.')
-        if (not settings_version[0] == default_version[0] or
-                not settings_version[1] == default_version[1]):
+        settings_version = self.settings.pop('version').split('.')
+        if (not settings_version[0] == current_version[0] or
+                not settings_version[1] == current_version[1]):
             # TODO: add in logic to help user migrate changes
             print('Settings file has changed, please update {}'.format(filename))
 

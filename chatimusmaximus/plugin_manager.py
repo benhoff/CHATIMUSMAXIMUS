@@ -41,7 +41,7 @@ class PluginManager(QtCore.QObject):
         websites = self.website_plugins.get_instances()
         for website in websites:
             website.chat_signal.connect(main_window.chat_slot)
-            website.connected_signal.connect(main_window.set_widget_status)
+            website.connected_signal.connect(main_window.set_widget_state)
 
     def terminate_plugins(self):
         for chat in self.website_plugins.get_instances():
