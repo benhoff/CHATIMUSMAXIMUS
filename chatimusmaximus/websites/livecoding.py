@@ -22,9 +22,9 @@ class Livecoding(WebsitePlugin):
         if not room:
             room = '{}@chat.livecoding.tv'.format(jid.name)
         """
-        self.password = password if password
-        self.local = local if local
-        self.room = room if room
+        self.password = password if password else self.password
+        self.local = local if local else self.password
+        self.room = room if room else self.room
 
         asyncio.ensure_future(self.start_subprocess(PATHS['xmpp_path'],
                                                     self.local,

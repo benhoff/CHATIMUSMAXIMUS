@@ -8,13 +8,12 @@ import pluginmanager
 import plugins
 
 from gui import MainWindow
-from .plugin_manager import PluginManager
-from .settings_manager import SettingsManager
+from plugin_manager import PluginManager
+from settings_manager import SettingsManager
 import logging
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
-from __init__ import get_settings_helper, instantiate_plugin_manager
 
 
 def main():

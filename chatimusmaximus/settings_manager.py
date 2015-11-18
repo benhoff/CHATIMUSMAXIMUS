@@ -1,6 +1,6 @@
 from os import path
 import yaml
-from .gui.models.settings_model import SettingsModel
+from gui.models.settings_model import SettingsModel
 
 class SettingsManager(object):
     def __init__(self):
@@ -35,10 +35,15 @@ class SettingsManager(object):
             print('Settings file has changed, please update {}'.format(filename))
 
     def register_plugin_manager(self, plugin_manager):
-        self.settings_model.instantiate_website.connect(plugin_manager.activate_website)
-        self.settings_model.manage_website_state.connect(plugin_manager.change_website_state)
+        f = self.settings_model.instantiate_website
+        f.connect(plugin_manager.activate_website)
+
+        f = self.settings_model.manage_website_state
+        f.connect(plugin_manager.change_website_state)
 
     def register_main_window(self, main_window):
-        main_window.set_settings(self.settings_model)
+        main_window.settings_model = self.settings_model
         self.settings_model.set_text_color_signal.connect(main_window.set_color)
-        self.settings_model.command_prompt_signal.connect(main_window.set_command_prompt)
+
+        f = self.settings_model.command_prompt_signal
+        f.connect(main_window.set_command_prompt)
