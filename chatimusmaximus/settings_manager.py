@@ -1,12 +1,14 @@
 from os import path
 import yaml
 from gui.models.settings_model import SettingsModel
+from gui.data.settings_data import SettingsData
 
 class SettingsManager(object):
     def __init__(self):
         self.settings = None
         self._get_settings_helper()
-        self.settings_model = SettingsModel(self.settings)
+        self.gui_data = SettingsData(self.settings)
+        self.settings_model = SettingsModel(self.gui_data)
 
     def _get_settings_helper(self):
         main_dir = path.dirname(path.realpath(__file__))
