@@ -38,7 +38,7 @@ class TreeItem(object):
 
 def _populate_tree(value, parent):
     if isinstance(value, dict):
-        for key, val in value.items():
+        for key, val in sorted(value.items()):
             top_level = TreeItem(key, parent)
             parent.appendChild(top_level)
             _populate_tree(val, top_level)
