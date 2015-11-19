@@ -6,6 +6,7 @@ class SettingsDialog(QtWidgets.QDialog):
     def __init__(self, model, parent=None):
         super().__init__(parent)
         self.setWindowTitle('CHATIMUS Settings')
+        self.setStyleSheet('background: black; color: white;')
         ok_button = QtWidgets.QPushButton('Ok')
         cancel_button = QtWidgets.QPushButton('Cancel')
         apply_button = QtWidgets.QPushButton('Apply')
