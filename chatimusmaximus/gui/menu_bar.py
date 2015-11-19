@@ -5,16 +5,20 @@ from PyQt5 import QtWidgets, QtCore
 class SettingsDialog(QtWidgets.QDialog):
     def __init__(self, model, parent=None):
         super().__init__(parent)
+        self.setWindowTitle('CHATIMUS Settings')
         ok_button = QtWidgets.QPushButton('Ok')
         cancel_button = QtWidgets.QPushButton('Cancel')
         apply_button = QtWidgets.QPushButton('Apply')
         layout = QtWidgets.QVBoxLayout()
         tree_view = QtWidgets.QTreeView()
+        tree_view.setHeaderHidden(True)
         tree_view.setModel(model)
+        tree_view.resizeColumnToContents(0)
         layout.addWidget(tree_view)
         layout.addWidget(ok_button)
         layout.addWidget(cancel_button)
         layout.addWidget(apply_button)
+        
 
         ok_button.clicked.connect(self.done)
         apply_button.clicked.connect(self.accept)

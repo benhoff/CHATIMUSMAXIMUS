@@ -30,10 +30,11 @@ class SettingsModel(QtCore.QAbstractItemModel):
             return self.createIndex(row, column, child_item)
         else:
             return QtCore.QModelIndex()
-    
-    """
+    """ 
     def flags(self, index):
-        pass
+        flags = super().flags(index)
+        if not index.isValid():
+            return flags
     """
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
@@ -50,11 +51,9 @@ class SettingsModel(QtCore.QAbstractItemModel):
 
         parent_item = child_item.parent
         
-        # TODO: verify if this works
         if parent_item == self.data_.root:
             return QtCore.QModelIndex()
-    
-        # TODO: verify that this works
+
         return self.createIndex(parent_item.row(), 0, parent_item)
 
     def rowCount(self, parent=QtCore.QModelIndex()):
@@ -66,11 +65,11 @@ class SettingsModel(QtCore.QAbstractItemModel):
             parent_item = parent.internalPointer()
         return parent_item.childCount()
 
+
     def columnCount(self, parent=QtCore.QModelIndex()):
-        if parent and parent.isValid():
-            return parent.internalPointer().columnCount()
-        else:
-            return 1
+        if parent.column() > 0:
+            return 0
+        return 2
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if not index.isValid():
@@ -80,5 +79,7 @@ class SettingsModel(QtCore.QAbstractItemModel):
 
         if not role == QtCore.Qt.DisplayRole:
             return
-
-        return item.data(index.column())
+        try:
+            return item.data(index.column())
+        except IndexError:
+            return

@@ -12,7 +12,10 @@ class TreeItem(object):
         super().__init__()
         self.parent = parent
         self.item_data = _to_list(data)
-        self.children = _to_list(children)
+        if children:
+            self.children = _to_list(children)
+        else:
+            self.children = []
 
     def appendChild(self, child):
         self.children.append(child)
@@ -32,17 +35,14 @@ class TreeItem(object):
         else:
             return 0
 
-
 def _populate_tree(value, parent):
     if isinstance(value, dict):
         for key, val in value.items():
             top_level = TreeItem(key, parent)
             parent.appendChild(top_level)
-
             _populate_tree(val, top_level)
     else:
-        child = TreeItem(value, parent)
-        parent.appendChild(child)
+        parent.item_data.append(value)
 
 
 class SettingsData(TreeItem):
