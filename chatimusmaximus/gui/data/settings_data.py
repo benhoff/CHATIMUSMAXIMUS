@@ -1,3 +1,6 @@
+from PyQt5 import QtCore
+
+
 def _to_list(object):
     if isinstance(object, str):
         return [object]
@@ -12,6 +15,7 @@ class TreeItem(object):
         super().__init__()
         self.parent = parent
         self.item_data = _to_list(data)
+        self.item_flags = []
         if children:
             self.children = _to_list(children)
         else:
@@ -44,6 +48,8 @@ def _populate_tree(value, parent):
             _populate_tree(val, top_level)
     else:
         parent.item_data.append(value)
+        parent.item_flags.append(QtCore.Qt.ItemIsEnabled)
+        parent.item_flags.append(QtCore.Qt.ItemIsEnabled| QtCore.Qt.ItemIsEditable)
 
 
 class SettingsData(TreeItem):
