@@ -8,6 +8,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.setWindowTitle('CHATIMUS Settings')
         self.setStyleSheet('background: black; color: white;')
         ok_button = QtWidgets.QPushButton('Ok')
+        ok_button.setDefault(True)
         cancel_button = QtWidgets.QPushButton('Cancel')
         apply_button = QtWidgets.QPushButton('Apply')
         layout = QtWidgets.QVBoxLayout()
@@ -16,13 +17,19 @@ class SettingsDialog(QtWidgets.QDialog):
         tree_view.setModel(model)
         tree_view.resizeColumnToContents(0)
         layout.addWidget(tree_view)
-        layout.addWidget(ok_button)
-        layout.addWidget(cancel_button)
-        layout.addWidget(apply_button)
+
+        horizontal_button_widget = QtWidgets.QWidget()
+        horizontal_layout = QtWidgets.QHBoxLayout()
+        horizontal_layout.addWidget(ok_button)
+        horizontal_layout.addWidget(cancel_button)
+        horizontal_layout.addWidget(apply_button)
+        horizontal_button_widget.setLayout(horizontal_layout)
+
+        layout.addWidget(horizontal_button_widget)
 
         ok_button.clicked.connect(self.done)
-        apply_button.clicked.connect(self.accept)
         cancel_button.clicked.connect(self.reject)
+        # TODO: add in apply button connection
 
         self.setLayout(layout)
 
