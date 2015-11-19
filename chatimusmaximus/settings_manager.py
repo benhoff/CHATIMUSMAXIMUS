@@ -3,6 +3,7 @@ import yaml
 from gui.models.settings_model import SettingsModel
 from gui.data.settings_data import SettingsData
 
+
 class SettingsManager(object):
     def __init__(self):
         self.settings = None
@@ -22,9 +23,9 @@ class SettingsManager(object):
         current_version = default_filesettings['version'].split('.')
 
         if path.exists(user_filepath):
-            filepath = user_filepath 
+            filepath = user_filepath
         else:
-            filepath = default_filepath 
+            filepath = default_filepath
 
         with open(filepath) as setting_file:
             self.settings = yaml.load(setting_file)
@@ -34,7 +35,7 @@ class SettingsManager(object):
         if (not settings_version[0] == current_version[0] or
                 not settings_version[1] == current_version[1]):
             # TODO: add in logic to help user migrate changes
-            print('Settings file has changed, please update {}'.format(filename))
+            print('Settings file changed, please update {}'.format(filepath))
 
     def register_plugin_manager(self, plugin_manager):
         f = self.settings_model.instantiate_website
@@ -45,7 +46,8 @@ class SettingsManager(object):
 
     def register_main_window(self, main_window):
         main_window.settings_model = self.settings_model
-        self.settings_model.set_text_color_signal.connect(main_window.set_color)
+        f = self.settings_model.set_text_color_signal
+        f.connect(main_window.set_color)
 
         f = self.settings_model.command_prompt_signal
         f.connect(main_window.set_command_prompt)

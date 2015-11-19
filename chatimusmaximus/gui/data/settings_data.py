@@ -35,6 +35,7 @@ class TreeItem(object):
         else:
             return 0
 
+
 def _populate_tree(value, parent):
     if isinstance(value, dict):
         for key, val in value.items():

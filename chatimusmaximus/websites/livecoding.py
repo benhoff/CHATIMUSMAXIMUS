@@ -11,8 +11,8 @@ class Livecoding(WebsitePlugin):
         self.domain = 'livecoding.tv'
         self.resource = 'CHATIMUSMAXIMUS'
 
-        self.password = None 
-        self.local = None 
+        self.password = None
+        self.local = None
         self.room = None
 
     def activate(self, password=None, local=None, room=None):

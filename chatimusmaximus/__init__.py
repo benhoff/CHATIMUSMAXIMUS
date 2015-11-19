@@ -1,8 +1,3 @@
-import os
-
-import pluginmanager
-
-
 def validate_settings_not_blank(setting):
     settings_have_values = False
     for key, value in setting.items():

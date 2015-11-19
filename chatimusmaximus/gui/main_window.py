@@ -1,6 +1,5 @@
 from PyQt5 import QtWidgets
 from gui import CentralWidget, StatusBar, MenuBar
-from .models.settings_model import SettingsModel
 
 
 class MainWindow(QtWidgets.QMainWindow):

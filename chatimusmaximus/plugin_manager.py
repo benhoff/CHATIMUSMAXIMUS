@@ -3,13 +3,17 @@ import pluginmanager
 from pluginmanager import module_filters
 
 import websites
+
+
 from websites.website_plugin import WebsitePlugin
+
 
 def _filter_website(platform_name, websites):
     for website in websites:
         if websites.platfrom == platform_name:
             return website
     return None
+
 
 class PluginManager(QtCore.QObject):
     def __init__(self, parent=None):
@@ -25,7 +29,7 @@ class PluginManager(QtCore.QObject):
     def _get_website(self, website_name):
         website_filter = lambda x: _filter_website(website_name, x)
         return self.website_plugins.get_instances(website_filter)
-    
+
     def activate_website(self, website_name: str, *args):
         website = self._get_website(website_name)
         website.activate(*args)

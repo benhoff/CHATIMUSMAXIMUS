@@ -18,14 +18,12 @@ class SettingsDialog(QtWidgets.QDialog):
         layout.addWidget(ok_button)
         layout.addWidget(cancel_button)
         layout.addWidget(apply_button)
-        
 
         ok_button.clicked.connect(self.done)
         apply_button.clicked.connect(self.accept)
         cancel_button.clicked.connect(self.reject)
-        
-        self.setLayout(layout)
 
+        self.setLayout(layout)
 
 
 class MenuBar(QtWidgets.QMenuBar):
@@ -37,7 +35,7 @@ class MenuBar(QtWidgets.QMenuBar):
         file_menu.addAction('Exit', self._stop_action_loop)
         self.addMenu(file_menu)
         self.settings_model = settings_model
-    
+
     @QtCore.pyqtSlot()
     def _stop_action_loop(self):
         asyncio.get_event_loop().stop()

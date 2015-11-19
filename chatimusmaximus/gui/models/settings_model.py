@@ -30,7 +30,7 @@ class SettingsModel(QtCore.QAbstractItemModel):
             return self.createIndex(row, column, child_item)
         else:
             return QtCore.QModelIndex()
-    """ 
+    """
     def flags(self, index):
         flags = super().flags(index)
         if not index.isValid():
@@ -50,7 +50,7 @@ class SettingsModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
 
         parent_item = child_item.parent
-        
+
         if parent_item == self.data_.root:
             return QtCore.QModelIndex()
 
@@ -64,7 +64,6 @@ class SettingsModel(QtCore.QAbstractItemModel):
         else:
             parent_item = parent.internalPointer()
         return parent_item.childCount()
-
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         if parent.column() > 0:
