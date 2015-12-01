@@ -45,6 +45,7 @@ class SettingsManager(object):
         f.connect(plugin_manager.change_website_state)
 
     def register_main_window(self, main_window):
+        main_window.set_settings(self.settings)
         main_window.settings_model = self.settings_model
         f = self.settings_model.set_text_color_signal
         f.connect(main_window.set_color)

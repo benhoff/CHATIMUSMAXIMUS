@@ -29,6 +29,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu_bar = MenuBar(parent=self)
         self.setMenuBar(self.menu_bar)
 
+    def set_settings(self, settings):
+        msg_area = self.central_widget.message_area
+
+        display = settings.pop('display')
+        message_color = display.get('text_color', 'blue')
+        self.set_color(message_color, 'listener')
+        self.central_widget.set_settings(display)
+        for key, setting in settings.items():
+            display_settings = setting['display_settings']
+            if display_settings['display_missing']:
+                self.status_bar.set_up_helper(key.title())
+            if display_settings['text_color']:
+                self.set_color(display_settings['text_color'], key)
+
     @property
     def settings_model(self):
         return self._settings_model

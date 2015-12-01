@@ -3,8 +3,6 @@ import pluginmanager
 from pluginmanager import module_filters
 
 import websites
-
-
 from websites.website_plugin import WebsitePlugin
 
 
