@@ -39,6 +39,11 @@ class TreeItem(object):
         else:
             return 0
 
+    def get_child_by_value(self, value):
+        for child in self.children:
+            if value in child.item_data:
+                return child
+
 
 def _populate_tree(value, parent):
     if isinstance(value, dict):
@@ -55,5 +60,6 @@ def _populate_tree(value, parent):
 class SettingsData(TreeItem):
     def __init__(self, dictionary: dict):
         super().__init__('Settings')
+        self._data_dict = dictionary
         self.root = self
         _populate_tree(dictionary, self)

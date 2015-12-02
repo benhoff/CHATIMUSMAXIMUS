@@ -3,6 +3,15 @@ import yaml
 from gui.models.settings_model import SettingsModel
 from gui.data.settings_data import SettingsData
 
+def _validate_settings_not_blank(setting):
+    settings_have_values = False
+    for key, value in setting.items():
+        if value == str() or key == 'display_settings' or key == 'connect':
+            pass
+        else:
+            settings_have_values = True
+            break
+    return settings_have_values
 
 class SettingsManager(object):
     def __init__(self):
@@ -38,6 +47,18 @@ class SettingsManager(object):
             print('Settings file changed, please update {}'.format(filepath))
 
     def register_plugin_manager(self, plugin_manager):
+        # FIXME: Hack
+        plugins = plugin_manager.website_plugins.get_plugins()
+        for plugin in plugins:
+            setting = self.settings[plugin.platform]
+            has_values = _validate_settings_not_blank(setting)
+            if (not has_values and 
+                    not setting['display_settings']['display_missing']):
+                self.settings.pop(plugin.platform)
+                break
+            if has_values and setting['connect']:
+                plugin.activate(setting)
+
         f = self.settings_model.instantiate_website
         f.connect(plugin_manager.activate_website)
 
