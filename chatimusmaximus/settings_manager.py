@@ -4,6 +4,7 @@ from operator import itemgetter
 import yaml
 from gui.models.settings_model import SettingsModel
 
+
 class _OrderedLoader(yaml.Loader):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -13,6 +14,7 @@ def _construct_mapping(loader, node):
     loader.flatten_mapping(node)
     result = OrderedDict(sorted(loader.construct_pairs(node), key=itemgetter(0)))
     return result
+
 
 _OrderedLoader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
@@ -29,11 +31,13 @@ def _validate_settings_not_blank(setting):
             break
     return settings_have_values
 
+
 def _append_parent_attribute(data: OrderedDict):
     for child in data.values():
         if isinstance(child, OrderedDict):
             child.parent = data
             _append_parent_attribute(child)
+
 
 class SettingsManager(object):
     def __init__(self):

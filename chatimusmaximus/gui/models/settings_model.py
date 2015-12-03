@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from PyQt5 import QtCore
 
 
@@ -11,23 +12,33 @@ class SettingsModel(QtCore.QAbstractItemModel):
     manage_website_state = QtCore.pyqtSignal(str, bool)
     show_website_missing = QtCore.pyqtSignal(str, bool)
 
-    def __init__(self, data=None, parent=None):
+    def __init__(self, root_data=None, parent=None):
         super().__init__(parent)
-        self.data_ = data
+        self.root = root_data
+        self.root.parent = QtCore.QModelIndex()
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if not self.hasIndex(row, column, parent):
             return QtCore.QModelIndex()
 
         if not parent.isValid():
-            parent_item = self.data_.root
+            parent_item = self.root
         else:
+            # should be an ordered dict
             parent_item = parent.internalPointer()
+        try:
+            child = list(parent_item.keys())[row]
+        except IndexError:
+            child = None
 
-        child_item = parent_item.children[row]
+        # want index instances to be a ordered dict
+        if isinstance(child, str):
+            child = parent_item
 
-        if child_item:
-            return self.createIndex(row, column, child_item)
+        if child:
+            index = self.createIndex(row, column, child)
+            child.index = index
+            return index
         else:
             return QtCore.QModelIndex()
 
@@ -36,38 +47,44 @@ class SettingsModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return flags
         item = index.internalPointer()
-        if not item.item_flags:
+        try:
+            if not item.item_flags:
+                return flags
+            else:
+                return item.item_flags[index.column()]
+        except AttributeError:
             return flags
-        else:
-            return item.item_flags[index.column()]
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
-        if not value:
-            return False
+        pass
 
     def parent(self, index):
         if not index.isValid():
             return QtCore.QModelIndex()
 
         child_item = index.internalPointer()
-        if not child_item:
+        if child_item == self.root:
             return QtCore.QModelIndex()
 
         parent_item = child_item.parent
 
-        if parent_item == self.data_.root:
+        if parent_item == self.root:
             return QtCore.QModelIndex()
 
-        return self.createIndex(parent_item.row(), 0, parent_item)
+        row = list(parent_item.values()).index(child_item)
+
+        index = self.createIndex(row, 0, parent_item)
+        parent_item.index = index
+        return index
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         if parent.column() > 0:
             return True
         if not parent.isValid():
-            parent_item = self.data_.root
+            parent_item = self.root
         else:
             parent_item = parent.internalPointer()
-        return parent_item.childCount()
+        return len(parent_item.values())
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         if parent.column() > 0:
@@ -77,11 +94,14 @@ class SettingsModel(QtCore.QAbstractItemModel):
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if not index.isValid():
             return
-
-        item = index.internalPointer()
         if not role == QtCore.Qt.DisplayRole and not role == QtCore.Qt.EditRole:
             return
-        try:
-            return item.data(index.column())
-        except IndexError:
-            return
+        row = index.row()
+        column = index.column()
+        item = index.internalPointer()
+
+        key = list(item.keys())[row]
+        if column == 0:
+            return key 
+        else:
+            return item[key]
