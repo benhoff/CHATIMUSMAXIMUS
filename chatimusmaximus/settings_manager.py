@@ -1,7 +1,23 @@
 from os import path
+from collections import OrderedDict
+from operator import itemgetter
 import yaml
 from gui.models.settings_model import SettingsModel
-from gui.data.settings_data import SettingsData
+
+class _OrderedLoader(yaml.Loader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+def _construct_mapping(loader, node):
+    loader.flatten_mapping(node)
+    result = OrderedDict(sorted(loader.construct_pairs(node), key=itemgetter(0)))
+    return result
+
+_OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        _construct_mapping)
+
 
 def _validate_settings_not_blank(setting):
     settings_have_values = False
@@ -13,12 +29,19 @@ def _validate_settings_not_blank(setting):
             break
     return settings_have_values
 
+def _append_parent_attribute(data: OrderedDict):
+    for child in data.values():
+        if isinstance(child, OrderedDict):
+            child.parent = data
+            _append_parent_attribute(child)
+
 class SettingsManager(object):
     def __init__(self):
         self.settings = None
         self._get_settings_helper()
-        self.gui_data = SettingsData(self.settings)
-        self.settings_model = SettingsModel(self.gui_data)
+        self.settings.parent = None
+        _append_parent_attribute(self.settings)
+        self.settings_model = SettingsModel(self.settings)
 
     def _get_settings_helper(self):
         main_dir = path.dirname(path.realpath(__file__))
@@ -37,7 +60,7 @@ class SettingsManager(object):
             filepath = default_filepath
 
         with open(filepath) as setting_file:
-            self.settings = yaml.load(setting_file)
+            self.settings = yaml.load(setting_file, _OrderedLoader)
 
         # get the settings version out and split on the `.` operator
         settings_version = self.settings.pop('version').split('.')
