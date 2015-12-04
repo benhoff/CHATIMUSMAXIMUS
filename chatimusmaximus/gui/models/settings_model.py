@@ -15,7 +15,6 @@ class SettingsModel(QtCore.QAbstractItemModel):
     def __init__(self, root_data=None, parent=None):
         super().__init__(parent)
         self.root = root_data
-        self.root.parent = QtCore.QModelIndex()
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if not self.hasIndex(row, column, parent):
@@ -23,17 +22,22 @@ class SettingsModel(QtCore.QAbstractItemModel):
 
         if not parent.isValid():
             parent_item = self.root
+            key = list(parent_item.keys())[row]
         else:
-            # should be an ordered dict
             parent_item = parent.internalPointer()
-        try:
-            child = list(parent_item.keys())[row]
-        except IndexError:
-            child = None
+            print(parent_item)
+            key = list(parent_item.values())[row]
+
+        if column == 1:
+            child = parent_item[key]
+        else:
+            child = key
 
         # want index instances to be a ordered dict
         if isinstance(child, str):
             child = parent_item
+        else:
+            return QtCore.QModelIndex()
 
         if child:
             index = self.createIndex(row, column, child)
@@ -99,9 +103,14 @@ class SettingsModel(QtCore.QAbstractItemModel):
         row = index.row()
         column = index.column()
         item = index.internalPointer()
+        print(row, column, 'in data', item.keys(), len(item.keys()))
 
         key = list(item.keys())[row]
         if column == 0:
             return key 
         else:
-            return item[key]
+            value = item[key]
+            if isinstance(value, OrderedDict):
+                return None
+            else:
+                return value

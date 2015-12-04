@@ -15,16 +15,16 @@ class Livecoding(WebsitePlugin):
         self.local = None
         self.room = None
 
-    def activate(self, password=None, local=None, room=None):
+    def activate(self, settings):
         # settings_nick = settings['bot_nick']
         # bot_nick = settings_nick if settings_nick != str() else 'EchoBot'
         """
         if not room:
             room = '{}@chat.livecoding.tv'.format(jid.name)
         """
-        self.password = password if password else self.password
-        self.local = local if local else self.password
-        self.room = room if room else self.room
+        self.password = settings['password']
+        self.local = settings['name']
+        self.room = settings['room']
 
         asyncio.ensure_future(self.start_subprocess(PATHS['xmpp_path'],
                                                     self.local,

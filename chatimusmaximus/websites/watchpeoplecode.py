@@ -8,7 +8,7 @@ class WatchPeopleCode(WebsitePlugin):
     def __init__(self):
         super().__init__(platform='watchpeoplecode')
 
-    def activate(self, settings):
+    def activate(self, settings, **kwargs):
         streamer_name = settings['channel']
         namespace = '/chat'
         name = 'http://www.watchpeoplecode.com/socket.io/1/'
