@@ -15,6 +15,7 @@ class SettingsModel(QtCore.QAbstractItemModel):
     def __init__(self, root_data=None, parent=None):
         super().__init__(parent)
         self.root = root_data
+        self.root.parent = object()
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if not self.hasIndex(row, column, parent):
@@ -23,24 +24,22 @@ class SettingsModel(QtCore.QAbstractItemModel):
         if not parent.isValid():
             parent_item = self.root
             key = list(parent_item.keys())[row]
+            if column == 1:
+                child = parent_item[key]
+            else:
+                child = key
+            if isinstance(child, str):
+                child = parent_item
+            else:
+                return QtCore.QModelIndex()
         else:
             parent_item = parent.internalPointer()
-            print(parent_item)
-            key = list(parent_item.values())[row]
-
-        if column == 1:
-            child = parent_item[key]
-        else:
-            child = key
-
-        # want index instances to be a ordered dict
-        if isinstance(child, str):
-            child = parent_item
-        else:
-            return QtCore.QModelIndex()
+            child = list(parent_item.values())[row]
+            print(child, row, column)
 
         if child:
             index = self.createIndex(row, column, child)
+            print(id(index))
             child.index = index
             return index
         else:
@@ -71,10 +70,6 @@ class SettingsModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
 
         parent_item = child_item.parent
-
-        if parent_item == self.root:
-            return QtCore.QModelIndex()
-
         row = list(parent_item.values()).index(child_item)
 
         index = self.createIndex(row, 0, parent_item)
@@ -103,7 +98,9 @@ class SettingsModel(QtCore.QAbstractItemModel):
         row = index.row()
         column = index.column()
         item = index.internalPointer()
-        print(row, column, 'in data', item.keys(), len(item.keys()))
+        print(row, column, 'in data', item.keys(), len(item.keys()), id(index))
+        if row == len(item.keys()):
+            row = row - 1
 
         key = list(item.keys())[row]
         if column == 0:
