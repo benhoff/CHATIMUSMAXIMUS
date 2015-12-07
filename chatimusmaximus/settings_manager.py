@@ -12,13 +12,14 @@ class _OrderedLoader(yaml.Loader):
 
 def _construct_mapping(loader, node):
     loader.flatten_mapping(node)
-    result = OrderedDict(sorted(loader.construct_pairs(node), key=itemgetter(0)))
+    result = OrderedDict(sorted(loader.construct_pairs(node),
+                                key=itemgetter(0)))
+
     return result
 
 
-_OrderedLoader.add_constructor(
-        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-        _construct_mapping)
+_OrderedLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+                               _construct_mapping)
 
 
 def _validate_settings_not_blank(setting):
@@ -52,6 +53,7 @@ class SpecialDict(OrderedDict):
             return item
         else:
             return super().__getitem__(index)
+
 
 class SettingsManager(object):
     def __init__(self):

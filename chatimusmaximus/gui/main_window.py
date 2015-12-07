@@ -30,8 +30,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setMenuBar(self.menu_bar)
 
     def set_settings(self, settings):
-        msg_area = self.central_widget.message_area
-
         display = settings.get('display')
         message_color = display.get('text_color', 'blue')
         self.set_color(message_color, 'listener')

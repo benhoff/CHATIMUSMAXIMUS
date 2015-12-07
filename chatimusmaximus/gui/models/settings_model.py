@@ -1,6 +1,5 @@
 from collections import OrderedDict
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
 
 
 class SettingsModel(QtCore.QAbstractItemModel):
@@ -12,6 +11,7 @@ class SettingsModel(QtCore.QAbstractItemModel):
     # website name, activate/deactivate
     manage_website_state = QtCore.pyqtSignal(str, bool)
     show_website_missing = QtCore.pyqtSignal(str, bool)
+
     def __init__(self, data, parent=None):
         super().__init__(parent)
         self.root = data
