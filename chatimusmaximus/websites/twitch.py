@@ -11,7 +11,7 @@ class Twitch(WebsitePlugin):
         """
         super().__init__(platform='twitch')
 
-    def activate(self, settings, **kwargs):
+    def activate(self, settings):
         nick = settings['nick']
         channel = settings['channel']
         password = settings['oauth_token']

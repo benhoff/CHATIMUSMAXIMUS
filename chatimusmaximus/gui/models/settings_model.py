@@ -1,13 +1,7 @@
 from collections import OrderedDict
 from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 
-
-class Wrapper(object):
-    __slots__ = ('data', 'parent', 'index')
-    def __init__(self, data, parent, index=None):
-        self.data = data
-        self.parent = parent
-        self.index = index
 
 class SettingsModel(QtCore.QAbstractItemModel):
     command_prompt_signal = QtCore.pyqtSignal(str)
@@ -18,107 +12,112 @@ class SettingsModel(QtCore.QAbstractItemModel):
     # website name, activate/deactivate
     manage_website_state = QtCore.pyqtSignal(str, bool)
     show_website_missing = QtCore.pyqtSignal(str, bool)
-
-    def __init__(self, root_data=None, parent=None):
+    def __init__(self, data, parent=None):
         super().__init__(parent)
-        self.root = root_data
-        # wrappers stores references to all `Wrapper` instances so 
-        # we don't garbage collect them
-        self.indexes = {}
+        self.root = data
+        self.my_index = {}   # Needed to stop garbage collection
 
-    def index(self, row, column, parent=QtCore.QModelIndex()):
+    def index(self, row, column, parent):
+        """Returns QModelIndex to row, column in parent (QModelIndex)"""
         if not self.hasIndex(row, column, parent):
             return QtCore.QModelIndex()
-
         if parent.isValid():
-            parent_item = parent.internalPointer()
+            index_pointer = parent.internalPointer()
+            parent_dict = self.root[index_pointer]
         else:
-            parent_item = self.root
-        row_key = list(parent_item.keys())[row]
-        child = parent_item + (row_key,)
+            parent_dict = self.root
+            index_pointer = ()
+        row_key = list(parent_dict.keys())[row]
+        child_pointer = (index_pointer, row_key)
         try:
-            child =  self.indexes[child]
+            child_pointer = self.my_index[child_pointer]
         except KeyError:
-            self.indexes[child] = child
-        index = self.createIndex(row, column, child)
+            self.my_index[child_pointer] = child_pointer
+        index = self.createIndex(row, column, child_pointer)
         return index
 
-    def flags(self, index):
-        flags = super().flags(index)
-        return flags
-
-    def setData(self, index, value, role=QtCore.Qt.EditRole):
-        pass
-
-    def parent(self, index):
-        if not index.isValid():
-            return QtCore.QModelIndex()
-
-        child_item = index.internalPointer()
-        parent_key_list = child_item[:-1]
-        try:
-            parent = self.indexes[parent_key_list]
-        except KeyError:
-            self.indexes[parent_key_list] = parent_key_list
-        parent_item = child_item.parent
-        column = index.column()
-        if isinstance(child_item, Wrapper):
-            child_item = child_item.data
-            column = 0
-        if column == 0:
-            row = list(parent_item.keys()).index(child_item)
-        elif column == 1:
-            row = list(parent_item.values()).index(child_item)
-        else:
-            print("""column value not handeled in `parent` function in {}
-                    for {}""".format('SettingsModel', self))
-
-        index = self.createIndex(row, 0, parent_item)
-        parent_item.index = index
-        return index
-
-    def rowCount(self, parent=QtCore.QModelIndex()):
-        if not parent.isValid():
-            parent_item = self.root
-        else:
-            parent_item = parent.internalPointer()
-        if isinstance(parent_item, OrderedDict):
-            row = len(parent_item.values())
-        else:
-            row = 0
-        return row
-
-    def columnCount(self, parent=QtCore.QModelIndex()):
-        if not parent.isValid():
-            parent_item = self.root
-        else:
-            parent_item = parent.internalPointer()
-        if isinstance(parent_item, Wrapper):
-            return 1
-        elif isinstance(parent_item, OrderedDict):
-            return 2
+    def get_row(self, key):
+        """Returns the row of the given key (list of keys) in its parent"""
+        if key:
+            parent = key[:-1]
+            if not parent:
+                return 0
+            return list(self.root[parent].keys()).index(key[-1])
         else:
             return 0
 
-    def data(self, index, role=QtCore.Qt.DisplayRole):
+    def parent(self, index):
+        """
+        Returns the parent (QModelIndex) of the given item (QModelIndex)
+        Top level returns QModelIndex()
+        """
         if not index.isValid():
-            return
-        if not role == QtCore.Qt.DisplayRole and not role == QtCore.Qt.EditRole:
-            return
-        column = index.column()
-        item = index.internalPointer()
-        if isinstance(item, Wrapper):
-            if column == 0:
-                return item.data
-            else:
-                return None
-        row = index.row()
-        key = list(item.keys())[row]
-        print(row, key, column)
-        if column == 0:
-            return key
-        elif column == 1:
-            value = item[key]
-            return value
+            return QtCore.QModelIndex()
+        child_key_list = index.internalPointer()
+        if child_key_list:
+            parent_key_list = child_key_list[:-1]
+            try:
+                parent_key_list = self.my_index[parent_key_list]
+            except KeyError:
+                self.my_index[parent_key_list] = parent_key_list
+            return self.createIndex(self.get_row(parent_key_list), 0,
+                                    parent_key_list)
         else:
-            print('column value in data is: {}'.format(column))
+            return QtCore.QModelIndex()
+
+    def rowCount(self, parent):
+        """Returns number of rows in parent (QModelIndex)"""
+        if parent.column() > 0:
+            return 0    # only keys have children, not values
+        if parent.isValid():
+            indexPtr = parent.internalPointer()
+            parentValue = self.root[indexPtr]
+            if isinstance(parentValue, OrderedDict):
+                return len(self.root[indexPtr])
+            else:
+                return 0
+        else:
+            return len(self.root)
+
+    def columnCount(self, parent):
+        return 2  # Key & value
+
+    def data(self, index, role):
+        """Returns data for given role for given index (QModelIndex)"""
+        if not index.isValid():
+            return None
+        if role in (QtCore.Qt.DisplayRole, QtCore.Qt.EditRole):
+            indexPtr = index.internalPointer()
+            if index.column() == 1:    # Column 1, send the value
+                return self.root[indexPtr]
+            else:                   # Column 0, send the key
+                if indexPtr:
+                    return indexPtr[-1]
+                else:
+                    return None
+        else:  # Not display or Edit
+            return None
+
+    def setData(self, index, value, role):
+        """Sets the value of index in a given role"""
+        if not index.isValid():
+            return False
+        if not index.column():  # Only change column 1
+            return False
+        try:
+            ptr = index.internalPointer()
+            self.root[ptr[:-1]][ptr[-1]] = value
+            self.emit(self.dataChanged(index, index))
+            return True
+        except:
+            return False
+
+    def flags(self, index):
+        """Indicates what can be done with the data"""
+        flags = super().flags(index)
+        if not index.isValid():
+            return flags
+        if index.column():  # only enable editing of values, not keys
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable

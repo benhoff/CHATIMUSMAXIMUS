@@ -39,11 +39,24 @@ def _append_parent_attribute(data: OrderedDict):
             _append_parent_attribute(child)
 
 
+class SpecialDict(OrderedDict):
+    def __init__(self, *args, **kwargs):
+        super().__init__(sorted(kwargs.items()))
+
+    def __getitem__(self, index):
+        if isinstance(index, tuple):
+            item = self
+            for key in index:
+                if item != ():
+                    item = item[key]
+            return item
+        else:
+            return super().__getitem__(index)
+
 class SettingsManager(object):
     def __init__(self):
         self.settings = None
         self._get_settings_helper()
-        self.settings.parent = None
         _append_parent_attribute(self.settings)
         self.settings_model = SettingsModel(self.settings)
 
@@ -66,6 +79,8 @@ class SettingsManager(object):
         with open(filepath) as setting_file:
             self.settings = yaml.load(setting_file, _OrderedLoader)
 
+        self.settings = SpecialDict(**self.settings)
+
         # get the settings version out and split on the `.` operator
         settings_version = self.settings.pop('version').split('.')
         if (not settings_version[0] == current_version[0] or
@@ -79,7 +94,7 @@ class SettingsManager(object):
         for plugin in plugins:
             setting = self.settings[plugin.platform]
             has_values = _validate_settings_not_blank(setting)
-            if (not has_values and 
+            if (not has_values and
                     not setting['display_settings']['display_missing']):
                 self.settings.pop(plugin.platform)
                 break

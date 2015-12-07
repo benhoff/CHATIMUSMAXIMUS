@@ -8,7 +8,7 @@ class Youtube(WebsitePlugin):
     def __init__(self):
         super().__init__('youtube')
 
-    def activate(self, settings, **kwargs):
+    def activate(self, settings):
         url = None
         if 'youtube_url' in settings:
             url = settings['youtube_url']
