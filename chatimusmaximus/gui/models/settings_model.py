@@ -97,27 +97,3 @@ class SettingsModel(QtCore.QAbstractItemModel):
                     return None
         else:  # Not display or Edit
             return None
-
-    def setData(self, index, value, role):
-        """Sets the value of index in a given role"""
-        if not index.isValid():
-            return False
-        if not index.column():  # Only change column 1
-            return False
-        try:
-            ptr = index.internalPointer()
-            self.root[ptr[:-1]][ptr[-1]] = value
-            self.emit(self.dataChanged(index, index))
-            return True
-        except:
-            return False
-
-    def flags(self, index):
-        """Indicates what can be done with the data"""
-        flags = super().flags(index)
-        if not index.isValid():
-            return flags
-        if index.column():  # only enable editing of values, not keys
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
-        else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
