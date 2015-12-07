@@ -32,7 +32,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_settings(self, settings):
         display = settings.get('display')
         message_color = display.get('text_color', 'blue')
-        self.set_color(message_color, 'listener')
+        self.set_color('listener', message_color)
         self.central_widget.set_settings(display)
         for key, setting in settings.items():
             if key == 'display':
@@ -41,7 +41,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if display_settings['display_missing']:
                 self.status_bar.set_up_helper(key.title())
             if display_settings['text_color']:
-                self.set_color(display_settings['text_color'], key)
+                self.set_color(key, display_settings['text_color'])
 
     @property
     def settings_model(self):
