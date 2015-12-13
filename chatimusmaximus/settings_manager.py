@@ -95,8 +95,6 @@ class SettingsManager(object):
     def register_main_window(self, main_window):
         main_window.set_settings(self.settings)
         main_window.settings_model = self.settings_model
-        f = self.settings_model.set_text_color_signal
-        f.connect(main_window.set_color)
 
         f = self.settings_model.command_prompt_signal
         f.connect(main_window.set_command_prompt)
