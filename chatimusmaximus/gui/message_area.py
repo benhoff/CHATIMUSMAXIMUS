@@ -24,8 +24,9 @@ class MessageArea(QtWidgets.QTextEdit):
     def __init__(self, parent=None):
         super(MessageArea, self).__init__(parent)
         self.setReadOnly(True)
-        self.sender_format = _StandardTextFormat()
-        self.text_format = _StandardTextFormat(font=self.fontWeight())
+        self.sender_format = _StandardTextFormat(Qt.gray, self.fontWeight())
+        self.time_format = _StandardTextFormat(Qt.gray, self.fontWeight())
+        self.text_format = _StandardTextFormat()
 
         # styling
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -45,6 +46,9 @@ class MessageArea(QtWidgets.QTextEdit):
         document.addResource(QtGui.QTextDocument.ImageResource,
                 QtCore.QUrl(platform),
                 icon)
+
+    def set_font(self, font):
+        self.text_format.setFont(font)
 
     @QtCore.pyqtSlot(str, str)
     def listeners_slot(self, sender, message):
@@ -99,7 +103,7 @@ class MessageArea(QtWidgets.QTextEdit):
         if not platform == 'listener':
             cursor.insertImage(platform)
         cursor.setCharFormat(self.sender_format)
-        cursor.insertText(' {}: '.format(sender))
+        cursor.insertText(' {}'.format(sender))
         cursor.insertBlock()
         cursor.setCharFormat(self.text_format)
         cursor.insertText(message)
