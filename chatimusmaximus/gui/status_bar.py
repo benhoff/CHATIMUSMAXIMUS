@@ -6,7 +6,7 @@ class StatusBar(QtWidgets.QStatusBar):
     def __init__(self, parent=None):
         super(StatusBar, self).__init__(parent)
         file_dir = os.path.dirname(__file__)
-        resource_dir = os.path.join(file_dir, 'resources')
+        resource_dir = os.path.join(file_dir, 'resources', 'buttons')
         red_button = os.path.join(resource_dir, 'red_button.png')
         green_button = os.path.join(resource_dir, 'green_button.png')
 
