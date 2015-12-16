@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 
 
 class SettingsModel(QtCore.QAbstractItemModel):
@@ -19,22 +20,38 @@ class SettingsModel(QtCore.QAbstractItemModel):
 
     def index(self, row, column, parent):
         """Returns QModelIndex to row, column in parent (QModelIndex)"""
-        if not self.hasIndex(row, column, parent):
+        if parent.isValid() and parent.column() != 0:
             return QtCore.QModelIndex()
+
         if parent.isValid():
-            index_pointer = parent.internalPointer()
-            parent_dict = self.root[index_pointer]
+            parent_pointer = parent.internalPointer()
+            parent_dict = self.root[parent_pointer]
         else:
             parent_dict = self.root
-            index_pointer = ()
+            parent_pointer = ()
         row_key = list(parent_dict.keys())[row]
-        child_pointer = (index_pointer, row_key)
+        child_pointer = (*parent_pointer, row_key)
         try:
             child_pointer = self.my_index[child_pointer]
         except KeyError:
             self.my_index[child_pointer] = child_pointer
         index = self.createIndex(row, column, child_pointer)
         return index
+
+    def setData(self, index, value, role=Qt.EditRole):
+        pointer = self.my_index[index.internalPointer()]
+        self.root[pointer] = value
+        self.dataChanged.emit(index, index)
+        return True
+
+    def flags(self, index):
+        if not index.isValid():
+            return 0
+
+        if index.column() == 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def get_row(self, key):
         """Returns the row of the given key (list of keys) in its parent"""
@@ -56,12 +73,15 @@ class SettingsModel(QtCore.QAbstractItemModel):
         child_key_list = index.internalPointer()
         if child_key_list:
             parent_key_list = child_key_list[:-1]
+            if parent_key_list == ((),):
+                return QtCore.QModelIndex()
             try:
                 parent_key_list = self.my_index[parent_key_list]
             except KeyError:
                 self.my_index[parent_key_list] = parent_key_list
             return self.createIndex(self.get_row(parent_key_list), 0,
                                     parent_key_list)
+
         else:
             return QtCore.QModelIndex()
 
@@ -86,14 +106,12 @@ class SettingsModel(QtCore.QAbstractItemModel):
         """Returns data for given role for given index (QModelIndex)"""
         if not index.isValid():
             return None
-        if role in (QtCore.Qt.DisplayRole, QtCore.Qt.EditRole):
-            indexPtr = index.internalPointer()
-            if index.column() == 1:    # Column 1, send the value
-                return self.root[indexPtr]
-            else:                   # Column 0, send the key
-                if indexPtr:
-                    return indexPtr[-1]
-                else:
-                    return None
-        else:  # Not display or Edit
+
+        if role != Qt.DisplayRole and role != Qt.EditRole:
             return None
+
+        indexPtr = index.internalPointer()
+        if index.column() == 1:    # Column 1, send the value
+            return self.root[indexPtr]
+        else:                   # Column 0, send the key
+            return indexPtr[-1]

@@ -1,5 +1,13 @@
-from PyQt5 import QtWidgets
+from os import path
+from PyQt5 import QtWidgets, QtGui
 from gui import CentralWidget, StatusBar, MenuBar
+
+_icon_path = path.join(path.dirname(__file__), 'resources', 'icons')
+_str = '{}.png'
+_platforms = ('youtube', 'watchpeoplecode', 'twitch', 'livecoding')
+_ICON_DICT = {x: path.join(_icon_path, _str.format(x)) for x in _platforms}
+for platform, path_ in _ICON_DICT.items():
+    _ICON_DICT[platform] = QtGui.QImage(path_)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -29,19 +37,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu_bar = MenuBar(parent=self)
         self.setMenuBar(self.menu_bar)
 
+        for platform, icon_path in _ICON_DICT.items():
+            msg_area.set_icon(icon_path, platform)
+
     def set_settings(self, settings):
         display = settings.get('display')
-        message_color = display.get('text_color', 'blue')
-        self.set_color('listener', message_color)
         self.central_widget.set_settings(display)
         for key, setting in settings.items():
             if key == 'display':
                 continue
-            display_settings = setting['display_settings']
-            if display_settings['display_missing']:
+            if setting['display_missing']:
                 self.status_bar.set_up_helper(key.title())
-            if display_settings['text_color']:
-                self.set_color(key, display_settings['text_color'])
 
     @property
     def settings_model(self):
@@ -51,10 +57,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def settings_model(self, model):
         self._settings_model = model
         self.menu_bar.settings_model = model
-
-    def set_color(self, platform, text_color):
-        msg = self.central_widget.message_area
-        msg.set_color(text_color, platform)
 
     def set_command_prompt(self, prompt):
         self.central_widget.command_line.button.setText(prompt)

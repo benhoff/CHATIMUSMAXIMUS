@@ -54,6 +54,18 @@ class SpecialDict(OrderedDict):
         else:
             return super().__getitem__(index)
 
+    def __setitem__(self, key, value):
+        if isinstance(key, tuple):
+            item = self
+            previous_item = None
+            for k in key:
+                if item != ():
+                    previous_item = item
+                    item = item[k]
+            previous_item[key[-1]] = value
+        else:
+            return super().__setitem__(key, value)
+
 
 class SettingsManager(object):
     def __init__(self):
@@ -112,8 +124,6 @@ class SettingsManager(object):
     def register_main_window(self, main_window):
         main_window.set_settings(self.settings)
         main_window.settings_model = self.settings_model
-        f = self.settings_model.set_text_color_signal
-        f.connect(main_window.set_color)
 
         f = self.settings_model.command_prompt_signal
         f.connect(main_window.set_command_prompt)
