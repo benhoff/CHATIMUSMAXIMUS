@@ -20,16 +20,17 @@ class SettingsModel(QtCore.QAbstractItemModel):
 
     def index(self, row, column, parent):
         """Returns QModelIndex to row, column in parent (QModelIndex)"""
-        if not self.hasIndex(row, column, parent):
+        if parent.isValid() and parent.column() != 0:
             return QtCore.QModelIndex()
+
         if parent.isValid():
-            index_pointer = parent.internalPointer()
-            parent_dict = self.root[index_pointer]
+            parent_pointer = parent.internalPointer()
+            parent_dict = self.root[parent_pointer]
         else:
             parent_dict = self.root
-            index_pointer = ()
+            parent_pointer = ()
         row_key = list(parent_dict.keys())[row]
-        child_pointer = (index_pointer, row_key)
+        child_pointer = (*parent_pointer, row_key)
         try:
             child_pointer = self.my_index[child_pointer]
         except KeyError:
@@ -105,8 +106,10 @@ class SettingsModel(QtCore.QAbstractItemModel):
         """Returns data for given role for given index (QModelIndex)"""
         if not index.isValid():
             return None
+
         if role != Qt.DisplayRole and role != Qt.EditRole:
             return None
+
         indexPtr = index.internalPointer()
         if index.column() == 1:    # Column 1, send the value
             return self.root[indexPtr]
