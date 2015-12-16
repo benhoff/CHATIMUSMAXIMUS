@@ -5,4 +5,4 @@ env
 settings.yml
 ghostdriver.log
 client_secrets.json
-*py-oauth2.json
+*-oauth2.json

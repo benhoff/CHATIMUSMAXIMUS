@@ -1,3 +1,4 @@
+import os
 import sys
 import httplib2
 
@@ -16,8 +17,11 @@ def _youtube_authentication(client_filepath):
     flow = flow_from_clientsecrets(client_filepath,
                                    scope=youtube_scope,
                                    message=missing_client_message)
+    filepath = "{}-oauth2.json".format(sys.argv[0])
+    if os.path.isfile(filepath):
+        os.remove(filepath)
 
-    storage = Storage("{}-oauth2.json".format(sys.argv[0]))
+    storage = Storage(filepath)
     credentials = storage.get()
     if credentials is None or credentials.invalid:
         credentials = run_flow(flow, storage, argparser.parse_args())
@@ -29,7 +33,7 @@ def _youtube_authentication(client_filepath):
 def get_current_youtube_link(client_secrets_filepath):
     youtube_api = _youtube_authentication(client_secrets_filepath)
     parts = 'id, snippet, status'
-    livestream_requests = youtube_api.liveStreams().list(mine=True,
+    livestream_requests = youtube_api.liveBroadcasts().list(mine=True,
                                                          part=parts,
                                                          maxResults=5)
 
