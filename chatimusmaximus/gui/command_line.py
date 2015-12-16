@@ -40,10 +40,8 @@ class CommandLine(QtWidgets.QWidget):
         self.listener_signal = self.line_edit.listener_signal
         self.button.clicked.connect(self.give_focus)
 
-    def set_settings(self, settings):
-        prompt = settings['command_line']
-        if not prompt == str():
-            self.button.setText(prompt)
+    def set_settings(self, settings_model):
+        settings_model.command_prompt_signal.connect(self.button.setText)
 
     def give_focus(self):
         self.line_edit.setFocus()

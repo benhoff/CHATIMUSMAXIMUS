@@ -1,7 +1,6 @@
 import argparse
 import logging
 from time import sleep
-import threading
 
 from selenium import webdriver
 
@@ -79,7 +78,7 @@ class JavascriptWebscraper(object):
 
                     message = find_elem(self.message_class_name).text
                     print('MSG NICK: {} BODY: {}'.format(author, message))
-        
+
         print('DISCONNECTED')
 
 if __name__ == '__main__':

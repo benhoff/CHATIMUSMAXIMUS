@@ -33,7 +33,6 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                          on_message=self.on_message,
                          on_error=self.on_error)
 
-
     def repeat_run_forever(self):
         while True:
             try:
@@ -121,5 +120,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    client = ReadOnlyWebSocket(args.streamer_name, args.namespace, args.website_url)
+    client = ReadOnlyWebSocket(args.streamer_name,
+                               args.namespace,
+                               args.website_url)
+
     client.repeat_run_forever()
