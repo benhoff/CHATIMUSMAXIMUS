@@ -44,7 +44,7 @@ class MessageArea(QtWidgets.QTextEdit):
 
         # sound_filepath = path.abspath(sound_filepath)
         sound_filepath = QtCore.QUrl.fromLocalFile(sound_filepath)
-        
+
         self.sound = QtMultimedia.QSoundEffect()
         self.sound.setSource(sound_filepath)
         self.sound.setVolume(0.5)
