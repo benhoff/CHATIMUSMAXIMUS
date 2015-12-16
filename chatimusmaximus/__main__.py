@@ -14,7 +14,6 @@ import logging
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
-from util import get_settings_helper, instantiate_plugin_manager
 
 
 def main():

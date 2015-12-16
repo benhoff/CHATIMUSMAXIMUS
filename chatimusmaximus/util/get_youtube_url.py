@@ -34,8 +34,8 @@ def get_current_youtube_link(client_secrets_filepath):
     youtube_api = _youtube_authentication(client_secrets_filepath)
     parts = 'id, snippet, status'
     livestream_requests = youtube_api.liveBroadcasts().list(mine=True,
-                                                         part=parts,
-                                                         maxResults=5)
+                                                            part=parts,
+                                                            maxResults=5)
 
     while livestream_requests:
         response = livestream_requests.execute()
