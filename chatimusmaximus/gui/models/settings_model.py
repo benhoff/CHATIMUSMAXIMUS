@@ -47,6 +47,9 @@ class SettingsModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return 0
 
+        if index.column() == 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def get_row(self, key):
@@ -69,12 +72,15 @@ class SettingsModel(QtCore.QAbstractItemModel):
         child_key_list = index.internalPointer()
         if child_key_list:
             parent_key_list = child_key_list[:-1]
+            if parent_key_list == ((),):
+                return QtCore.QModelIndex()
             try:
                 parent_key_list = self.my_index[parent_key_list]
             except KeyError:
                 self.my_index[parent_key_list] = parent_key_list
             return self.createIndex(self.get_row(parent_key_list), 0,
                                     parent_key_list)
+
         else:
             return QtCore.QModelIndex()
 
@@ -99,16 +105,10 @@ class SettingsModel(QtCore.QAbstractItemModel):
         """Returns data for given role for given index (QModelIndex)"""
         if not index.isValid():
             return None
-        if role in (Qt.DisplayRole, Qt.EditRole):
-            indexPtr = index.internalPointer()
-            if index.column() == 1:    # Column 1, send the value
-                if role == Qt.EditRole:
-                    print(index.column(), self.root[indexPtr])
-                return self.root[indexPtr]
-            else:                   # Column 0, send the key
-                if indexPtr:
-                    return indexPtr[-1]
-                else:
-                    return None
-        else:  # Not display or Edit
+        if role != Qt.DisplayRole and role != Qt.EditRole:
             return None
+        indexPtr = index.internalPointer()
+        if index.column() == 1:    # Column 1, send the value
+            return self.root[indexPtr]
+        else:                   # Column 0, send the key
+            return indexPtr[-1]

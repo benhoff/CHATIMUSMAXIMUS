@@ -17,6 +17,9 @@ class SettingsDialog(QtWidgets.QDialog):
         tree_view.setModel(model)
         tree_view.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
         tree_view.setUniformRowHeights(True)
+        tree_view.setAnimated(False)
+        tree_view.setAllColumnsShowFocus(True)
+
         tree_view.resizeColumnToContents(0)
         layout.addWidget(tree_view)
 
