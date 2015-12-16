@@ -66,6 +66,7 @@ class SpecialDict(OrderedDict):
         else:
             return super().__setitem__(key, value)
 
+
 class SettingsManager(object):
     def __init__(self):
         self.settings = None

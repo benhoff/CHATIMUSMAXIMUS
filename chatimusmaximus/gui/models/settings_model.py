@@ -49,7 +49,6 @@ class SettingsModel(QtCore.QAbstractItemModel):
 
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-
     def get_row(self, key):
         """Returns the row of the given key (list of keys) in its parent"""
         if key:
