@@ -39,8 +39,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 continue
             if setting['display_missing']:
                 self.status_bar.set_up_helper(key.title())
+            """
             if display_settings['text_color']:
                 self.set_color(key, display_settings['text_color'])
+            """
 
     @property
     def settings_model(self):

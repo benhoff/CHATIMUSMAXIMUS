@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 
 
 class SettingsModel(QtCore.QAbstractItemModel):
@@ -35,6 +36,19 @@ class SettingsModel(QtCore.QAbstractItemModel):
             self.my_index[child_pointer] = child_pointer
         index = self.createIndex(row, column, child_pointer)
         return index
+
+    def setData(self, index, value, role=Qt.EditRole):
+        pointer = self.my_index[index.internalPointer()]
+        self.root[pointer] = value
+        self.dataChanged.emit(index, index)
+        return True
+
+    def flags(self, index):
+        if not index.isValid():
+            return 0
+
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
 
     def get_row(self, key):
         """Returns the row of the given key (list of keys) in its parent"""
@@ -86,9 +100,11 @@ class SettingsModel(QtCore.QAbstractItemModel):
         """Returns data for given role for given index (QModelIndex)"""
         if not index.isValid():
             return None
-        if role in (QtCore.Qt.DisplayRole, QtCore.Qt.EditRole):
+        if role in (Qt.DisplayRole, Qt.EditRole):
             indexPtr = index.internalPointer()
             if index.column() == 1:    # Column 1, send the value
+                if role == Qt.EditRole:
+                    print(index.column(), self.root[indexPtr])
                 return self.root[indexPtr]
             else:                   # Column 0, send the key
                 if indexPtr:

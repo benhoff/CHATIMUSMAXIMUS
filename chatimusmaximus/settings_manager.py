@@ -54,6 +54,17 @@ class SpecialDict(OrderedDict):
         else:
             return super().__getitem__(index)
 
+    def __setitem__(self, key, value):
+        if isinstance(key, tuple):
+            item = self
+            previous_item = None
+            for k in key:
+                if item != ():
+                    previous_item = item
+                    item = item[k]
+            previous_item[key[-1]] = value
+        else:
+            return super().__setitem__(key, value)
 
 class SettingsManager(object):
     def __init__(self):
