@@ -109,5 +109,4 @@ class MessageArea(QtWidgets.QTextEdit):
         cursor.insertText(message)
         # inserts newline
         cursor.insertBlock()
-        cursor.insertBlock()
         self.setTextCursor(cursor)

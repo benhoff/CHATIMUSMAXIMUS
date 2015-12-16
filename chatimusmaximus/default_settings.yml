@@ -1,4 +1,4 @@
-version: "0.0.4"
+version: "0.1.1"
 
 display:
     command_line: "user@chatimus ~$ "
@@ -6,9 +6,7 @@ display:
 watchpeoplecode:
     channel: ""
     connect: false
-
-    display_settings:
-        display_missing: true
+    display_missing: true
 
 twitch:
     # in the format `oauth:asdasd234asd234ad234asds23`
@@ -16,9 +14,7 @@ twitch:
     channel: ""
     nick: ""
     connect: false
-
-    display_settings:
-        display_missing: true
+    display_missing: true
 
 livecoding:
     # this MUST be your livecode name
@@ -28,9 +24,7 @@ livecoding:
     bot_nick: ""
     room: ""
     connect: true
-
-    display_settings:
-        display_missing: true
+    display_missing: true
 
 youtube:
      # NOTE: only pass in channel id if you want to connect chat to your 
@@ -38,6 +32,4 @@ youtube:
     channel_id: ""
     youtube_url: ""
     connect: false
-
-    display_settings:
-        display_missing: true
+    display_missing: true

@@ -48,6 +48,7 @@ def main():
         event_loop.run_forever()
     except KeyboardInterrupt:
         pass
+    app.deleteLater()
     plugin_manager.terminate_plugins()
     event_loop.close()
     sys.exit()

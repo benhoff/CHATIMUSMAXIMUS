@@ -40,15 +40,12 @@ class MainWindow(QtWidgets.QMainWindow):
             msg_area.set_icon(icon_path, platform)
 
     def set_settings(self, settings):
-        msg_area = self.central_widget.message_area
-
         display = settings.get('display')
         self.central_widget.set_settings(display)
         for key, setting in settings.items():
             if key == 'display':
                 continue
-            display_settings = setting['display_settings']
-            if display_settings['display_missing']:
+            if setting['display_missing']:
                 self.status_bar.set_up_helper(key.title())
 
     @property
