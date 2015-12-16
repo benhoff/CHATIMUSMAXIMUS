@@ -37,8 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for key, setting in settings.items():
             if key == 'display':
                 continue
-            display_settings = setting['display_settings']
-            if display_settings['display_missing']:
+            if setting['display_missing']:
                 self.status_bar.set_up_helper(key.title())
             if display_settings['text_color']:
                 self.set_color(key, display_settings['text_color'])
