@@ -6,8 +6,9 @@ _icon_path = path.join(path.dirname(__file__), 'resources', 'icons')
 _str = '{}.png'
 _platforms = ('youtube', 'watchpeoplecode', 'twitch', 'livecoding')
 _ICON_DICT = {x: path.join(_icon_path, _str.format(x)) for x in _platforms}
-for platform, path in _ICON_DICT.items():
-    _ICON_DICT[platform] = QtGui.QImage(path)
+for platform, path_ in _ICON_DICT.items():
+    _ICON_DICT[platform] = QtGui.QImage(path_)
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, settings: dict=None, parent=None):

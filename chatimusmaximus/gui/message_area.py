@@ -44,8 +44,8 @@ class MessageArea(QtWidgets.QTextEdit):
     def set_icon(self, icon, platform):
         document = self.document()
         document.addResource(QtGui.QTextDocument.ImageResource,
-                QtCore.QUrl(platform),
-                icon)
+                             QtCore.QUrl(platform),
+                             icon)
 
     def set_font(self, font):
         self.text_format.setFont(font)
