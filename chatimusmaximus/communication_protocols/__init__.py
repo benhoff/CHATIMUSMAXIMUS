@@ -8,7 +8,8 @@ from communication_protocols.irc_client import create_irc_bot, EchoToMessage
 _file_path = os.path.abspath(os.path.dirname(__file__))
 
 PATHS = {'xmpp_path': os.path.join(_file_path, 'xmpp_client.py'),
-         'javascript_path': os.path.join(_file_path, 'javascript_webscraper.py'),
+         'javascript_path': os.path.join(_file_path,
+                                         'javascript_webscraper.py'),
          'socket_path': os.path.join(_file_path, 'socket_io_client.py'),
          'irc_path': os.path.join(_file_path, 'irc_client.py')}
 

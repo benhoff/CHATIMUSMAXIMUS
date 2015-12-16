@@ -5,6 +5,7 @@ A Python3.5, PyQt, read-only, client, chat GUI featuring support for the followi
 > Youtube          (Selenium based scraper)  
 > Twitch           (IRC client)  
 > WatchPeopleCode  (websocket client)  
+> Livecoding       (xmpp client)
 
 ### Installation instructions
 1. Install PyQt5 onto your system

@@ -57,6 +57,7 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         print('MSG NICK: {} BODY: {}'.format(msg['mucnick'],
                                              msg['body']))
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('local', help='local arg for string parsing')

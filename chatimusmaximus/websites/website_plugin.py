@@ -1,7 +1,5 @@
 import os
-import re
 import sys
-import signal
 import asyncio
 import locale
 
@@ -19,8 +17,13 @@ class WebsitePlugin(QtCore.QObject):
         self.platform = platform
         # TODO: change from `process` to `subprocess`
         self.process = None
-    
+
+    def deactivate(self):
+        if self.process:
+            self.process.kill()
+
     async def start_subprocess(self, path_script, *args, **kwargs):
+        self.deactivate()
         self.process = await asyncio.create_subprocess_exec(
             sys.executable,
             '-u',
@@ -33,9 +36,10 @@ class WebsitePlugin(QtCore.QObject):
         await self._reoccuring()
 
     async def _reoccuring(self):
+        encoding = locale.getpreferredencoding(False)
         while True:
             async for line in self.process.stdout:
-                self._parse_communication(line.decode(locale.getpreferredencoding(False)))
+                self._parse_communication(line.decode(encoding))
 
     def _parse_communication(self, comms):
         try:
@@ -56,5 +60,3 @@ class WebsitePlugin(QtCore.QObject):
 # NOTE: Forcing `WebsitePlugin` to be subclass of IPlugin
 # for ease of parsing
 IPlugin.register(WebsitePlugin)
-
-
