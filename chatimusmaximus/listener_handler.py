@@ -12,40 +12,46 @@ class Database(object):
             self.version_1(cursor)
 
     def version_1(self, cursor: sqlite3.Cursor):
-        yt_table = 'CREATE TABLE youtube (youtubeid PRIMARY KEY ASC, FOREIGN KEY(userid) REFERENCES user(userid))'
-        wpc_table = 'CREATE TABLE watchpeoplecode (watchpeoplecodeid PRIMARY KEY ASC, FOREIGN KEY(userid) REFERENCES user(userid))'
-        livecode_table = 'CREATE TABLE livecoding (livecodingid PRIMARY KEY ASC, FOREIGN KEY(userid) REFERENCES user(userid))'
-        twitch_table = str('CREATE TABLE twitch' +
-                           '(twitchid PRIMARY KEY ASC,' +
-                           'FOREIGN KEY(userid) REFERENCES user(userid)')
+        cursor.execute("PRAGMA user_version")
+        print('version is {}'.format(cursor.fetchone()[0]))
+        cursor.execute("PRAGMA foreign_keys = ON")
 
-        cursor.execute(yt_table)
+        youtube_table = '''CREATE TABLE youtube (id PRIMARY KEY, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
+
+        wpc_table = '''CREATE TABLE watchpeoplecode (id PRIMARY KEY ASC, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
+
+        livecode_table = '''CREATE TABLE livecoding (id PRIMARY KEY ASC, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
+
+        twitch_table = '''CREATE TABLE twitch (id PRIMARY KEY ASC, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
+
+        initial_user_table = 'CREATE TABLE user (id integer PRIMARY KEY ASC)'
+
+
+        role_table = 'CREATE TABLE role (id integer PRIMARY KEY ASC, name text)'
+
+        # create all 5 tables. USER, YOUTUBE, LIVECODE, TWITCH, WPC
+        cursor.execute(initial_user_table)
+        cursor.execute(youtube_table)
         cursor.execute(wpc_table)
         cursor.execute(livecode_table)
         cursor.execute(twitch_table)
 
-        user_table = str('CREATE TABLE user (' +
-                         'userid integer PRIMARY KEY ASC,' +
-                         'FOREIGN KEY(livecodingid) REFERENCES ' +
-                         'livecoding(livecodingid) DEFAULT NULL,' +
-                         'FOREIGN KEY(twitchid) REFERENCES ' +
-                         'twitch(twitchid) DEFAULT NULL,' +
-                         'FOREIGN KEY(watchpeoplecodeid) REFERENCES ' +
-                         'watchpeoplecode(watchpeoplecodeid) DEFAULT NULL,' +
-                         'FOREIGN KEY(youtubeid) REFERENCES ' +
-                         'youtube(youtubeid) DEFAULT NULL,' +
-                         'roleid integer FOREIGN KEY DEFAULT 0)')
+        # create our role table
+        cursor.execute(role_table)
+        alter_user_table = ['ALTER TABLE user ADD COLUMN {} integer REFERENCES {}(id)'.format(*value) for value in (('livecodingid', 'livecoding'), ('youtubeid', 'youtube'), ('twitchid', 'twitch'), ('roleid', 'role'))]
+
 
         # create user table
-        cursor.execute(usr_table)
+        for x in alter_user_table:
+            cursor.execute(x)
+
         # create activity table
         cursor.execute('CREATE TABLE activities (activityid integer PRIMARY KEY ASC, name text)')
         # create roles table
         cursor.execute('CREATE TABLE roles (roleid integer PRIMARY KEY ASC, name text)')
-        roles = [('anonymous'), ('user'), ('trusted_user'), ('admin')]
-        cursor.executemany('INSERT INTO roles VALUES(?)', roles)
+        roles = [(0, 'anonymous'), (1, 'user'), (2, 'trusted_user'), (3, 'admin')]
+        cursor.executemany('INSERT INTO roles VALUES(?, ?)', roles)
         cursor.execute("PRAGMA user_version = 1")
-        cursor.commit()
 
 class ListenerHandler(QtCore.QObject):
     listeners_signal = QtCore.pyqtSignal(str, str)
