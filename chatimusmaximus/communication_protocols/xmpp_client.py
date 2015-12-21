@@ -1,6 +1,7 @@
 import logging
 import argparse
 import slixmpp
+import asyncio
 
 
 class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
@@ -70,8 +71,12 @@ def main():
     # jid = slixmpp.JID(jid)
 
     xmpp_bot = ReadOnlyXMPPBot(jid, args.password, args.room)
-    xmpp_bot.connect()
-    xmpp_bot.process()
+    while True:
+        try:
+            xmpp_bot.connect()
+            xmpp_bot.process()
+        except Exception:
+            asyncio.sleep(3)
 
 if __name__ == '__main__':
     main()
