@@ -12,9 +12,11 @@ class Database(object):
             self.version_1(cursor)
 
     def version_1(self, cursor: sqlite3.Cursor):
-        cursor.execute("PRAGMA user_version")
-        print('version is {}'.format(cursor.fetchone()[0]))
         cursor.execute("PRAGMA foreign_keys = ON")
+
+        role_table = 'CREATE TABLE role (name text)'
+
+        initial_user_table = 'CREATE TABLE user (roleid integer default 0, FOREIGN KEY(roleid) REFERENCES role(rowid))'
 
         youtube_table = '''CREATE TABLE youtube (id PRIMARY KEY, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
 
@@ -24,22 +26,25 @@ class Database(object):
 
         twitch_table = '''CREATE TABLE twitch (id PRIMARY KEY ASC, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
 
-        initial_user_table = 'CREATE TABLE user (id integer PRIMARY KEY ASC)'
-
-
-        role_table = 'CREATE TABLE role (id integer PRIMARY KEY ASC, name text)'
-
-        # create all 5 tables. USER, YOUTUBE, LIVECODE, TWITCH, WPC
+        # Create role table first!
+        cursor.execute(role_table)
+        # create the user table second!
         cursor.execute(initial_user_table)
+
         cursor.execute(youtube_table)
         cursor.execute(wpc_table)
         cursor.execute(livecode_table)
         cursor.execute(twitch_table)
 
         # create our role table
-        cursor.execute(role_table)
-        alter_user_table = ['ALTER TABLE user ADD COLUMN {} integer REFERENCES {}(id)'.format(*value) for value in (('livecodingid', 'livecoding'), ('youtubeid', 'youtube'), ('twitchid', 'twitch'), ('roleid', 'role'))]
+        string_template = 'ALTER TABLE user ADD COLUMN {} integer REFERENCES {}(rowid)'
 
+        values = (('livecodingid', 'livecoding'),
+                  ('youtubeid', 'youtube'),
+                  ('twitchid', 'twitch'),
+                  ('watchpeoplecodeid', 'watchpeoplecode'))
+
+        alter_user_table = [string_template.format(*value) for value in values]
 
         # create user table
         for x in alter_user_table:
@@ -48,10 +53,11 @@ class Database(object):
         # create activity table
         cursor.execute('CREATE TABLE activities (activityid integer PRIMARY KEY ASC, name text)')
         # create roles table
-        cursor.execute('CREATE TABLE roles (roleid integer PRIMARY KEY ASC, name text)')
-        roles = [(0, 'anonymous'), (1, 'user'), (2, 'trusted_user'), (3, 'admin')]
-        cursor.executemany('INSERT INTO roles VALUES(?, ?)', roles)
+        roles = (('anonymous',), ('user',), ('trusted_user',), ('admin',))
+        cursor.executemany('INSERT INTO role VALUES(?)', roles)
         cursor.execute("PRAGMA user_version = 1")
+        # make sure our changes are committed
+        connection.commit()
 
 class ListenerHandler(QtCore.QObject):
     listeners_signal = QtCore.pyqtSignal(str, str)
