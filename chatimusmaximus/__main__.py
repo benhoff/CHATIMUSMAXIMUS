@@ -17,6 +17,7 @@ log.addHandler(logging.StreamHandler())
 
 
 def main():
+    print(__name__)
     # create the Application
     app = QtWidgets.QApplication(sys.argv)
 

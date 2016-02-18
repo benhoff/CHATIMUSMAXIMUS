@@ -1,7 +1,14 @@
 import asyncio
 import sqlite3
 from PyQt5 import QtCore
-# import auth here
+import sqlalchemy
+
+engine = create_engine('sqlite:///:memory:', echo=True)
+
+
+
+class Role(sqlalchemy.
+
 
 class Database(object):
     VERSION = 1
@@ -14,47 +21,30 @@ class Database(object):
     def version_1(self, cursor: sqlite3.Cursor):
         cursor.execute("PRAGMA foreign_keys = ON")
 
-        role_table = 'CREATE TABLE role (name text)'
+        role_table = 'CREATE TABLE role (name text, id INTEGER PRIMARY KEY AUTOINCREMENT)'
 
-        initial_user_table = 'CREATE TABLE user (roleid integer default 0, FOREIGN KEY(roleid) REFERENCES role(rowid))'
+        youtube_table = '''CREATE TABLE youtube (name text UNIQUE, roleid integer, FOREIGN KEY(roleid) REFERENCES role(id))'''
 
-        youtube_table = '''CREATE TABLE youtube (id PRIMARY KEY, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
+        wpc_table = '''CREATE TABLE watchpeoplecode (name text UNIQUE, roleid integer, FOREIGN KEY(roleid) REFERENCES role(id))'''
 
-        wpc_table = '''CREATE TABLE watchpeoplecode (id PRIMARY KEY ASC, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
+        livecode_table = '''CREATE TABLE livecoding (name text UNIQUE, roleid integer, FOREIGN KEY(roleid) REFERENCES role(id))'''
 
-        livecode_table = '''CREATE TABLE livecoding (id PRIMARY KEY ASC, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
-
-        twitch_table = '''CREATE TABLE twitch (id PRIMARY KEY ASC, name text, userid integer, FOREIGN KEY(userid) REFERENCES user(id))'''
+        twitch_table = '''CREATE TABLE twitch (name text UNIQUE, roleid integer, FOREIGN KEY(roleid) REFERENCES role(id))'''
 
         # Create role table first!
         cursor.execute(role_table)
         # create the user table second!
-        cursor.execute(initial_user_table)
 
         cursor.execute(youtube_table)
         cursor.execute(wpc_table)
         cursor.execute(livecode_table)
         cursor.execute(twitch_table)
 
-        # create our role table
-        string_template = 'ALTER TABLE user ADD COLUMN {} integer REFERENCES {}(rowid)'
-
-        values = (('livecodingid', 'livecoding'),
-                  ('youtubeid', 'youtube'),
-                  ('twitchid', 'twitch'),
-                  ('watchpeoplecodeid', 'watchpeoplecode'))
-
-        alter_user_table = [string_template.format(*value) for value in values]
-
-        # create user table
-        for x in alter_user_table:
-            cursor.execute(x)
-
         # create activity table
-        cursor.execute('CREATE TABLE activities (activityid integer PRIMARY KEY ASC, name text)')
+        cursor.execute('CREATE TABLE activity(id integer PRIMARY KEY AUTOINCREMENT, name text, roleid INTEGER, FOREIGN KEY(roleid) REFERENCES role(id))')
         # create roles table
         roles = (('anonymous',), ('user',), ('trusted_user',), ('admin',))
-        cursor.executemany('INSERT INTO role VALUES(?)', roles)
+        cursor.executemany('INSERT INTO role(name) VALUES(?)', roles)
         cursor.execute("PRAGMA user_version = 1")
         # make sure our changes are committed
         connection.commit()
