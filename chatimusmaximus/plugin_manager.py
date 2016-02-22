@@ -20,7 +20,7 @@ class PluginManager(QtCore.QObject):
         self.website_plugins = pluginmanager.PluginInterface()
         # website plugins only `WebsitePlugin` class
         subclass_filter = module_filters.SubclassParser(WebsitePlugin)
-        self.website_plugins.module_manager.set_module_filters(subclass_filter)
+        self.website_plugins.set_module_plugin_filters(subclass_filter)
 
         self.website_plugins.collect_plugins(websites)
 
