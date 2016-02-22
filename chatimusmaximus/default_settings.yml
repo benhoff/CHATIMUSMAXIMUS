@@ -3,6 +3,8 @@ version: "0.1.1"
 display:
     command_line: "user@chatimus ~$ "
 
+communication_port: 'tcp://localhost:5599'
+
 watchpeoplecode:
     channel: ""
     connect: false

@@ -1,6 +1,8 @@
 import sys
 import asyncio
 import argparse
+
+import zmq
 import irc3
 from irc3.plugins.autojoins import AutoJoins
 
@@ -10,7 +12,10 @@ class AutoJoinMessage(AutoJoins):
     requires = ['irc3.plugins.core', ]
 
     def __init__(self, bot):
-        super(AutoJoinMessage, self).__init__(bot)
+        super().__init__(bot)
+        context = zmq.Context()
+        self.socket = context.socket(zmq.PUB)
+        self.socket.connect('tcp://')
 
     def connection_lost(self):
         print('DISCONNECTED')
@@ -23,12 +28,12 @@ class AutoJoinMessage(AutoJoins):
     @irc3.event(irc3.rfc.KICK)
     def on_kick(self, mask, channel, target, **kwargs):
         print('DISCONNECTED')
-        super(AutoJoinMessage, self).on_kick(mask, channel, target, **kwargs)
+        super().on_kick(mask, channel, target, **kwargs)
 
     @irc3.event("^:\S+ 47[1234567] \S+ (?P<channel>\S+).*")
     def on_err_join(self, channel, **kwargs):
         print('DISCONNECTED')
-        super(AutoJoinMessage, self).on_err_join(channel, **kwargs)
+        super().on_err_join(channel, **kwargs)
 
 
 @irc3.plugin
@@ -75,19 +80,11 @@ def create_irc_bot(nick,
 
     return bot
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('nick')
-    parser.add_argument('password')
-    parser.add_argument('host')
-    parser.add_argument('channel')
-
-    args = parser.parse_args()
-
-    irc_client = create_irc_bot(args.nick,
-                                args.password,
-                                args.host,
-                                channel=args.channel)
+def main(nick, password, host, channel):
+    irc_client = create_irc_bot(nick,
+                                password,
+                                host,
+                                channel=channel)
 
     irc_client.create_connection()
     irc_client.add_signal_handlers()
@@ -98,3 +95,14 @@ if __name__ == '__main__':
         pass
     event_loop.close()
     sys.exit()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('nick')
+    parser.add_argument('password')
+    parser.add_argument('host')
+    parser.add_argument('channel')
+    parser.add_argument('communication_port')
+
+    args = parser.parse_args()
+

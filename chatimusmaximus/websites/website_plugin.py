@@ -3,6 +3,8 @@ import sys
 import asyncio
 import locale
 
+
+import zmq
 from parse import parse
 from PyQt5 import QtCore
 from pluginmanager import IPlugin
@@ -14,6 +16,9 @@ class WebsitePlugin(QtCore.QObject):
 
     def __init__(self, platform, parent=None):
         super().__init__(parent)
+        context = zmq.Context()
+        self.socket = context.socket(zmq.PUB)
+        self.socket.setsockopt_string(zmq.SUBSCRIBE, '')
         self.platform = platform
         # TODO: change from `process` to `subprocess`
         self.process = None
