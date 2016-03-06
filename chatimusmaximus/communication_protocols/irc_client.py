@@ -1,5 +1,4 @@
 import sys
-import asyncio
 import argparse
 
 import zmq
@@ -14,25 +13,34 @@ class AutoJoinMessage(AutoJoins):
     def __init__(self, bot):
         super().__init__(bot)
         context = zmq.Context()
-        self.socket = context.socket(zmq.PUB)
-        self.socket.connect('tcp://')
+        self.bot.pub_socket = context.socket(zmq.PUB)
+        self.socket.bind(bot.config.pub_address)
+        self.bot._service_name = bot.config.service_name.encode('ascii')
 
     def connection_lost(self):
-        print('DISCONNECTED')
+        frame = (self.bot._service_name,
+                 b'DISCONNECTED')
+        self.bot.pub_socket.send_multipart(frame)
         super(AutoJoinMessage, self).connection_lost()
 
     def join(self, channel=None):
         super(AutoJoinMessage, self).join(channel)
-        print('CONNECTED')
+        frame = (self.bot._service_name,
+                 b'CONNECTED')
+        self.bot.pub_socket.send_multipart(frame)
 
     @irc3.event(irc3.rfc.KICK)
     def on_kick(self, mask, channel, target, **kwargs):
-        print('DISCONNECTED')
+        frame = (self.bot._service_name,
+                 b'DISCONNECTED')
+        self.bot.pub_socket.send_multipart(frame)
         super().on_kick(mask, channel, target, **kwargs)
 
     @irc3.event("^:\S+ 47[1234567] \S+ (?P<channel>\S+).*")
     def on_err_join(self, channel, **kwargs):
-        print('DISCONNECTED')
+        frame = (self.bot._service_name,
+                 b'DISCONNECTED')
+        self.bot.pub_socket.send_multipart(frame)
         super().on_err_join(channel, **kwargs)
 
 
@@ -48,7 +56,11 @@ class EchoToMessage(object):
     def message(self, mask, event, target, data):
         nick = mask.split('!')[0]
         message = data
-        print('MSG NICK: {} BODY: {}'.format(nick, message))
+        frame = (self.bot._service_name,
+                 b'MSG',
+                 nick,
+                 message)
+        self.bot.pub_socket.send_multipart(frame)
 
 
 def create_irc_bot(nick,
@@ -56,7 +68,9 @@ def create_irc_bot(nick,
                    host=None,
                    port=6667,
                    realname=None,
-                   channel=None):
+                   channel=None,
+                   pub_address='',
+                   service_name=''):
 
     config = dict(ssl=False,
                   includes=['irc3.plugins.core',
@@ -69,12 +83,15 @@ def create_irc_bot(nick,
         realname = nick
     if channel is None:
         channel = nick
+
     config['nick'] = nick
     config['password'] = password
     config['host'] = host
     config['port'] = port
     config['realname'] = realname
     config['autojoins'] = channel
+    config['service_name'] = service_name
+    config['pub_address'] = pub_address
 
     bot = irc3.IrcBot.from_config(config)
 
@@ -96,13 +113,25 @@ def main(nick, password, host, channel):
     event_loop.close()
     sys.exit()
 
-if __name__ == '__main__':
+def _get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('nick')
     parser.add_argument('password')
     parser.add_argument('host')
     parser.add_argument('channel')
-    parser.add_argument('communication_port')
+    parser.add_argument('pub_address')
+    parser.add_argument('service_name')
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+if __name__ == '__main__':
+
+    args = _get_args()
+
+    main(args.nick,
+         args.password,
+         args.host,
+         args.channel,
+         args.pub_address,
+         args.service_name)
