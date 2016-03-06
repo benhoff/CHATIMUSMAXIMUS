@@ -1,16 +1,14 @@
 import sys
 import asyncio
+import logging
 
 from PyQt5 import QtWidgets
 from quamash import QEventLoop
-import pluginmanager
-# TODO: Change to `listener-plugins`
-import plugins
 
-from gui import MainWindow
-from plugin_manager import PluginManager
-from settings_manager import SettingsManager
-import logging
+from chatimusmaximus.gui import MainWindow
+from chatimusmaximus.plugin_manager import PluginManager
+from chatimusmaximus.settings_manager import SettingsManager
+from chatimusmaximus.messaging import ZmqMessaging
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
@@ -34,14 +32,6 @@ def main():
     settings_manager = SettingsManager()
     settings_manager.register_main_window(main_window)
     settings_manager.register_plugin_manager(plugin_manager)
-
-
-    # listeners handeled separatly for now
-    listener_interface = pluginmanager.PluginInterface()
-    listener_interface.collect_plugins(plugins)
-
-    listener_list = listener_interface.get_instances()  # flake8: noqa
-    # main_window.central_widget.message_area.listeners = listener_list
 
     main_window.show()
     try:

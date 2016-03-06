@@ -5,34 +5,57 @@ display:
 
 communication_port: 'tcp://localhost:5599'
 
-watchpeoplecode:
-    channel: ""
-    connect: false
-    display_missing: true
+services:
 
-twitch:
-    # in the format `oauth:asdasd234asd234ad234asds23`
-    oauth_token: ""
-    channel: ""
-    nick: ""
-    connect: false
-    display_missing: true
+    irc:
 
-livecoding:
-    # this MUST be your livecode name
-    name: ""
-    # this can be your profile password
-    password: ""
-    bot_nick: ""
-    room: ""
-    connect: true
-    display_missing: true
+        twitch:
+            # I use this site to get oauth_token 
+            # https://twitchapps.com/tmi/
+            # use this format: `oauth:asdasd234asd234ad234asds23`
+            oauth_token: ""
+            # this will be your twitch channel
+            channel: ""
+            # I believe this has to be your twitch acct name
+            nick: ""
+            connect: false
+            display_missing: true
 
-youtube:
-     # NOTE: only pass in channel id if you want to connect chat to your 
-     # permenant landing page
-    channel_id: ""
-    youtube_url: ""
-    client_secrets_file: ""
-    connect: false
-    display_missing: true
+    xmpp:
+
+        livecoding:
+            # this MUST be your livecode name
+            name: ""
+            # this can be your profile password
+            password: ""
+            bot_nick: ""
+            room: ""
+            connect: false
+            display_missing: true
+
+    # socket_io is hardcoded for watchpeople code
+    # feel free to yell at me about that on github
+    socket_io:
+
+        watchpeoplecode:
+            channel: ""
+            connect: false
+            display_missing: true
+    
+    # youtube is special.
+    youtube:
+        connect: false
+        display_missing: true
+        
+        # must install selenium. Don't need OAuth credentials
+        javascript_scraper:
+             # NOTE: only pass in channel id if you want to connect chat to your 
+             # permenant landing page
+            channel_id: ""
+            youtube_url: ""
+        
+        # go to goole developers console. Create an app and request
+        # YouTube Data API v3 access. Create and download OAuth credentials
+        # and put the filepath info in `client_secrets_file`
+        api_connect:
+            client_secrets_file: ""
