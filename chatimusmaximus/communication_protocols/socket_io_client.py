@@ -4,6 +4,8 @@ import requests
 import html
 import logging
 from time import sleep
+
+import zmq
 import websocket
 
 
@@ -13,7 +15,9 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
     def __init__(self,
                  streamer_name,
                  namespace,
-                 website_url):
+                 website_url,
+                 pub_address,
+                 service_name):
 
         self.log = logging.getLogger(__name__)
         self.log.setLevel(0)
@@ -23,6 +27,12 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         self.log.info('Getting Socket IO key!')
         self.key, heartbeat = self._connect_to_server_helper()
         self.log.info('Socket IO key got!')
+        # only sending the service name through mssging
+        self._service_name = service_name.encode('ascii')
+
+        context = zmq.Context()
+        self.pub_socket = context.socket(zmq.PUB)
+        self.pub_scoket.bind(pub_address)
 
         # alters URL to be more websocket...ie
         self._website_socket = self._website_url.replace('http', 'ws')
@@ -40,7 +50,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             except Exception as e:
                 self.log.info('Socket IO errors: {}'.format(e))
             sleep(3)
-            print('DISCONNECTED')
+            frame = (self._service_name, b'DISCONNECTED')
+            self.pub_socket.send_multipart(frame)
             key, _ = self._connect_to_server_helper()
             self.url = self._website_socket + key
 
@@ -77,7 +88,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
 
             self.send_packet_helper(5, data=data)
             self.log.info('Connected to channel with socket io!')
-            print('CONNECTED')
+            frame = (self._service_name, b'CONNECTED')
+            self.pub_socket.send_multipart(frame)
         elif key == 2:
             self.send_packet_helper(2)
         elif key == 5:
@@ -86,7 +98,12 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 message = data['args'][0]
                 sender = html.unescape(message['sender'])
                 message = html.unescape(message['text'])
-                print('MSG NICK: {} BODY: {}'.format(sender, message))
+                frame = (self._service_name,
+                         b'MSG',
+                         sender.encode('ascii'),
+                         message.encode('ascii'))
+
+                self.pub_socket.send_multipart(frame)
 
     def on_error(self, *args):
         print(args[1])
@@ -112,16 +129,26 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         message = ':'.join([str(type_key), callback, self.namespace, data])
         self.send(message)
 
-if __name__ == '__main__':
+
+def _get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('streamer_name')
     parser.add_argument('namespace')
     parser.add_argument('website_url')
+    parser.add_argument('pub_address')
+    parser.add_argument('service_name')
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+
+    args = _get_args()
 
     client = ReadOnlyWebSocket(args.streamer_name,
                                args.namespace,
-                               args.website_url)
+                               args.website_url,
+                               args.pub_address,
+                               args.service_name)
 
     client.repeat_run_forever()
