@@ -76,7 +76,7 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.publish_socket.send_multipart(frame)
 
 
-def main():
+def _get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('local', help='local arg for string parsing')
     parser.add_argument('domain', help='domain for xmpp')
@@ -87,7 +87,11 @@ def main():
     parser.add_argument('--pub_address', default='tcp://127.0.0.1:6001')
     parser.add_argument('--nick', default='EchoBot')
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    args = _get_args()
     jid = '{}@{}/{}'.format(args.local, args.domain, args.resource)
 
     xmpp_bot = ReadOnlyXMPPBot(jid,

@@ -1,6 +1,7 @@
 import argparse
 import logging
 from time import sleep
+import zmq
 
 from selenium import webdriver
 
@@ -11,7 +12,9 @@ class JavascriptWebscraper(object):
                  url=None,
                  comment_element_id=None,
                  author_class_name=None,
-                 message_class_name=None):
+                 message_class_name=None,
+                 pub_address='',
+                 service_name=''):
 
         """
         `comment_element_id` is the css element where all the comments are,
@@ -25,6 +28,10 @@ class JavascriptWebscraper(object):
         """
         self.log = logging.getLogger(__name__)
         self.log.setLevel(logging.NOTSET)
+        context = zmq.Context()
+        self.pub_socket = context.socket(zmq.PUB)
+        self.pub_socket.bind(pub_address)
+        self._service_name = service_name.encode('ascii')
 
         self.url = url
         self._number_of_messages = 0
@@ -59,7 +66,8 @@ class JavascriptWebscraper(object):
         # NOTE: make sure this is ok if using for anything other than youtube
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)
-        print('CONNECTED')
+        frame = (self._service_name, b'CONNECTED')
+        self.pub_socket.send_multipart(frame)
 
         while True:
             sleep(1)
@@ -77,21 +85,35 @@ class JavascriptWebscraper(object):
                     author = find_elem(self.author_class_name).text
 
                     message = find_elem(self.message_class_name).text
-                    print('MSG NICK: {} BODY: {}'.format(author, message))
+                    frame = (self._service_name,
+                             b'MSG',
+                             author.encode('ascii'),
+                             message.encode('ascii'))
 
-        print('DISCONNECTED')
+                    self.pub_socket.send_multipart(frame)
 
-if __name__ == '__main__':
+        frame = (self._service_name, b'DISCONNECTED')
+        self.pub_socket.send_multipart(frame)
+
+def _get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('url')
     parser.add_argument('comment_element_id')
     parser.add_argument('author_class_name')
     parser.add_argument('message_class_name')
+    parser.add_argument('pub_address')
+    parser.add_argument('service_name')
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    args = _get_args()
     webscraper = JavascriptWebscraper(args.url,
                                       args.comment_element_id,
                                       args.author_class_name,
-                                      args.message_class_name)
+                                      args.message_class_name,
+                                      args.pub_address,
+                                      args.service_name)
 
     webscraper.run_forever()
