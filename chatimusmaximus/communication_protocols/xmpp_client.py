@@ -1,18 +1,27 @@
 import logging
 import argparse
-import slixmpp
-import asyncio
+import sleekxmpp
+from time import sleep
+
+import zmq
 
 
-class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
+class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
     def __init__(self,
                  jid,
                  password,
                  room,
-                 nick='EchoBot'):
+                 nick='EchoBot',
+                 pub_address='tcp://127.0.0.1:6001',
+                 service_name=''):
 
         # Initialize the parent class
         super().__init__(jid, password)
+        context = zmq.Context()
+        self.publish_socket = context.socket(zmq.PUB)
+        self.publish_socket.bind(pub_address)
+        # encode this to ascii as it's being used for mssging
+        self._service_name = service_name.encode('ascii')
 
         self.room = room
         self.nick = nick
@@ -27,10 +36,14 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         self.add_event_handler('disconnected', self._disconnected)
 
     def _disconnected(self, *args):
-        print('DISCONNECTED')
+        frame = (self._service_name,
+                 b'DISCONNECTED')
+
+        self.publish_socket.send_multipart(frame)
 
     def _connected(self, *args):
-        print('CONNECTED')
+        frame = (self._service_name, b'CONNECTED')
+        self.publish_socket.send_multipart(frame)
 
     def process(self):
         self.init_plugins()
@@ -55,8 +68,12 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         self.get_roster()
 
     def muc_message(self, msg):
-        print('MSG NICK: {} BODY: {}'.format(msg['mucnick'],
-                                             msg['body']))
+        frame = (self._service_name,
+                 b'MSG',
+                 msg['mucnick']
+                 msg['body'])
+
+        self.publish_socket.send_multipart(frame)
 
 
 def main():
@@ -66,17 +83,28 @@ def main():
     parser.add_argument('room', help='room!')
     parser.add_argument('resource', help='resource')
     parser.add_argument('password', help='password')
+    parser.add_argument('service_name')
+    parser.add_argument('--pub_address', default='tcp://127.0.0.1:6001')
+    parser.add_argument('--nick', default='EchoBot')
+
     args = parser.parse_args()
     jid = '{}@{}/{}'.format(args.local, args.domain, args.resource)
-    # jid = slixmpp.JID(jid)
 
-    xmpp_bot = ReadOnlyXMPPBot(jid, args.password, args.room)
+    xmpp_bot = ReadOnlyXMPPBot(jid,
+                               args.password,
+                               args.room,
+                               args.nick,
+                               pub_address=args.pub_address,
+                               args.service_name)
+
     while True:
         try:
-            xmpp_bot.connect()
-            xmpp_bot.process()
+            if xmpp_bot.connect():
+                xmpp_bot.process(block=True)
+            else:
+                sleep(3)
         except Exception:
-            asyncio.sleep(3)
+            sleep(3)
 
 if __name__ == '__main__':
     main()
