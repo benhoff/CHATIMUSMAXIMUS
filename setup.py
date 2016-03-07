@@ -11,7 +11,7 @@ with open(os.path.join(directory, 'README.rst')) as f:
 setup(
     name="chatimusmaximus",
     version='0.0.1',
-    description='Chat GUI for youtube, twitch, livecoding, and WatchPeopleCode chats'
+    description='Chat GUI for youtube, twitch, livecoding, and WatchPeopleCode chats',
     # long_description=long_description,
     url='https://github.com/benhoff/chatimusmaximus',
     license='GPL3',
@@ -30,7 +30,7 @@ setup(
                                                               'xmpp = chatimusmaximus.communication_protocols.xmpp_client',
                                                               'socket_io = chatimusmaximus.communication_protocols.socket_io_client'],
 
-                  'gui_scripts': ['chatimusmaximus = chatimusmaximus.__main__:main']}
+                  'gui_scripts': ['chatimusmaximus = chatimusmaximus.__main__:main']},
                                                               #'youtube = chatimusmaximus.communication_protocols.client']},
 
     packages= find_packages(), # exclude=['docs', 'tests']
@@ -48,6 +48,6 @@ setup(
         'irc': ['irc3'],
         'socket_io': ['requests', 'websocket-client'],
         'xmpp': ['sleekxmpp'],
-        'youtube' ['google-api-python-client']
+        'youtube': ['google-api-python-client'],
         },
 )

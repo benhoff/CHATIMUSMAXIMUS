@@ -4,11 +4,12 @@ import logging
 
 from PyQt5 import QtWidgets
 from quamash import QEventLoop
+import pluginmanager
 
 from chatimusmaximus.gui import MainWindow
-from chatimusmaximus.plugin_manager import PluginManager
 from chatimusmaximus.settings_manager import SettingsManager
 from chatimusmaximus.messaging import ZmqMessaging
+
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
@@ -24,14 +25,12 @@ def main():
 
     # Create the Gui
     main_window = MainWindow()
-    # plugins to include different websites (and listeners?)
-    plugin_manager = PluginManager()
-    plugin_manager.register_main_window(main_window)
 
-    # User Settings
-    settings_manager = SettingsManager()
-    settings_manager.register_main_window(main_window)
-    settings_manager.register_plugin_manager(plugin_manager)
+    # Create the messaging interface
+    messager = ZmqMessaging()
+    messager.message_signal.connect(main_window.chat_slot)
+
+    plugin_manager = PluginInterface()
 
     main_window.show()
     try:

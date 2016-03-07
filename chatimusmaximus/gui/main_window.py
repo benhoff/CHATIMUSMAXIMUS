@@ -1,6 +1,7 @@
 from os import path
 from PyQt5 import QtWidgets, QtGui
 from gui import CentralWidget, StatusBar, MenuBar
+from gui.models.settings_model import SettingsModel
 
 _icon_path = path.join(path.dirname(__file__), 'resources', 'icons')
 _str = '{}.png'
@@ -16,13 +17,16 @@ class MainWindow(QtWidgets.QMainWindow):
         MainWindow uses a QTextEdit to display chat
         """
         # initialize parent class. Req'd for PyQt subclasses
-        super(MainWindow, self).__init__(parent)
+        super().__init__(parent)
         # set title window to `CHATIMUSMAXIMUS`
         self.setWindowTitle("CHATIMUSMAXIMUS")
         self.setStyleSheet('background: black;')
         # Create the central widget
         self.central_widget = CentralWidget(parent=self)
         self.setCentralWidget(self.central_widget)
+
+        self.settings_model = SettingsModel()
+        self._set_settings(self.settings_model.root)
 
         # add chat_slot to class
         self.chat_slot = self.central_widget.chat_slot
@@ -40,23 +44,13 @@ class MainWindow(QtWidgets.QMainWindow):
         for platform, icon_path in _ICON_DICT.items():
             msg_area.set_icon(icon_path, platform)
 
-    def set_settings(self, settings):
+    def _set_settings(self, settings):
         display = settings.get('display')
         self.central_widget.set_settings(display)
-        for key, setting in settings.items():
-            if key == 'display':
-                continue
-            if setting['display_missing']:
-                self.status_bar.set_up_helper(key.title())
-
-    @property
-    def settings_model(self):
-        return self._settings_model
-
-    @settings_model.setter
-    def settings_model(self, model):
-        self._settings_model = model
-        self.menu_bar.settings_model = model
+        for services in settings['services'].values():
+            for platform, platform_setting in service.items():
+                if platform_setting['display_missing']:
+                    self.status_bar.set_up_helper(platform.title())
 
     def set_command_prompt(self, prompt):
         self.central_widget.command_line.button.setText(prompt)
