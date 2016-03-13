@@ -4,11 +4,10 @@ from time import sleep
 import zmq
 
 from selenium import webdriver
-from _base import BaseCommunicationProto
+from _messaging import ZmqMessaging
 
 
-class JavascriptWebscraper(BaseCommunicationProto):
-
+class JavascriptWebscraper:
     def __init__(self,
                  url=None,
                  comment_element_id=None,
@@ -27,7 +26,7 @@ class JavascriptWebscraper(BaseCommunicationProto):
         `message_class_name` is the css class which holds the comment test
         ie., 'comment-text' for youtube
         """
-        super().__init__()
+        self.messaging = ZmqMessaging(service_name, pub_port_number)
         self.log = logging.getLogger(__name__)
         self.log.setLevel(logging.NOTSET)
 
@@ -64,7 +63,7 @@ class JavascriptWebscraper(BaseCommunicationProto):
         # NOTE: make sure this is ok if using for anything other than youtube
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)
-        self.send_message('CONNECTED')
+        self.messaging.send_message('CONNECTED')
 
         while True:
             sleep(1)
@@ -82,9 +81,9 @@ class JavascriptWebscraper(BaseCommunicationProto):
                     author = find_elem(self.author_class_name).text
 
                     message = find_elem(self.message_class_name).text
-                    self.send_message('MSG', author, message)
+                    self.messaging.send_message('MSG', author, message)
 
-        self.send_message('DISCONNECTED')
+        self.messaging.send_message('DISCONNECTED')
 
 def _get_args():
     parser = argparse.ArgumentParser()

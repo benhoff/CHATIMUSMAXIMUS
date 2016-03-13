@@ -5,6 +5,8 @@ from time import sleep
 
 import zmq
 
+from _messaging import ZmqMessaging
+
 
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
     def __init__(self,
@@ -17,11 +19,7 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
 
         # Initialize the parent class
         super().__init__(jid, password)
-        context = zmq.Context()
-        self.publish_socket = context.socket(zmq.PUB)
-        self.publish_socket.bind(pub_address)
-        # encode this to ascii as it's being used for mssging
-        self._service_name = service_name.encode('ascii')
+        self.messaging = ZmqMessaging(service_name, pub_address)
 
         self.room = room
         self.nick = nick
@@ -36,14 +34,10 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.add_event_handler('disconnected', self._disconnected)
 
     def _disconnected(self, *args):
-        frame = (self._service_name,
-                 b'DISCONNECTED')
-
-        self.publish_socket.send_multipart(frame)
+        self.messaging.send_message('DISCONNECTED')
 
     def _connected(self, *args):
-        frame = (self._service_name, b'CONNECTED')
-        self.publish_socket.send_multipart(frame)
+        self.messaging.send_message('CONNECTED')
 
     def process(self):
         self.init_plugins()
@@ -68,12 +62,9 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.get_roster()
 
     def muc_message(self, msg):
-        frame = (self._service_name,
-                 b'MSG',
-                 msg['mucnick']
-                 msg['body'])
-
-        self.publish_socket.send_multipart(frame)
+        self.messaging.send_message('MSG',
+                                    msg['mucnick'],
+                                    msg['body'])
 
 
 def _get_args():

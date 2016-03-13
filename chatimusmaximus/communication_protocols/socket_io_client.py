@@ -8,6 +8,8 @@ from time import sleep
 import zmq
 import websocket
 
+from _messaging import ZmqMessaging
+
 
 class ReadOnlyWebSocket(websocket.WebSocketApp):
     # NOTE: chat_signal defined in `__init__`
@@ -21,18 +23,13 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
 
         self.log = logging.getLogger(__name__)
         self.log.setLevel(0)
+        self.messaging = ZmqMessaging(serive_name, pub_address)
         self._streamer_name = streamer_name
         self.namespace = namespace
         self._website_url = website_url
         self.log.info('Getting Socket IO key!')
         self.key, heartbeat = self._connect_to_server_helper()
         self.log.info('Socket IO key got!')
-        # only sending the service name through mssging
-        self._service_name = service_name.encode('ascii')
-
-        context = zmq.Context()
-        self.pub_socket = context.socket(zmq.PUB)
-        self.pub_scoket.bind(pub_address)
 
         # alters URL to be more websocket...ie
         self._website_socket = self._website_url.replace('http', 'ws')
@@ -50,8 +47,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
             except Exception as e:
                 self.log.info('Socket IO errors: {}'.format(e))
             sleep(3)
-            frame = (self._service_name, b'DISCONNECTED')
-            self.pub_socket.send_multipart(frame)
+            self.messaging.send_message('DISCONNECTED')
             key, _ = self._connect_to_server_helper()
             self.url = self._website_socket + key
 
@@ -88,8 +84,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
 
             self.send_packet_helper(5, data=data)
             self.log.info('Connected to channel with socket io!')
-            frame = (self._service_name, b'CONNECTED')
-            self.pub_socket.send_multipart(frame)
+            self.messaging.send_message('CONNECTED')
         elif key == 2:
             self.send_packet_helper(2)
         elif key == 5:
@@ -98,12 +93,7 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                 message = data['args'][0]
                 sender = html.unescape(message['sender'])
                 message = html.unescape(message['text'])
-                frame = (self._service_name,
-                         b'MSG',
-                         sender.encode('ascii'),
-                         message.encode('ascii'))
-
-                self.pub_socket.send_multipart(frame)
+                self.messaging.send_message('MSG', sender, message)
 
     def on_error(self, *args):
         print(args[1])

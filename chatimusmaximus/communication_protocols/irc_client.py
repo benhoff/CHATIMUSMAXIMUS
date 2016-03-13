@@ -1,9 +1,10 @@
 import sys
 import argparse
 
-import zmq
 import irc3
 from irc3.plugins.autojoins import AutoJoins
+
+from _messaging import ZmqMessaging
 
 
 @irc3.plugin
@@ -12,35 +13,23 @@ class AutoJoinMessage(AutoJoins):
 
     def __init__(self, bot):
         super().__init__(bot)
-        context = zmq.Context()
-        self.bot.pub_socket = context.socket(zmq.PUB)
-        self.socket.bind(bot.config.pub_address)
-        self.bot._service_name = bot.config.service_name.encode('ascii')
 
     def connection_lost(self):
-        frame = (self.bot._service_name,
-                 b'DISCONNECTED')
-        self.bot.pub_socket.send_multipart(frame)
+        self.bot.messaging.send_message('DISCONNECTED')
         super(AutoJoinMessage, self).connection_lost()
 
     def join(self, channel=None):
         super(AutoJoinMessage, self).join(channel)
-        frame = (self.bot._service_name,
-                 b'CONNECTED')
-        self.bot.pub_socket.send_multipart(frame)
+        self.bot.messaging.send_message('CONNECTED')
 
     @irc3.event(irc3.rfc.KICK)
     def on_kick(self, mask, channel, target, **kwargs):
-        frame = (self.bot._service_name,
-                 b'DISCONNECTED')
-        self.bot.pub_socket.send_multipart(frame)
+        self.bot.messaging.send_message('DISCONNECTED')
         super().on_kick(mask, channel, target, **kwargs)
 
     @irc3.event("^:\S+ 47[1234567] \S+ (?P<channel>\S+).*")
     def on_err_join(self, channel, **kwargs):
-        frame = (self.bot._service_name,
-                 b'DISCONNECTED')
-        self.bot.pub_socket.send_multipart(frame)
+        self.bot.messaging.send_message('DISCONNECTED')
         super().on_err_join(channel, **kwargs)
 
 
@@ -60,7 +49,7 @@ class EchoToMessage(object):
                  b'MSG',
                  nick,
                  message)
-        self.bot.pub_socket.send_multipart(frame)
+        self.bot.message.send_message('MSG', nick, message)
 
 
 def create_irc_bot(nick,
@@ -97,11 +86,15 @@ def create_irc_bot(nick,
 
     return bot
 
-def main(nick, password, host, channel):
+def main(nick, password, host, channel, pub_address, service_name):
     irc_client = create_irc_bot(nick,
                                 password,
                                 host,
                                 channel=channel)
+
+    messaging = ZmqMessaging(service_name, pub_address)
+    # Duck type messaging onto irc_client, FTW
+    irc_client.messaging = messaging
 
     irc_client.create_connection()
     irc_client.add_signal_handlers()
