@@ -5,7 +5,7 @@ from time import sleep
 
 import zmq
 
-from _messaging import ZmqMessaging
+from communication_protocols._messaging import ZmqMessaging
 
 
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
@@ -90,7 +90,7 @@ def main():
                                args.room,
                                args.nick,
                                pub_address=args.pub_address,
-                               args.service_name)
+                               service_name=args.service_name)
 
     while True:
         try:

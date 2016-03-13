@@ -37,12 +37,11 @@ setup(
     install_requires=[
         'pluginmanager',
         'pyzmq',
-        'sleekxmpp',
         'PyYAML',
-        'Quamash',
         ],
 
     extras_require={
+        'gui': ['PyQt5', 'Quamash'],
         'dev': ['flake8'],
         'javascript_webscrapper': ['selenium'],
         'irc': ['irc3'],

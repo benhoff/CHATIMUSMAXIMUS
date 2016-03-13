@@ -5,7 +5,7 @@ import zmq.asyncio
 
 
 class ZmqMessaging:
-    def __init__(self, service_name, pub_port)
+    def __init__(self, service_name, pub_port):
         self._service_name = service_name.encode('ascii')
         self.start_messaging(pub_port)
 

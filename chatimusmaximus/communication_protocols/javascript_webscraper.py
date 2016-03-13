@@ -4,7 +4,7 @@ from time import sleep
 import zmq
 
 from selenium import webdriver
-from _messaging import ZmqMessaging
+from communication_protocols._messaging import ZmqMessaging
 
 
 class JavascriptWebscraper:

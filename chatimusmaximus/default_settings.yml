@@ -18,6 +18,8 @@ services:
             channel: ""
             # I believe this has to be your twitch acct name
             nick: ""
+            # TODO: add in default handeling
+            default_socket_address: ""
             connect: false
             display_missing: true
 
@@ -30,6 +32,8 @@ services:
             password: ""
             bot_nick: ""
             room: ""
+            # TODO: add in default handeling
+            default_socket_address: ""
             connect: false
             display_missing: true
 
@@ -39,11 +43,15 @@ services:
 
         watchpeoplecode:
             channel: ""
+            # TODO: add in default handeling
+            default_socket_address: ""
             connect: false
             display_missing: true
     
     # youtube is special.
     youtube:
+        # TODO: add in default handeling
+        default_socket_address: ""
         connect: false
         display_missing: true
         
