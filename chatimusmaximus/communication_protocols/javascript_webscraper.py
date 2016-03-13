@@ -4,9 +4,10 @@ from time import sleep
 import zmq
 
 from selenium import webdriver
+from _base import BaseCommunicationProto
 
 
-class JavascriptWebscraper(object):
+class JavascriptWebscraper(BaseCommunicationProto):
 
     def __init__(self,
                  url=None,
@@ -26,12 +27,9 @@ class JavascriptWebscraper(object):
         `message_class_name` is the css class which holds the comment test
         ie., 'comment-text' for youtube
         """
+        super().__init__()
         self.log = logging.getLogger(__name__)
         self.log.setLevel(logging.NOTSET)
-        context = zmq.Context()
-        self.pub_socket = context.socket(zmq.PUB)
-        self.pub_socket.bind(pub_address)
-        self._service_name = service_name.encode('ascii')
 
         self.url = url
         self._number_of_messages = 0
@@ -66,8 +64,7 @@ class JavascriptWebscraper(object):
         # NOTE: make sure this is ok if using for anything other than youtube
         comments = all_comments.find_elements_by_tag_name('li')
         self._number_of_messages = len(comments)
-        frame = (self._service_name, b'CONNECTED')
-        self.pub_socket.send_multipart(frame)
+        self.send_message('CONNECTED')
 
         while True:
             sleep(1)
@@ -85,15 +82,9 @@ class JavascriptWebscraper(object):
                     author = find_elem(self.author_class_name).text
 
                     message = find_elem(self.message_class_name).text
-                    frame = (self._service_name,
-                             b'MSG',
-                             author.encode('ascii'),
-                             message.encode('ascii'))
+                    self.send_message('MSG', author, message)
 
-                    self.pub_socket.send_multipart(frame)
-
-        frame = (self._service_name, b'DISCONNECTED')
-        self.pub_socket.send_multipart(frame)
+        self.send_message('DISCONNECTED')
 
 def _get_args():
     parser = argparse.ArgumentParser()
@@ -108,12 +99,9 @@ def _get_args():
 
 
 if __name__ == '__main__':
-    args = _get_args()
-    webscraper = JavascriptWebscraper(args.url,
-                                      args.comment_element_id,
-                                      args.author_class_name,
-                                      args.message_class_name,
-                                      args.pub_address,
-                                      args.service_name)
+    # python magic to get a list of args
+    # vars changes namespace to dict, `values()` gets the values out of dict
+    args = vars(_get_args()).values()
+    webscraper = JavascriptWebscraper(*args)
 
     webscraper.run_forever()

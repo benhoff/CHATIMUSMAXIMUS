@@ -24,7 +24,7 @@ class ZmqMessaging(QtCore.QObject):
             frame = await self.control_socket.recv_multipart()
             # response socket MUST send response
             self.control_socket.send(b'')
-            # bind the sent socket to the 
+            # bind the sent socket to the
             self.sub_socket.bind(frame.decode('ascii'))
 
     async def recv_sub_socket(self):
