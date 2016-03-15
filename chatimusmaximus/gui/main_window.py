@@ -25,15 +25,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.central_widget = CentralWidget(parent=self)
         self.setCentralWidget(self.central_widget)
 
-        self.settings_model = SettingsModel()
-        self._set_settings(self.settings_model.root)
-
         # add chat_slot to class
         self.chat_slot = self.central_widget.chat_slot
 
         self.status_bar = StatusBar(parent=self)
         self.set_widget_state = self.status_bar.set_widget_status
         self.setStatusBar(self.status_bar)
+
+        self.settings_model = SettingsModel()
+        self._set_settings(self.settings_model.root)
 
         # alias for pep8
         msg_area = self.central_widget.message_area
@@ -46,9 +46,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _set_settings(self, settings):
         display = settings.get('display')
-        self.central_widget.set_settings(display)
         for services in settings['services'].values():
-            for platform, platform_setting in service.items():
+            for platform, platform_setting in services.items():
                 if platform_setting['display_missing']:
                     self.status_bar.set_up_helper(platform.title())
 

@@ -50,10 +50,9 @@ services:
     
     # youtube is special.
     youtube:
-        # TODO: add in default handeling
-        default_socket_address: ""
-        connect: false
-        display_missing: true
+        # FIXME: add in default handeling
+        # default_socket_address: ""
+        # connect: false
         
         # must install selenium. Don't need OAuth credentials
         javascript_scraper:
@@ -61,9 +60,13 @@ services:
              # permenant landing page
             channel_id: ""
             youtube_url: ""
+            # FIXME
+            display_missing: true
         
         # go to goole developers console. Create an app and request
         # YouTube Data API v3 access. Create and download OAuth credentials
         # and put the filepath info in `client_secrets_file`
         api_connect:
             client_secrets_file: ""
+            # FIXME
+            display_missing: true

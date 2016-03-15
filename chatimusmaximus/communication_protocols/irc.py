@@ -4,7 +4,7 @@ import argparse
 import irc3
 from irc3.plugins.autojoins import AutoJoins
 
-from communication_protocols._messaging import ZmqMessaging
+from chatimusmaximus.communication_protocols._messaging import ZmqMessaging
 
 
 @irc3.plugin

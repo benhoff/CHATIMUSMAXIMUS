@@ -5,7 +5,7 @@ from time import sleep
 
 import zmq
 
-from communication_protocols._messaging import ZmqMessaging
+from chatimusmaximus.communication_protocols._messaging import ZmqMessaging
 
 
 class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):

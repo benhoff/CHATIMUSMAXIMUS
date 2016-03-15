@@ -25,10 +25,10 @@ setup(
         'Operating System :: OS Independent'],
     author='Ben Hoff',
     author_email='beohoff@gmail.com',
-    entry_points={'chatimusmaximus.communication_protocols': ['irc = chatimusmaximus.communication_protocols.irc_client',
+    entry_points={'chatimusmaximus.communication_protocols': ['irc = chatimusmaximus.communication_protocols.irc',
                                                               'javascript_webscraper = chatimusmaximus.communication_protocols.javascript_webscraper',
-                                                              'xmpp = chatimusmaximus.communication_protocols.xmpp_client',
-                                                              'socket_io = chatimusmaximus.communication_protocols.socket_io_client'],
+                                                              'xmpp = chatimusmaximus.communication_protocols.xmpp',
+                                                              'socket_io = chatimusmaximus.communication_protocols.socket_io'],
 
                   'gui_scripts': ['chatimusmaximus = chatimusmaximus.__main__:main']},
                                                               #'youtube = chatimusmaximus.communication_protocols.client']},
