@@ -1,4 +1,5 @@
 import sys
+import asyncio
 import argparse
 
 import irc3
@@ -45,11 +46,7 @@ class EchoToMessage(object):
     def message(self, mask, event, target, data):
         nick = mask.split('!')[0]
         message = data
-        frame = (self.bot._service_name,
-                 b'MSG',
-                 nick,
-                 message)
-        self.bot.message.send_message('MSG', nick, message)
+        self.bot.messaging.send_message('MSG', nick, message)
 
 
 def create_irc_bot(nick,
@@ -57,9 +54,7 @@ def create_irc_bot(nick,
                    host=None,
                    port=6667,
                    realname=None,
-                   channel=None,
-                   pub_address='',
-                   service_name=''):
+                   channel=None):
 
     config = dict(ssl=False,
                   includes=['irc3.plugins.core',
@@ -79,22 +74,21 @@ def create_irc_bot(nick,
     config['port'] = port
     config['realname'] = realname
     config['autojoins'] = channel
-    config['service_name'] = service_name
-    config['pub_address'] = pub_address
 
     bot = irc3.IrcBot.from_config(config)
 
     return bot
 
-def main(nick, password, host, channel, pub_address, service_name):
+def main(nick, password, host, channel, socket_address, service_name):
     irc_client = create_irc_bot(nick,
                                 password,
                                 host,
                                 channel=channel)
 
-    messaging = ZmqMessaging(service_name, pub_address)
+    messaging = ZmqMessaging(service_name, socket_address)
     # Duck type messaging onto irc_client, FTW
     irc_client.messaging = messaging
+    print(dir(irc_client))
 
     irc_client.create_connection()
     irc_client.add_signal_handlers()
@@ -108,23 +102,17 @@ def main(nick, password, host, channel, pub_address, service_name):
 
 def _get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('nick')
-    parser.add_argument('password')
-    parser.add_argument('host')
-    parser.add_argument('channel')
-    parser.add_argument('pub_address')
-    parser.add_argument('service_name')
+    parser.add_argument('--nick')
+    parser.add_argument('--password')
+    parser.add_argument('--host')
+    parser.add_argument('--channel')
+    parser.add_argument('--socket_address')
+    parser.add_argument('--service_name')
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
 
-    args = _get_args()
-
-    main(args.nick,
-         args.password,
-         args.host,
-         args.channel,
-         args.pub_address,
-         args.service_name)
+    kwargs = vars(_get_args())
+    main(**kwargs)

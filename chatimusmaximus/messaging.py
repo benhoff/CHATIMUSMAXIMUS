@@ -1,34 +1,43 @@
 import asyncio
 from PyQt5 import QtCore
 import zmq
-import zmq.asyncio
 
 
 class ZmqMessaging(QtCore.QObject):
     message_signal = QtCore.pyqtSignal(str, str, str)
+    connected_signal = QtCore.pyqtSignal(bool, str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        context = zmq.asyncio.Context()
+        context = zmq.Context()
         self.sub_socket = context.socket(zmq.SUB)
         self.sub_socket.setsockopt(zmq.SUBSCRIBE, b'')
-
-        self.control_socket = context.socket(zmq.REP)
-        self.control_socket.bind('tcp://127.0.0.1:5986')
         event_loop = asyncio.get_event_loop()
-        event_loop.call_soon(self.recv_control_socket)
-        event_loop.call_soon(self.recv_sub_socket)
+        event_loop.run_in_executor(None, self.recv_sub_socket)
 
-    async def recv_control_socket(self):
-        while True:
-            frame = await self.control_socket.recv_multipart()
-            # response socket MUST send response
-            self.control_socket.send(b'')
-            # bind the sent socket to the
-            self.sub_socket.bind(frame.decode('ascii'))
+    def subscribe_to_publishers(self, settings: dict):
+        for services, values in settings['services'].items():
+            if not services == 'youtube':
+                for platform_values in values.values():
+                    if platform_values['connect']:
+                        self.sub_socket.connect(platform_values['socket_address'])
+            else:
+                # youtube is special
+                pass
 
-    async def recv_sub_socket(self):
+    def recv_sub_socket(self):
         while True:
-            frame = await self.sub_socket.recv_multipart()
-            frame = (x.decode('ascii') for x in frame)
-            self.msg_signal.emit(*frame)
+            frame = self.sub_socket.recv_multipart()
+            frame = [x.decode('ascii') for x in frame]
+            frame_length = len(frame)
+            print(frame, frame_length)
+            if frame_length == 4:
+                del frame[1]
+                self.message_signal.emit(*frame)
+            elif frame_length == 3:
+                state = frame[1]
+                if state == 'CONNECTED':
+                    state = True
+                else:
+                    state = False
+                self.connected_signal.emit(state, frame[0])

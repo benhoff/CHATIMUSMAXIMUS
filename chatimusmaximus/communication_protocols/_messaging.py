@@ -12,10 +12,9 @@ class ZmqMessaging:
     def start_messaging(self, pub_port):
         context = zmq.Context()
         self.pub_socket = context.socket(zmq.PUB)
-        pub_port = self.pub_socket.bind(pub_port)
-        self.response_socket = context.socket(zmq.RSP)
-        self.reponse_socket.connect(request_port)
+        self.pub_socket.bind(pub_port)
 
     def send_message(self, *msg):
-        msg = (x.encode('ascii') for x in msg)
+        msg = [x.encode('ascii') for x in msg]
+        msg.insert(0, self._service_name)
         self.pub_socket.send_multipart(msg)

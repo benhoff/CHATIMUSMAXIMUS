@@ -3,8 +3,6 @@ version: "0.1.1"
 display:
     command_line: "user@chatimus ~$ "
 
-communication_port: 'tcp://localhost:5599'
-
 services:
 
     irc:
@@ -19,7 +17,8 @@ services:
             # I believe this has to be your twitch acct name
             nick: ""
             # TODO: add in default handeling
-            default_socket_address: ""
+            socket_address: ""
+            host: 'irc.twitch.tv'
             connect: false
             display_missing: true
 
@@ -33,7 +32,7 @@ services:
             bot_nick: ""
             room: ""
             # TODO: add in default handeling
-            default_socket_address: ""
+            socket_address: ""
             connect: false
             display_missing: true
 
@@ -42,16 +41,17 @@ services:
     socket_io:
 
         watchpeoplecode:
-            channel: ""
-            # TODO: add in default handeling
-            default_socket_address: ""
-            connect: false
+            streamer_name: ""
+            namespace: '/chat'
+            website_url: 'http://www.watchpeoplecode.com/socket.io/1/'
+            socket_address: ""
+            connect: true
             display_missing: true
     
     # youtube is special.
     youtube:
         # FIXME: add in default handeling
-        # default_socket_address: ""
+        # socket_address: ""
         # connect: false
         
         # must install selenium. Don't need OAuth credentials
@@ -61,7 +61,7 @@ services:
             channel_id: ""
             youtube_url: ""
             # FIXME
-            display_missing: true
+            display_missing: false
         
         # go to goole developers console. Create an app and request
         # YouTube Data API v3 access. Create and download OAuth credentials
@@ -69,4 +69,4 @@ services:
         api_connect:
             client_secrets_file: ""
             # FIXME
-            display_missing: true
+            display_missing: false

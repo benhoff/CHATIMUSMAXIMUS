@@ -18,12 +18,12 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
                  streamer_name,
                  namespace,
                  website_url,
-                 pub_address,
+                 socket_address,
                  service_name):
 
         self.log = logging.getLogger(__name__)
         self.log.setLevel(0)
-        self.messaging = ZmqMessaging(serive_name, pub_address)
+        self.messaging = ZmqMessaging(service_name, socket_address)
         self._streamer_name = streamer_name
         self.namespace = namespace
         self._website_url = website_url
@@ -122,23 +122,17 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
 
 def _get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('streamer_name')
-    parser.add_argument('namespace')
-    parser.add_argument('website_url')
-    parser.add_argument('pub_address')
-    parser.add_argument('service_name')
+    parser.add_argument('--streamer_name')
+    parser.add_argument('--namespace')
+    parser.add_argument('--website_url')
+    parser.add_argument('--service_name')
+    parser.add_argument('--socket_address')
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
 
-    args = _get_args()
-
-    client = ReadOnlyWebSocket(args.streamer_name,
-                               args.namespace,
-                               args.website_url,
-                               args.pub_address,
-                               args.service_name)
-
+    args = vars(_get_args())
+    client = ReadOnlyWebSocket(**args)
     client.repeat_run_forever()
