@@ -44,6 +44,8 @@ class ReadOnlyWebSocket(websocket.WebSocketApp):
         while True:
             try:
                 self.run_forever()
+            except KeyboardInterrupt:
+                break
             except Exception as e:
                 self.log.info('Socket IO errors: {}'.format(e))
             sleep(3)

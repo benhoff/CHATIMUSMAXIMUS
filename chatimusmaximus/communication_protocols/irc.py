@@ -88,7 +88,6 @@ def main(nick, password, host, channel, socket_address, service_name):
     messaging = ZmqMessaging(service_name, socket_address)
     # Duck type messaging onto irc_client, FTW
     irc_client.messaging = messaging
-    print(dir(irc_client))
 
     irc_client.create_connection()
     irc_client.add_signal_handlers()

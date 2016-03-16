@@ -1,6 +1,6 @@
-import asyncio
 from PyQt5 import QtCore
 import zmq
+from threading import Thread
 
 
 class ZmqMessaging(QtCore.QObject):
@@ -12,8 +12,8 @@ class ZmqMessaging(QtCore.QObject):
         context = zmq.Context()
         self.sub_socket = context.socket(zmq.SUB)
         self.sub_socket.setsockopt(zmq.SUBSCRIBE, b'')
-        event_loop = asyncio.get_event_loop()
-        event_loop.run_in_executor(None, self.recv_sub_socket)
+        self.thread = Thread(target=self.recv_sub_socket, daemon=True)
+        self.thread.start()
 
     def subscribe_to_publishers(self, settings: dict):
         for services, values in settings['services'].items():
@@ -30,7 +30,6 @@ class ZmqMessaging(QtCore.QObject):
             frame = self.sub_socket.recv_multipart()
             frame = [x.decode('ascii') for x in frame]
             frame_length = len(frame)
-            print(frame, frame_length)
             if frame_length == 4:
                 del frame[1]
                 self.message_signal.emit(*frame)

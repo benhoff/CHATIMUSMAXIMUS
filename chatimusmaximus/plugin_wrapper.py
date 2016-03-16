@@ -1,4 +1,6 @@
+import os
 import sys
+import signal
 import subprocess
 
 
@@ -35,12 +37,12 @@ class PluginWrapper:
                          # *flattened_dict)
 
         self._save_args = (invoke_args, invoke_kwargs, args, kwargs)
-        self._subprocess = subprocess.Popen(activate_args)
+        self._subprocess = subprocess.Popen(activate_args, stdout=subprocess.PIPE)
 
     def deactivate(self):
         # TODO: do terminate instead of kill, and schedule a callback to make
         # sure the process is terminated. Then kill
-        self._subprocess.kill()
+        self._subprocess.terminate()
 
     def restart(self):
         self.deactivate()
