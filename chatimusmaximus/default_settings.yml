@@ -26,9 +26,12 @@ services:
 
         livecoding:
             # this MUST be your livecode name
-            name: ""
+            # This is a name
+            local: ""
             # this can be your profile password
             password: ""
+            domain: 'livecoding.tv'
+            resource: 'CHATIMUSMAXIMUS'
             bot_nick: ""
             room: ""
             # TODO: add in default handeling

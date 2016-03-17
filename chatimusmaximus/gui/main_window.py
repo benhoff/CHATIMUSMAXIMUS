@@ -46,10 +46,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _set_settings(self, settings):
         display = settings.get('display')
-        for services in settings['services'].values():
-            for platform, platform_setting in services.items():
-                if platform_setting['display_missing']:
-                    self.status_bar.set_up_helper(platform.title())
+        for service, platform in settings['services'].items():
+            if not service == 'youtube':
+                for platform_name, settings in platform.items():
+                    if settings['display_missing']:
+                        self.status_bar.set_up_helper(platform_name.title())
+            else:
+                if platform['display_missing']:
+                    self.status_bar.set_up_helper(service.title())
 
     def set_command_prompt(self, prompt):
         self.central_widget.command_line.button.setText(prompt)

@@ -33,7 +33,7 @@ class ZmqMessaging(QtCore.QObject):
             if frame_length == 4:
                 del frame[1]
                 self.message_signal.emit(*frame)
-            elif frame_length == 3:
+            elif frame_length == 2:
                 state = frame[1]
                 if state == 'CONNECTED':
                     state = True

@@ -1,25 +1,28 @@
 import logging
 import argparse
-import sleekxmpp
-from time import sleep
+import slixmpp
+import asyncio
+from asyncio import sleep
 
 import zmq
 
-from chatimusmaximus.communication_protocols._messaging import ZmqMessaging
+from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging
 
 
-class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
+class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
     def __init__(self,
                  jid,
                  password,
                  room,
+                 socket_address,
+                 service_name,
                  nick='EchoBot',
-                 pub_address='tcp://127.0.0.1:6001',
-                 service_name=''):
+                 **kwargs):
 
         # Initialize the parent class
         super().__init__(jid, password)
-        self.messaging = ZmqMessaging(service_name, pub_address)
+        print(jid, password, room, socket_address, service_name)
+        self.messaging = ZmqMessaging(service_name, socket_address)
 
         self.room = room
         self.nick = nick
@@ -58,7 +61,9 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
         self.log.info('starting xmpp')
         self.send_presence()
         self.plugin['xep_0045'].joinMUC(self.room,
-                                        self.nick)
+                                        self.nick,
+                                        wait=True)
+
         self.get_roster()
 
     def muc_message(self, msg):
@@ -69,14 +74,14 @@ class ReadOnlyXMPPBot(sleekxmpp.ClientXMPP):
 
 def _get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('local', help='local arg for string parsing')
-    parser.add_argument('domain', help='domain for xmpp')
-    parser.add_argument('room', help='room!')
-    parser.add_argument('resource', help='resource')
-    parser.add_argument('password', help='password')
-    parser.add_argument('service_name')
-    parser.add_argument('--pub_address', default='tcp://127.0.0.1:6001')
-    parser.add_argument('--nick', default='EchoBot')
+    parser.add_argument('--local', help='local arg for string parsing')
+    parser.add_argument('--domain', help='domain for xmpp')
+    parser.add_argument('--room', help='room!')
+    parser.add_argument('--resource', help='resource')
+    parser.add_argument('--password', help='password')
+    parser.add_argument('--service_name')
+    parser.add_argument('--socket_address')
+    parser.add_argument('--nick')
 
     return parser.parse_args()
 
@@ -84,22 +89,18 @@ def _get_args():
 def main():
     args = _get_args()
     jid = '{}@{}/{}'.format(args.local, args.domain, args.resource)
+    kwargs = vars(args)
 
-    xmpp_bot = ReadOnlyXMPPBot(jid,
-                               args.password,
-                               args.room,
-                               args.nick,
-                               pub_address=args.pub_address,
-                               service_name=args.service_name)
+    xmpp_bot = ReadOnlyXMPPBot(jid, **kwargs)
+
+    xmpp_bot.log.warning(vars(args))
 
     while True:
         try:
-            if xmpp_bot.connect():
-                xmpp_bot.process(block=True)
-            else:
-                sleep(3)
+            xmpp_bot.connect()
+            xmpp_bot.process()
         except Exception:
-            sleep(3)
+            sleep(1)
 
 if __name__ == '__main__':
     main()

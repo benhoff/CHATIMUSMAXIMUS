@@ -29,6 +29,9 @@ def _create_services_from_settings(settings, modules: dict):
                 kwargs['--service_name'] = platform
                 plugin_wrapper.activate(invoke_kwargs=kwargs)
                 plugin_wrappers.append(plugin_wrapper)
+        else:
+            # TODO: youtube parsing here
+            pass
 
     return plugin_wrappers
 

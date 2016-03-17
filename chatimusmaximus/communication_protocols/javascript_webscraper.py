@@ -4,7 +4,7 @@ from time import sleep
 import zmq
 
 from selenium import webdriver
-from chatimusmaximus.communication_protocols._messaging import ZmqMessaging
+from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging
 
 
 class JavascriptWebscraper:
