@@ -34,6 +34,8 @@ setup(
                                                               #'youtube = chatimusmaximus.communication_protocols.client']},
 
     packages= find_packages(), # exclude=['docs', 'tests']
+    package_data={'chatimusmaximus': ['default_settings.yml', 'gui/resources/click.wav', 'gui/resources/icons/*', 'gui/resources/buttons/*']},
+
     install_requires=[
         'pluginmanager',
         'pyzmq',
@@ -41,12 +43,12 @@ setup(
         ],
 
     extras_require={
-        'gui': ['PyQt5', 'Quamash'],
+        'gui': ['Quamash'],
         'dev': ['flake8'],
         'javascript_webscrapper': ['selenium'],
         'irc': ['irc3'],
         'socket_io': ['requests', 'websocket-client'],
-        'xmpp': ['slixmpp', 'pythondns3'],
+        'xmpp': ['slixmpp', 'dnspython3'],
         'youtube': ['google-api-python-client'],
         },
 )

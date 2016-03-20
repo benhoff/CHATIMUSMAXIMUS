@@ -1,7 +1,7 @@
 from os import path
 from PyQt5 import QtWidgets, QtGui
-from gui import CentralWidget, StatusBar, MenuBar
-from gui.models.settings_model import SettingsModel
+from chatimusmaximus.gui import CentralWidget, StatusBar, MenuBar
+from chatimusmaximus.gui.models.settings_model import SettingsModel
 
 _icon_path = path.join(path.dirname(__file__), 'resources', 'icons')
 _str = '{}.png'

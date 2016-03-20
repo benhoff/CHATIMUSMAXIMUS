@@ -1,11 +1,14 @@
 import os
 import sys
-import httplib2
+try:
+    import httplib2
 
-from apiclient.discovery import build
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.file import Storage
-from oauth2client.tools import run_flow, argparser
+    from apiclient.discovery import build
+    from oauth2client.client import flow_from_clientsecrets
+    from oauth2client.file import Storage
+    from oauth2client.tools import run_flow, argparser
+except ImportError:
+    pass
 
 from chatimusmaximus.plugin_wrapper import PluginWrapper
 
