@@ -65,4 +65,5 @@ services:
         # YouTube Data API v3 access. Create and download OAuth credentials
         # and put the filepath info in `client_secrets_file`
         api_connect:
+            # use an absolute filepath!
             client_secrets_file: ""
