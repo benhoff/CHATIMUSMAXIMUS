@@ -15,20 +15,13 @@ class ZmqMessaging(QtCore.QObject):
         self.thread = Thread(target=self.recv_sub_socket, daemon=True)
         self.thread.start()
 
-    def subscribe_to_publishers(self, settings: dict):
-        for services, values in settings['services'].items():
-            if not services == 'youtube':
-                for platform_values in values.values():
-                    if platform_values['connect']:
-                        self.sub_socket.connect(platform_values['socket_address'])
-            else:
-                # youtube is special
-                pass
+    def subscribe_to_publishers(self, addresses: list):
+        for address in addresses:
+            self.sub_socket.connect(address)
 
     def recv_sub_socket(self):
         while True:
-            frame = self.sub_socket.recv_multipart()
-            frame = [x.decode('ascii') for x in frame]
+            frame = self.sub_socket.recv_pyobj()
             frame_length = len(frame)
             if frame_length == 4:
                 del frame[1]

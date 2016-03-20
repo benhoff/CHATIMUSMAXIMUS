@@ -6,74 +6,61 @@ from PyQt5 import QtWidgets
 from quamash import QEventLoop
 import pluginmanager
 from chatimusmaximus.gui import MainWindow
-from chatimusmaximus.plugin_wrapper import PluginWrapper
 from chatimusmaximus.messaging import ZmqMessaging
+from chatimusmaximus.util import create_services_from_settings
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
 
 
-def _create_services_from_settings(settings, modules: dict):
-    _rm_arguments = ['connect', 'display_missing']
-    plugin_wrappers = []
-    for name, service in settings['services'].items():
-        # youtube is special
-        if not name == 'youtube':
-            module = modules[name]
-            for platform, platform_settings in service.items():
-                if not platform_settings['connect']:
-                    continue
-                plugin_wrapper = PluginWrapper(module)
-                kwargs = {'--' + key: value for (key, value) in platform_settings.items() if key not in _rm_arguments}
-                kwargs['--service_name'] = platform
-                plugin_wrapper.activate(invoke_kwargs=kwargs)
-                plugin_wrappers.append(plugin_wrapper)
-        else:
-            # TODO: youtube parsing here
-            pass
-
-    return plugin_wrappers
-
-
 def main():
     # create the Application
     app = QtWidgets.QApplication(sys.argv)
 
-    # create the event loop
+    # create the event loop and set it in asyncio
     event_loop = QEventLoop(app)
     asyncio.set_event_loop(event_loop)
 
     # Create the Gui
     main_window = MainWindow()
     settings_data = main_window.settings_model.root
+    # Need 3 bits of information from settings. ip addresses, display missing,
+    # and general settings
 
-    # Create the recv messaging interface
+    # Create the recving messaging interface
     messager = ZmqMessaging()
     messager.message_signal.connect(main_window.chat_slot)
     messager.connected_signal.connect(main_window.status_bar.set_widget_status)
-    messager.subscribe_to_publishers(settings_data)
 
     # gather the plugins
-    plugin_manager = pluginmanager.PluginInterface()
-    plugin_manager.set_entry_points('chatimusmaximus.communication_protocols')
-    plugin_manager.collect_entry_point_plugins()
+    module_manager = pluginmanager.PluginInterface()
+    module_manager.set_entry_points('chatimusmaximus.communication_protocols')
+    modules = module_manager.collect_entry_point_plugins()
 
-    # collect the modules and turn them into services
-    modules = plugin_manager.get_plugins()
-    plugins = {module.__name__.split('.')[-1]: module for module in modules}
-    services = _create_services_from_settings(settings_data, plugins)
+    # need to have the modules in a dict, so get the name and put in dict
+    module_dict = {module.__name__.split('.')[-1]: module for module in modules}
+    services, addresses = create_services_from_settings(settings_data,
+                                                        module_dict)
 
+    messager.subscribe_to_publishers(addresses)
     # show me the money!
     main_window.show()
+
+    # let everything asyncorous run
     try:
         event_loop.run_forever()
+    # catch ctrl-C event to allow for graceful closing
     except KeyboardInterrupt:
         pass
+    # tell Qt we're going out
     app.deleteLater()
+    # close the event loop
     event_loop.close()
+    # close the subprocesses
     for service in services:
         service.deactivate()
+    # exit
     sys.exit()
 
 if __name__ == '__main__':

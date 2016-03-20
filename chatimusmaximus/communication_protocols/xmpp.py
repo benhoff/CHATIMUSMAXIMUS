@@ -21,7 +21,6 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
 
         # Initialize the parent class
         super().__init__(jid, password)
-        print(jid, password, room, socket_address, service_name)
         self.messaging = ZmqMessaging(service_name, socket_address)
 
         self.room = room
@@ -92,8 +91,6 @@ def main():
     kwargs = vars(args)
 
     xmpp_bot = ReadOnlyXMPPBot(jid, **kwargs)
-
-    xmpp_bot.log.warning(vars(args))
 
     while True:
         try:

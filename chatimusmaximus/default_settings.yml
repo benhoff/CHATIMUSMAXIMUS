@@ -54,22 +54,16 @@ services:
     # youtube is special.
     youtube:
         # FIXME: add in default handeling
-        # socket_address: ""
-        # connect: false
+        socket_address: ""
+        connect: false
+        display_missing: true
         
         # must install selenium. Don't need OAuth credentials
         javascript_scraper:
-             # NOTE: only pass in channel id if you want to connect chat to your 
-             # permenant landing page
-            channel_id: ""
             youtube_url: ""
-            # FIXME
-            display_missing: false
         
         # go to goole developers console. Create an app and request
         # YouTube Data API v3 access. Create and download OAuth credentials
         # and put the filepath info in `client_secrets_file`
         api_connect:
             client_secrets_file: ""
-            # FIXME
-            display_missing: false

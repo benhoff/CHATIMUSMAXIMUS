@@ -46,7 +46,7 @@ setup(
         'javascript_webscrapper': ['selenium'],
         'irc': ['irc3'],
         'socket_io': ['requests', 'websocket-client'],
-        'xmpp': ['sleekxmpp'],
+        'xmpp': ['slixmpp', 'pythondns3'],
         'youtube': ['google-api-python-client'],
         },
 )
