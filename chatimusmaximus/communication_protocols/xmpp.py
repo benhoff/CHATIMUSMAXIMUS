@@ -1,7 +1,12 @@
 import logging
 import argparse
 import slixmpp
-import asyncio
+import asyncio # flake8: noqa
+from asyncio import sleep
+
+import zmq
+
+from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging # flake8: noqa
 
 
 class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
@@ -9,13 +14,17 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
                  jid,
                  password,
                  room,
-                 nick='EchoBot'):
+                 socket_address,
+                 service_name,
+                 bot_nick='EchoBot',
+                 **kwargs):
 
         # Initialize the parent class
         super().__init__(jid, password)
+        self.messaging = ZmqMessaging(service_name, socket_address)
 
         self.room = room
-        self.nick = nick
+        self.nick = bot_nick
         self.log = logging.getLogger(__file__)
 
         # One-shot helper method used to register all the plugins
@@ -27,10 +36,10 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         self.add_event_handler('disconnected', self._disconnected)
 
     def _disconnected(self, *args):
-        print('DISCONNECTED')
+        self.messaging.send_message('DISCONNECTED')
 
     def _connected(self, *args):
-        print('CONNECTED')
+        self.messaging.send_message('CONNECTED')
 
     def process(self):
         self.init_plugins()
@@ -51,32 +60,44 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         self.log.info('starting xmpp')
         self.send_presence()
         self.plugin['xep_0045'].joinMUC(self.room,
-                                        self.nick)
+                                        self.nick,
+                                        wait=True)
+
         self.get_roster()
 
     def muc_message(self, msg):
-        print('MSG NICK: {} BODY: {}'.format(msg['mucnick'],
-                                             msg['body']))
+        self.messaging.send_message('MSG',
+                                    msg['mucnick'],
+                                    msg['body'])
+
+
+def _get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--local', help='local arg for string parsing')
+    parser.add_argument('--domain', help='domain for xmpp')
+    parser.add_argument('--room', help='room!')
+    parser.add_argument('--resource', help='resource')
+    parser.add_argument('--password', help='password')
+    parser.add_argument('--service_name')
+    parser.add_argument('--socket_address')
+    parser.add_argument('--bot_nick')
+
+    return parser.parse_args()
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('local', help='local arg for string parsing')
-    parser.add_argument('domain', help='domain for xmpp')
-    parser.add_argument('room', help='room!')
-    parser.add_argument('resource', help='resource')
-    parser.add_argument('password', help='password')
-    args = parser.parse_args()
+    args = _get_args()
     jid = '{}@{}/{}'.format(args.local, args.domain, args.resource)
-    # jid = slixmpp.JID(jid)
+    kwargs = vars(args)
 
-    xmpp_bot = ReadOnlyXMPPBot(jid, args.password, args.room)
+    xmpp_bot = ReadOnlyXMPPBot(jid, **kwargs)
+
     while True:
         try:
             xmpp_bot.connect()
             xmpp_bot.process()
         except Exception:
-            asyncio.sleep(3)
+            sleep(1)
 
 if __name__ == '__main__':
     main()

@@ -24,7 +24,3 @@ class CentralWidget(QtWidgets.QWidget):
         vertical_layout.addWidget(self.message_area)
         vertical_layout.addWidget(self.command_line)
         self.setLayout(vertical_layout)
-
-    def set_settings(self, settings_model):
-        pass
-        # self.command_line.set_settings(settings_model)

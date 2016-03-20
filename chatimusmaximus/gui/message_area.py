@@ -90,7 +90,7 @@ class MessageArea(QtWidgets.QTextEdit):
             self._insert_and_format('Vex', result, 'listener')
 
     @QtCore.pyqtSlot(str, str, str)
-    def chat_slot(self, sender, message, platform):
+    def chat_slot(self, platform, sender, message):
         # get the timestamp
         formatted_datetime = datetime.now().strftime("%H:%M:%S")
         self.time_signal.emit(formatted_datetime)

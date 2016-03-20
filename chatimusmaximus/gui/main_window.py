@@ -1,6 +1,7 @@
 from os import path
 from PyQt5 import QtWidgets, QtGui
 from gui import CentralWidget, StatusBar, MenuBar
+from gui.models.settings_model import SettingsModel
 
 _icon_path = path.join(path.dirname(__file__), 'resources', 'icons')
 _str = '{}.png'
@@ -16,7 +17,7 @@ class MainWindow(QtWidgets.QMainWindow):
         MainWindow uses a QTextEdit to display chat
         """
         # initialize parent class. Req'd for PyQt subclasses
-        super(MainWindow, self).__init__(parent)
+        super().__init__(parent)
         # set title window to `CHATIMUSMAXIMUS`
         self.setWindowTitle("CHATIMUSMAXIMUS")
         self.setStyleSheet('background: black;')
@@ -31,6 +32,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_widget_state = self.status_bar.set_widget_status
         self.setStatusBar(self.status_bar)
 
+        self.settings_model = SettingsModel()
+        self._set_settings(self.settings_model.root)
+
         # alias for pep8
         msg_area = self.central_widget.message_area
         msg_area.time_signal.connect(self.status_bar.time_label.setText)
@@ -40,23 +44,17 @@ class MainWindow(QtWidgets.QMainWindow):
         for platform, icon_path in _ICON_DICT.items():
             msg_area.set_icon(icon_path, platform)
 
-    def set_settings(self, settings):
-        display = settings.get('display')
-        self.central_widget.set_settings(display)
-        for key, setting in settings.items():
-            if key == 'display':
-                continue
-            if setting['display_missing']:
-                self.status_bar.set_up_helper(key.title())
-
-    @property
-    def settings_model(self):
-        return self._settings_model
-
-    @settings_model.setter
-    def settings_model(self, model):
-        self._settings_model = model
-        self.menu_bar.settings_model = model
+    def _set_settings(self, settings):
+        # FIXME: not used
+        # display = settings.get('display')
+        for service, platform in settings['services'].items():
+            if not service == 'youtube':
+                for platform_name, settings in platform.items():
+                    if settings['display_missing']:
+                        self.status_bar.set_up_helper(platform_name.title())
+            else:
+                if platform['display_missing']:
+                    self.status_bar.set_up_helper(service.title())
 
     def set_command_prompt(self, prompt):
         self.central_widget.command_line.button.setText(prompt)

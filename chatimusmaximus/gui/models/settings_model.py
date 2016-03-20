@@ -1,6 +1,73 @@
+import argparse
+from os import path
+from operator import itemgetter
 from collections import OrderedDict
+import yaml
+
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+
+
+class _OrderedLoader(yaml.Loader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+def _construct_mapping(loader, node):
+    loader.flatten_mapping(node)
+    result = OrderedDict(sorted(loader.construct_pairs(node),
+                                key=itemgetter(0)))
+
+    return result
+
+
+_OrderedLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+                               _construct_mapping)
+
+
+def _validate_settings_not_blank(setting):
+    settings_have_values = False
+    for key, value in setting.items():
+        if value == str() or key == 'display_settings' or key == 'connect':
+            pass
+        else:
+            settings_have_values = True
+            break
+    return settings_have_values
+
+
+def _append_parent_attribute(data: OrderedDict):
+    for child in data.values():
+        if isinstance(child, OrderedDict):
+            child.parent = data
+            _append_parent_attribute(child)
+
+
+class SpecialDict(OrderedDict):
+    def __init__(self, *args, **kwargs):
+        super().__init__(sorted(kwargs.items()))
+
+    def __getitem__(self, index):
+        if isinstance(index, tuple):
+            item = self
+            for key in index:
+                if item != ():
+                    item = item[key]
+            return item
+        else:
+            return super().__getitem__(index)
+
+    def __setitem__(self, key, value):
+        if isinstance(key, tuple):
+            item = self
+            previous_item = None
+            for k in key:
+                if item != ():
+                    previous_item = item
+                    item = item[k]
+            previous_item[key[-1]] = value
+        else:
+            return super().__setitem__(key, value)
 
 
 class SettingsModel(QtCore.QAbstractItemModel):
@@ -13,10 +80,47 @@ class SettingsModel(QtCore.QAbstractItemModel):
     manage_website_state = QtCore.pyqtSignal(str, bool)
     show_website_missing = QtCore.pyqtSignal(str, bool)
 
-    def __init__(self, data, parent=None):
+    def __init__(self, data=None, parent=None):
         super().__init__(parent)
+        if data is None:
+            data = self._get_settings_helper()
+            _append_parent_attribute(data)
         self.root = data
         self.my_index = {}   # Needed to stop garbage collection
+
+    def _get_args(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--settings_path',
+                            nargs='?',
+                            action='store')
+
+        return parser.parse_args()
+
+    def _get_settings_helper(self):
+        main_dir = path.dirname(path.realpath(__file__))
+        main_dir = path.realpath(path.join(main_dir, '..', '..'))
+        default_filepath = path.join(main_dir, 'default_settings.yml')
+        user_filepath = path.join(main_dir, 'settings.yml')
+        args = self._get_args()
+        if args.settings_path:
+            user_filepath = args.settings_path
+
+        # open the default file and get version information
+        with open(default_filepath) as default_filestream:
+            default_filesettings = yaml.load(default_filestream)
+
+        # FIXME: not used
+        current_version = default_filesettings['version'].split('.') # flake8: noqa
+
+        if path.exists(user_filepath):
+            filepath = user_filepath
+        else:
+            filepath = default_filepath
+
+        with open(filepath) as setting_file:
+            self.settings = yaml.load(setting_file, _OrderedLoader)
+
+        return SpecialDict(**self.settings)
 
     def index(self, row, column, parent):
         """Returns QModelIndex to row, column in parent (QModelIndex)"""

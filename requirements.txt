@@ -17,7 +17,7 @@ rsa==3.3
 selenium==2.52.0
 simplejson==3.8.2
 six==1.10.0
-slixmpp==1.1
+sleekxmpp==1.1
 uritemplate==0.6
 venusian==1.0
 websocket-client==0.35.0
