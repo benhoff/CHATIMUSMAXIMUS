@@ -28,7 +28,8 @@ setup(
     entry_points={'chatimusmaximus.communication_protocols': ['irc = chatimusmaximus.communication_protocols.irc',
                                                               'javascript_webscraper = chatimusmaximus.communication_protocols.javascript_webscraper',
                                                               'xmpp = chatimusmaximus.communication_protocols.xmpp',
-                                                              'socket_io = chatimusmaximus.communication_protocols.socket_io'],
+                                                              'socket_io = chatimusmaximus.communication_protocols.socket_io',
+                                                              'youtube_api = chatimusmaximus.communication_protocols.youtube_api'],
 
                   'gui_scripts': ['chatimusmaximus = chatimusmaximus.__main__:main']},
                                                               #'youtube = chatimusmaximus.communication_protocols.client']},

@@ -53,21 +53,22 @@ def create_services_from_settings(settings, modules: dict):
         else:
             if not service['connect']:
                 continue
-            kwargs = {'--url': None,
-                      '--comment_element_id': 'all-comments',
-                      '--author_class_name': 'yt-user-name',
-                      '--message_class_name': 'comment-text',
-                      '--socket_address': service['socket_address'],
-                      '--service_name': 'youtube'}
-
             addresses.append(service['socket_address'])
-
             client_secrets_file = service['api_connect']['client_secrets_file']
             if client_secrets_file and not client_secrets_file == "":
-                kwargs['--url'] = _get_youtube_link(client_secrets_file)
+                print('activating the youtube api!')
+                plugin_wrapper = PluginWrapper(modules['youtube_api'])
+                kwargs = {'--client_secret_filepath': client_secrets_file,
+                          '--socket_address': service['socket_address']}
             else:
-                kwargs['--url'] = service['javascript_scraper']['youtube_url']
-            plugin_wrapper = PluginWrapper(modules['javascript_webscraper'])
+                kwargs = {'--url': service['javascript_scraper']['youtube_url'],
+                          '--comment_element_id': 'all-comments',
+                          '--author_class_name': 'yt-user-name',
+                          '--message_class_name': 'comment-text',
+                          '--socket_address': service['socket_address'],
+                          '--service_name': 'youtube'}
+
+                plugin_wrapper = PluginWrapper(modules['javascript_webscraper'])
             plugin_wrapper.activate(invoke_kwargs=kwargs)
             plugin_wrappers.append(plugin_wrapper)
 
@@ -76,10 +77,10 @@ def create_services_from_settings(settings, modules: dict):
 
 _YOUTUBE_API_SERVICE_NAME = 'youtube'
 _YOUTUBE_API_VERSION = 'v3'
+_READ_ONLY = "https://www.googleapis.com/auth/youtube.readonly"
 
 
-def _youtube_authentication(client_filepath):
-    youtube_scope = "https://www.googleapis.com/auth/youtube.readonly"
+def youtube_authentication(client_filepath, youtube_scope=_READ_ONLY):
     missing_client_message = "You need to populate the client_secrets.json!"
     flow = flow_from_clientsecrets(client_filepath,
                                    scope=youtube_scope,
@@ -100,7 +101,7 @@ def _youtube_authentication(client_filepath):
 
 
 def _get_youtube_link(client_secrets_filepath):
-    youtube_api = _youtube_authentication(client_secrets_filepath)
+    youtube_api = youtube_authentication(client_secrets_filepath)
     parts = 'id, snippet, status'
     livestream_requests = youtube_api.liveBroadcasts().list(mine=True,
                                                             part=parts,
