@@ -13,12 +13,12 @@ services:
             # use this format: `oauth:asdasd234asd234ad234asds23`
             password: ""
             # this will be your twitch channel
+            # should be something like "#beohoff"
             channel: ""
             # I believe this has to be your twitch acct name
             nick: ""
-            # TODO: add in default handeling
-            socket_address: ""
             host: 'irc.twitch.tv'
+            socket_address: ""
             connect: false
             display_missing: true
 
@@ -30,11 +30,11 @@ services:
             local: ""
             # this can be your profile password
             password: ""
+            bot_nick: ""
+            # room is going to look something like `benhoff@chat.livecoding.tv`
+            room: ""
             domain: 'livecoding.tv'
             resource: 'CHATIMUSMAXIMUS'
-            bot_nick: ""
-            room: ""
-            # TODO: add in default handeling
             socket_address: ""
             connect: false
             display_missing: true
@@ -53,7 +53,6 @@ services:
     
     # youtube is special.
     youtube:
-        # FIXME: add in default handeling
         socket_address: ""
         connect: false
         display_missing: true
