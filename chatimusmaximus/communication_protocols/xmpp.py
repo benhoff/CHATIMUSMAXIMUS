@@ -6,8 +6,7 @@ from asyncio import sleep
 
 import zmq
 
-import chatimusmaximus.communication_protocols as ccp # flake: noqa
-from ccp.communication_messaging import ZmqMessaging
+from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging # flake8: noqa
 
 
 class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
@@ -17,7 +16,7 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
                  room,
                  socket_address,
                  service_name,
-                 nick='EchoBot',
+                 bot_nick='EchoBot',
                  **kwargs):
 
         # Initialize the parent class
@@ -25,7 +24,7 @@ class ReadOnlyXMPPBot(slixmpp.ClientXMPP):
         self.messaging = ZmqMessaging(service_name, socket_address)
 
         self.room = room
-        self.nick = nick
+        self.nick = bot_nick
         self.log = logging.getLogger(__file__)
 
         # One-shot helper method used to register all the plugins
@@ -81,7 +80,7 @@ def _get_args():
     parser.add_argument('--password', help='password')
     parser.add_argument('--service_name')
     parser.add_argument('--socket_address')
-    parser.add_argument('--nick')
+    parser.add_argument('--bot_nick')
 
     return parser.parse_args()
 

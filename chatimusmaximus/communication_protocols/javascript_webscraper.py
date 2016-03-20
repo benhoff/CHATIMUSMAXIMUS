@@ -6,8 +6,7 @@ from time import sleep
 import selenium
 from selenium import webdriver
 
-import chatimusmaximus.communication_protocols as ccp # flake8: noqa
-from ccp.communication_messaging import ZmqMessaging
+from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging # flake8: noqa
 
 
 class JavascriptWebscraper:

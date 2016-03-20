@@ -1,12 +1,10 @@
-import chatimusmaximus.communication_protocols as ccp # flake8: noqa
-
-from ccp.xmpp import ReadOnlyXMPPBot
-from ccp.socket_io import ReadOnlyWebSocket
-from ccp.irc import (create_irc_bot,
-                     EchoToMessage)
+from chatimusmaximus.communication_protocols.xmpp import ReadOnlyXMPPBot
+from chatimusmaximus.communication_protocols.socket_io import ReadOnlyWebSocket
+from chatimusmaximus.communication_protocols.irc import (create_irc_bot,
+                                                         EchoToMessage)
 
 try:
-    from ccp.javascript_webscraper import JavascriptWebscraper
+    from chatimusmaximus.communication_protocols.javascript_webscraper import JavascriptWebscraper # flake8: noqa
 except ImportError:
     pass
 

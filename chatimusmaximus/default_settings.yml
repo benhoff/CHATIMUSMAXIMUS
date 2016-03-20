@@ -11,7 +11,7 @@ services:
             # I use this site to get oauth_token 
             # https://twitchapps.com/tmi/
             # use this format: `oauth:asdasd234asd234ad234asds23`
-            oauth_token: ""
+            password: ""
             # this will be your twitch channel
             channel: ""
             # I believe this has to be your twitch acct name
