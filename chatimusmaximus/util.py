@@ -61,14 +61,15 @@ def create_services_from_settings(settings, modules: dict):
                 kwargs = {'--client_secret_filepath': client_secrets_file,
                           '--socket_address': service['socket_address']}
             else:
-                kwargs = {'--url': service['javascript_scraper']['youtube_url'],
+                url = service['javascript_scraper']['youtube_url']
+                kwargs = {'--url': url,
                           '--comment_element_id': 'all-comments',
                           '--author_class_name': 'yt-user-name',
                           '--message_class_name': 'comment-text',
                           '--socket_address': service['socket_address'],
                           '--service_name': 'youtube'}
-
-                plugin_wrapper = PluginWrapper(modules['javascript_webscraper'])
+                module = modules['javascript_webscraper']
+                plugin_wrapper = PluginWrapper(module)
             plugin_wrapper.activate(invoke_kwargs=kwargs)
             plugin_wrappers.append(plugin_wrapper)
 
