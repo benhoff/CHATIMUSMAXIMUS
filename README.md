@@ -1,7 +1,7 @@
 # CHATIMUSMAXIMUS
 [![Build Status](https://travis-ci.org/benhoff/CHATIMUSMAXIMUS.svg?branch=master)](https://travis-ci.org/benhoff/CHATIMUSMAXIMUS) [![Code Climate](https://codeclimate.com/github/benhoff/CHATIMUSMAXIMUS/badges/gpa.svg)](https://codeclimate.com/github/benhoff/CHATIMUSMAXIMUS)
 
-A Python3.5, PyQt, read-only, client, chat GUI featuring support for the following websites
+A Python3.5, PyQt, chat GUI featuring support for the following websites
 > Youtube          (Selenium based scraper)  
 > Twitch           (IRC client)  
 > WatchPeopleCode  (websocket client)  
@@ -12,12 +12,12 @@ A Python3.5, PyQt, read-only, client, chat GUI featuring support for the followi
 2. Install PhantomJS onto your system
 3. `pip install chatimusmaximus[gui,javascript_webscrapper,irc,socket_io,xmpp,youtube]`
 4. create a settings.yml file using `default_settings.yml` as guidance
-4. `chatimusmaximus --settings_path /path/to/your/settings.yml`
+5. `chatimusmaximus --settings_path /path/to/your/settings.yml`
 
 Alternatively clone/download and unzip, change into directory and run:
-`pip install -r requirements.txt`
-`python setup.py develop`
-`python chatimusmaximus`
+1. `pip install -r requirements.txt`
+2. `python setup.py develop`
+3. `python chatimusmaximus`
 
 If you run into issues, send me an email [beohoff@gmail] or start an issue!
 
