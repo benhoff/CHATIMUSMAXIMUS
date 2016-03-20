@@ -5,10 +5,10 @@ import html
 import logging
 from time import sleep
 
-import zmq
 import websocket
 
-from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging
+import chatimusmaximus.communication_protocols as ccp # flake8: noqa
+from ccp.communication_messaging import ZmqMessaging
 
 
 class ReadOnlyWebSocket(websocket.WebSocketApp):

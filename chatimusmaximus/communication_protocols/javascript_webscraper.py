@@ -3,12 +3,11 @@ import logging
 import signal
 from time import sleep
 
-import zmq
-
 import selenium
 from selenium import webdriver
 
-from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging
+import chatimusmaximus.communication_protocols as ccp # flake8: noqa
+from ccp.communication_messaging import ZmqMessaging
 
 
 class JavascriptWebscraper:

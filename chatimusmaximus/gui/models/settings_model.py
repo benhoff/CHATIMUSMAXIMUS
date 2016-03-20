@@ -69,6 +69,7 @@ class SpecialDict(OrderedDict):
         else:
             return super().__setitem__(key, value)
 
+
 class SettingsModel(QtCore.QAbstractItemModel):
     command_prompt_signal = QtCore.pyqtSignal(str)
     # website name, color
@@ -108,7 +109,8 @@ class SettingsModel(QtCore.QAbstractItemModel):
         with open(default_filepath) as default_filestream:
             default_filesettings = yaml.load(default_filestream)
 
-        current_version = default_filesettings['version'].split('.')
+        # FIXME: not used
+        current_version = default_filesettings['version'].split('.') # flake8: noqa
 
         if path.exists(user_filepath):
             filepath = user_filepath

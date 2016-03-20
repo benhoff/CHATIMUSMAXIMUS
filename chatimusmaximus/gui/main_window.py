@@ -45,7 +45,8 @@ class MainWindow(QtWidgets.QMainWindow):
             msg_area.set_icon(icon_path, platform)
 
     def _set_settings(self, settings):
-        display = settings.get('display')
+        # FIXME: not used
+        # display = settings.get('display')
         for service, platform in settings['services'].items():
             if not service == 'youtube':
                 for platform_name, settings in platform.items():

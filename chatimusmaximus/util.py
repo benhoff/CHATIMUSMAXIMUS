@@ -37,9 +37,9 @@ def create_services_from_settings(settings, modules: dict):
                 plugin_wrapper = PluginWrapper(module)
                 # create kwargs with every value having a `--` in front of it
                 kwargs = {'--' + key: value
-                        for (key, value)
-                        in platform_settings.items()
-                        if key not in _rm_arguments}
+                          for (key, value)
+                          in platform_settings.items()
+                          if key not in _rm_arguments}
 
                 # add in the service name to kwargs
                 kwargs['--service_name'] = platform
@@ -61,7 +61,7 @@ def create_services_from_settings(settings, modules: dict):
 
             client_secrets_file = service['api_connect']['client_secrets_file']
             if client_secrets_file and not client_secrets_file == "":
-                kwargs['--url'] = _get_current_youtube_link(client_secrets_file)
+                kwargs['--url'] = _get_youtube_link(client_secrets_file)
             else:
                 kwargs['--url'] = service['javascript_scraper']['youtube_url']
             plugin_wrapper = PluginWrapper(modules['javascript_webscraper'])
@@ -96,7 +96,7 @@ def _youtube_authentication(client_filepath):
                      http=credentials.authorize(httplib2.Http()))
 
 
-def _get_current_youtube_link(client_secrets_filepath):
+def _get_youtube_link(client_secrets_filepath):
     youtube_api = _youtube_authentication(client_secrets_filepath)
     parts = 'id, snippet, status'
     livestream_requests = youtube_api.liveBroadcasts().list(mine=True,

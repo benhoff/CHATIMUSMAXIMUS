@@ -1,5 +1,3 @@
-import asyncio
-
 import zmq
 
 
@@ -14,7 +12,12 @@ class ZmqMessaging:
         try:
             self.pub_socket.bind(pub_port)
         except zmq.error.ZMQError:
-            print('Incorrect value passed in for socket address in {}, fix it in your settings/default_settings.yml'.format(self._service_name))
+            err = """
+                  Incoreect value passed in for socket address in {}, fix it
+                  in your settings.yml or default_settings.yml
+                  """.format(self._service_name)
+
+            print(err)
 
     def send_message(self, *msg):
         msg = list(msg)

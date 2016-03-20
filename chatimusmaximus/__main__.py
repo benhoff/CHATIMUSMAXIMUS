@@ -39,7 +39,9 @@ def main():
     modules = module_manager.collect_entry_point_plugins()
 
     # need to have the modules in a dict, so get the name and put in dict
-    module_dict = {module.__name__.split('.')[-1]: module for module in modules}
+    module_dict = {module.__name__.split('.')[-1]: module
+                   for module in modules}
+
     services, addresses = create_services_from_settings(settings_data,
                                                         module_dict)
 

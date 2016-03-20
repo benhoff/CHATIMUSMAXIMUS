@@ -1,12 +1,13 @@
 import logging
 import argparse
 import slixmpp
-import asyncio
+import asyncio # flake8: noqa
 from asyncio import sleep
 
 import zmq
 
-from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging
+import chatimusmaximus.communication_protocols as ccp # flake: noqa
+from ccp.communication_messaging import ZmqMessaging
 
 
 class ReadOnlyXMPPBot(slixmpp.ClientXMPP):

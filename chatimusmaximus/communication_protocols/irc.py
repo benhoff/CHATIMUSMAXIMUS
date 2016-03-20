@@ -5,7 +5,8 @@ import argparse
 import irc3
 from irc3.plugins.autojoins import AutoJoins
 
-from chatimusmaximus.communication_protocols.communication_messaging import ZmqMessaging
+import chatimusmaximus.communication_protocols as ccp # flake8: noqa
+from ccp.communication_messaging import ZmqMessaging
 
 
 @irc3.plugin
@@ -79,6 +80,7 @@ def create_irc_bot(nick,
 
     return bot
 
+
 def main(nick, password, host, channel, socket_address, service_name):
     irc_client = create_irc_bot(nick,
                                 password,
@@ -98,6 +100,7 @@ def main(nick, password, host, channel, socket_address, service_name):
         pass
     event_loop.close()
     sys.exit()
+
 
 def _get_args():
     parser = argparse.ArgumentParser()
