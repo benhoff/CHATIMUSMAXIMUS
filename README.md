@@ -10,10 +10,16 @@ A Python3.5, PyQt, read-only, client, chat GUI featuring support for the followi
 ### Installation instructions
 1. Install PyQt5 onto your system
 2. Install PhantomJS onto your system
-3. Clone the library or download and unpack the tar.gz file and change to that directory
-4. install the required libraries (`pip install -r requirements.txt`)
-5. setup to run in develop mode (`python setup.py develop`)
-6. change the default settings to suit your needs, optionally copying into a new file named `settings.yml`
+3. `pip install chatimusmaximus[gui,javascript_webscrapper,irc,socket_io,xmpp,youtube]`
+4. create a settings.yml file using `default_settings.yml` as guidance
+4. `chatimusmaximus --settings_path /path/to/your/settings.yml`
+
+Alternatively clone/download and unzip, change into directory and run:
+`pip install -r requirements.txt`
+`python setup.py develop`
+`python chatimusmaximus`
+
+If you run into issues, send me an email [beohoff@gmail] or start an issue!
 
 ### Running instructions
 1. change into the `chatimusmaximus` source directory and from the command line run `python chatimusmaximus`
