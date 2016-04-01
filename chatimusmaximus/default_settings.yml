@@ -48,7 +48,7 @@ services:
             namespace: '/chat'
             website_url: 'http://www.watchpeoplecode.com/socket.io/1/'
             socket_address: ""
-            connect: true
+            connect: false 
             display_missing: true
     
     # youtube is special.
