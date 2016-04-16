@@ -46,7 +46,7 @@ def main():
     services, addresses = create_services_from_settings(settings_data,
                                                         module_dict)
 
-    messager.subscribe_to_publishers(addresses)
+    messager.subscribe_to_publishers(settings_data['sockets_to_connect_to'])
     # show me the money!
     main_window.show()
 
