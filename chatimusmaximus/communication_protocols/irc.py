@@ -46,7 +46,7 @@ class EchoToMessage(object):
     def message(self, mask, event, target, data):
         nick = mask.split('!')[0]
         message = data
-        self.bot.messaging.send_message('MSG', nick, message)
+        self.bot.messaging.send_message('MSG', nick, str(message))
 
 
 def create_irc_bot(nick,
