@@ -10,7 +10,7 @@ with open(os.path.join(directory, 'README.rst')) as f:
 
 setup(
     name="chatimusmaximus",
-    version='0.0.5',
+    version='0.0.6',
     description='Chat GUI for youtube, twitch, livecoding, and WatchPeopleCode chats',
     # long_description=long_description,
     url='https://github.com/benhoff/chatimusmaximus',
