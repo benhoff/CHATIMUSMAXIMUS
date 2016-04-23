@@ -11,10 +11,7 @@ class CentralWidget(QtWidgets.QWidget):
 
         # duck type the slot onto the MainWindow for ease of access
         self.chat_slot = self.message_area.chat_slot
-
         self.command_line = CommandLine(parent=self)
-        list_signal = self.command_line.listener_signal
-        list_signal.connect(self.message_area.listeners_slot)
 
         # create vertical layout to stack the textedit on top
         # of the `clear` button

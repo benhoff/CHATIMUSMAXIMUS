@@ -3,10 +3,12 @@ version: "0.1.2"
 display:
     command_line: "user@chatimus ~$ "
 
+# MUST include the socket addresses
+# used by your services. So if your twitch socket address is
+# `tcp://127.0.0.1:5555`, then you need to put that in the list below.
 sockets_to_connect_to: 
     [
         '',
-        ''
     ]
 
 services:

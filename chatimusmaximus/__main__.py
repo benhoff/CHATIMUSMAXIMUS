@@ -1,6 +1,7 @@
 import sys
 import asyncio
 import logging
+import atexit
 
 from PyQt5 import QtWidgets
 from quamash import QEventLoop
@@ -46,6 +47,8 @@ def main():
     services, addresses = create_services_from_settings(settings_data,
                                                         module_dict)
 
+    atexit.register(_destroy_services, services)
+
     messager.subscribe_to_publishers(settings_data['sockets_to_connect_to'])
     # show me the money!
     main_window.show()
@@ -65,6 +68,10 @@ def main():
         service.deactivate()
     # exit
     sys.exit()
+
+def _destroy_services(services):
+    for service in services:
+        service.deactivate()
 
 if __name__ == '__main__':
     main()

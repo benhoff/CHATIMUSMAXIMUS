@@ -1,5 +1,4 @@
 from os import path
-import re
 from datetime import datetime
 from PyQt5 import QtWidgets, QtGui, QtCore, QtMultimedia
 from PyQt5.QtCore import Qt
@@ -36,8 +35,6 @@ class MessageArea(QtWidgets.QTextEdit):
         self.name_formats = {}
 
         self.listeners = []
-        self.listeners_signal.connect(self.listeners_slot)
-        self.listener_commands = ['!']
         sound_filepath = path.join(path.dirname(__file__),
                                    'resources',
                                    'click.wav')
@@ -62,33 +59,6 @@ class MessageArea(QtWidgets.QTextEdit):
     def set_font(self, font):
         self.text_format.setFont(font)
 
-    @QtCore.pyqtSlot(str, str)
-    def listeners_slot(self, sender, message):
-        # strip the first word off of the message
-        # keep the trailing sentence intact
-        if sender == 'command_line':
-            self._insert_and_format('User', message, 'listener')
-
-        try:
-            cmd, message = message.split(' ', maxsplit=1)
-        except ValueError:
-            cmd = message.rstrip()
-            message = None
-        for arg in self.listener_commands:
-            cmd = cmd.replace(arg, '')
-        cmd = re.compile(cmd)
-        result = None
-        for listener in self.listeners:
-            if cmd in listener.matches:
-                try:
-                    result = listener(cmd, message)
-                except Exception as e:
-                    result = str(e)
-                break
-
-        if result:
-            self._insert_and_format('Vex', result, 'listener')
-
     @QtCore.pyqtSlot(str, str, str)
     def chat_slot(self, platform, sender, message):
         # get the timestamp
@@ -101,8 +71,6 @@ class MessageArea(QtWidgets.QTextEdit):
         # get scroll bar and set to maximum
         scroll_bar = self.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
-        if message[0] in self.listener_commands and self.listeners != []:
-            self.listeners_signal.emit(sender, message)
 
     def _insert_and_format(self, sender, message, platform):
         """
