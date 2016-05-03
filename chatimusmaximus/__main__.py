@@ -69,6 +69,7 @@ def main():
     # exit
     sys.exit()
 
+
 def _destroy_services(services):
     for service in services:
         service.deactivate()
