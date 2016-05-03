@@ -5,7 +5,7 @@ from chatimusmaximus.gui.models.settings_model import SettingsModel
 
 _icon_path = path.join(path.dirname(__file__), 'resources', 'icons')
 _str = '{}.png'
-_platforms = ('youtube', 'watchpeoplecode', 'twitch', 'livecoding')
+_platforms = ('youtube', 'watchpeoplecode', 'twitch', 'livecoding', 'vex')
 _ICON_DICT = {x: path.join(_icon_path, _str.format(x)) for x in _platforms}
 for platform, path_ in _ICON_DICT.items():
     _ICON_DICT[platform] = QtGui.QImage(path_)
