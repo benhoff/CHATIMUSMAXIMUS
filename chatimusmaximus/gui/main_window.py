@@ -1,14 +1,18 @@
+import glob
 from os import path
 from PyQt5 import QtWidgets, QtGui
 from chatimusmaximus.gui import CentralWidget, StatusBar, MenuBar
 from chatimusmaximus.gui.models.settings_model import SettingsModel
 
-_icon_path = path.join(path.dirname(__file__), 'resources', 'icons')
-_str = '{}.png'
-_platforms = ('youtube', 'watchpeoplecode', 'twitch', 'livecoding', 'vex')
-_ICON_DICT = {x: path.join(_icon_path, _str.format(x)) for x in _platforms}
-for platform, path_ in _ICON_DICT.items():
-    _ICON_DICT[platform] = QtGui.QImage(path_)
+
+def _get_icon_dict():
+    icon_path = path.join(path.dirname(__file__), 'resources', 'icons', '')
+    filepaths = glob.glob(str(icon_path) + '*.png')
+    filenames = [path.basename(f).split('.')[0] for f in filepaths]
+    file_platform = zip(filepaths, filenames)
+
+    icon_dict = {name: QtGui.QImage(path) for (path, name) in file_platform}
+    return icon_dict
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -23,10 +27,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setStyleSheet('background: black;')
         # Create the central widget
         self.central_widget = CentralWidget(parent=self)
-        self.setCentralWidget(self.central_widget)
-
-        # add chat_slot to class
+        # duck type for easier access in `main`
+        self.command_line_signal = self.central_widget.command_line_signal
         self.chat_slot = self.central_widget.chat_slot
+        self.setCentralWidget(self.central_widget)
 
         self.status_bar = StatusBar(parent=self)
         self.set_widget_state = self.status_bar.set_widget_status
@@ -41,7 +45,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu_bar = MenuBar(parent=self)
         self.setMenuBar(self.menu_bar)
 
-        for platform, icon_path in _ICON_DICT.items():
+        icon_dict = _get_icon_dict()
+
+        for platform, icon_path in icon_dict.items():
             msg_area.set_icon(icon_path, platform)
 
     def _set_settings(self, settings):

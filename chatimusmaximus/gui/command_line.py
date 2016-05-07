@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 
 
 class LineEdit(QtWidgets.QLineEdit):
-    listener_signal = QtCore.pyqtSignal(str, str)
+    listener_signal = QtCore.pyqtSignal(str, str, str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -14,7 +14,7 @@ class LineEdit(QtWidgets.QLineEdit):
     @QtCore.pyqtSlot()
     def return_pressed_slot(self):
         # TODO: emit a platform
-        self.listener_signal.emit('command_line', self.text())
+        self.listener_signal.emit('command_line', 'cmd', self.text())
         self.clear()
 
 
@@ -41,6 +41,7 @@ class CommandLine(QtWidgets.QWidget):
         self.button.clicked.connect(self.give_focus)
 
     def set_settings(self, settings_model):
+        # FIXME ?
         settings_model.command_prompt_signal.connect(self.button.setText)
 
     def give_focus(self):

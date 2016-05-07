@@ -27,13 +27,12 @@ def main():
     # Create the Gui
     main_window = MainWindow()
     settings_data = main_window.settings_model.root
-    # Need 3 bits of information from settings. ip addresses, display missing,
-    # and general settings
 
     # Create the recving messaging interface
     messager = ZmqMessaging()
     messager.message_signal.connect(main_window.chat_slot)
     messager.connected_signal.connect(main_window.status_bar.set_widget_status)
+    main_window.command_line_signal.connect(messager.publish_message)
 
     # gather the plugins
     module_manager = pluginmanager.PluginInterface()
@@ -50,6 +49,10 @@ def main():
     atexit.register(_destroy_services, services)
 
     messager.subscribe_to_publishers(settings_data['sockets_to_connect_to'])
+    cmd_line_address = settings_data['display']['address']
+    if cmd_line_address:
+        messager.publish_to_address(cmd_line_address)
+
     # show me the money!
     main_window.show()
 

@@ -1,7 +1,8 @@
-version: "0.1.2"
+version: "0.1.3"
 
 display:
     command_line: "user@chatimus ~$ "
+    address: ""
 
 # MUST include the socket addresses
 # used by your services. So if your twitch socket address is
