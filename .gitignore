@@ -6,3 +6,6 @@ settings.yml
 ghostdriver.log
 client_secrets.json
 *-oauth2.json
+build
+dist
+*.egg-info
