@@ -37,7 +37,7 @@ def main():
     # gather the plugins
     module_manager = pluginmanager.PluginInterface()
     module_manager.set_entry_points('chatimusmaximus.communication_protocols')
-    modules = module_manager.collect_entry_point_plugins()
+    modules, names = module_manager.collect_entry_point_plugins()
 
     # need to have the modules in a dict, so get the name and put in dict
     module_dict = {module.__name__.split('.')[-1]: module

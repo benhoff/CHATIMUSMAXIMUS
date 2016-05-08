@@ -10,7 +10,7 @@ with open(os.path.join(directory, 'README.rst')) as f:
 
 setup(
     name="chatimusmaximus",
-    version='0.0.7',
+    version='0.0.8',
     description='Chat GUI for youtube, twitch, livecoding, and WatchPeopleCode chats',
     # long_description=long_description,
     url='https://github.com/benhoff/chatimusmaximus',
@@ -30,6 +30,8 @@ setup(
                                                               'xmpp = chatimusmaximus.communication_protocols.xmpp',
                                                               'socket_io = chatimusmaximus.communication_protocols.socket_io',
                                                               'youtube_api = chatimusmaximus.communication_protocols.youtube_api'],
+
+                  'vexbot.plugins': ['chatimusmaximus = chatimusmaximus.__main__'],
 
                   'gui_scripts': ['chatimusmaximus = chatimusmaximus.__main__:main']},
                                                               #'youtube = chatimusmaximus.communication_protocols.client']},
