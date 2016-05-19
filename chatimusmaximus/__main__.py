@@ -7,6 +7,8 @@ from PyQt5 import QtWidgets
 from quamash import QEventLoop
 import pluginmanager
 
+from zmq.error import ZMQError
+
 from chatimusmaximus.gui import MainWindow
 from chatimusmaximus.messaging import ZmqMessaging
 from chatimusmaximus.util import create_services_from_settings
@@ -48,10 +50,13 @@ def main():
 
     atexit.register(_destroy_services, services)
 
-    messager.subscribe_to_publishers(settings_data['sockets_to_connect_to'])
-    cmd_line_address = settings_data['display']['address']
-    if cmd_line_address:
-        messager.publish_to_address(cmd_line_address)
+    try:
+        messager.subscribe_to_publishers(settings_data['sockets_to_connect_to'])
+        cmd_line_address = settings_data['display']['address']
+        if cmd_line_address:
+            messager.publish_to_address(cmd_line_address)
+    except ZMQError:
+        pass
 
     # show me the money!
     main_window.show()
