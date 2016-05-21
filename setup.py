@@ -32,9 +32,9 @@ setup(
     package_data={'chatimusmaximus': ['default_settings.yml', 'gui/resources/click.wav', 'gui/resources/icons/*', 'gui/resources/buttons/*']},
 
     install_requires=[
-        'pluginmanager',
         'pyzmq',
         'PyYAML',
+        'pYqT5',
         'Quamash',
         'vexbot',
         ],
