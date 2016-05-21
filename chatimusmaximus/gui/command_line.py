@@ -14,14 +14,14 @@ class LineEdit(QtWidgets.QLineEdit):
     @QtCore.pyqtSlot()
     def return_pressed_slot(self):
         # TODO: emit a platform
-        self.listener_signal.emit('command_line', 'Ben', self.text())
+        self.listener_signal.emit('command_line', 'cmd', self.text())
         self.clear()
 
 
 class CommandLine(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        prompt = 'ben@chatimus ~$'
+        prompt = 'user@chatimus ~$'
 
         self.button = QtWidgets.QPushButton(prompt)
         self.button.setStyleSheet("""color: white; font: bold;
