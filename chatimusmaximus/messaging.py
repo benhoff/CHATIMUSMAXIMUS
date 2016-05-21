@@ -17,9 +17,8 @@ class ZmqMessaging(QtCore.QObject):
         self.thread = Thread(target=self.recv_sub_socket, daemon=True)
         self.thread.start()
 
-    def subscribe_to_publishers(self, addresses: list):
-        for address in addresses:
-            self.sub_socket.connect(address)
+    def subscribe_to_publisher(self, address: str):
+        self.sub_socket.connect(address)
 
     def publish_to_address(self, address):
         # FIXME

@@ -50,13 +50,23 @@ def main():
 
     atexit.register(_destroy_services, services)
 
+    sockets = settings_data['sockets_to_connect_to']
+    cmd_line_address = settings_data['display']['address']
+
+    for socket in sockets:
+        try:
+            messager.subscribe_to_publishers(socket)
+        except ZMQError:
+            # TODO: change to a logging command
+            s = 'socket address to connect to {} is throwing errors!'
+            print(s.format(socket))
+
     try:
-        messager.subscribe_to_publishers(settings_data['sockets_to_connect_to'])
-        cmd_line_address = settings_data['display']['address']
         if cmd_line_address:
             messager.publish_to_address(cmd_line_address)
     except ZMQError:
-        pass
+        s = 'command line address to connect to {} is throwing errors!'
+        print(s.format(cmd_line_address))
 
     # show me the money!
     main_window.show()
