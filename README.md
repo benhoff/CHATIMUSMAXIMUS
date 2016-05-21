@@ -1,11 +1,14 @@
 # CHATIMUSMAXIMUS
 [![Build Status](https://travis-ci.org/benhoff/CHATIMUSMAXIMUS.svg?branch=master)](https://travis-ci.org/benhoff/CHATIMUSMAXIMUS) [![Code Climate](https://codeclimate.com/github/benhoff/CHATIMUSMAXIMUS/badges/gpa.svg)](https://codeclimate.com/github/benhoff/CHATIMUSMAXIMUS)
 
+## NOTE: All of the communication/adapter code has been moved to [vexbot](https://github.com/benhoff/vexbot)
+
 A Python3.5, PyQt chat GUI featuring support for the following websites
 > Youtube          (Selenium based scraper or Youtube API)
 > Twitch           (IRC client)  
 > WatchPeopleCode  (websocket client)  
 > Livecoding       (xmpp client)
+
 
 ### Installation instructions
 1. `pip install chatimusmaximus`
