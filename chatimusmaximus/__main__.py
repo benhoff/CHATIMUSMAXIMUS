@@ -1,17 +1,14 @@
 import sys
 import asyncio
 import logging
-import atexit
 
 from PyQt5 import QtWidgets
 from quamash import QEventLoop
-import pluginmanager
 
 from zmq.error import ZMQError
 
 from chatimusmaximus.gui import MainWindow
 from chatimusmaximus.messaging import ZmqMessaging
-from chatimusmaximus.util import create_services_from_settings
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
