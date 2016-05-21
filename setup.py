@@ -10,7 +10,7 @@ with open(os.path.join(directory, 'README.rst')) as f:
 
 setup(
     name="chatimusmaximus",
-    version='0.0.8',
+    version='0.1.0',
     description='Chat GUI for youtube, twitch, livecoding, and WatchPeopleCode chats',
     # long_description=long_description,
     url='https://github.com/benhoff/chatimusmaximus',
@@ -25,16 +25,8 @@ setup(
         'Operating System :: OS Independent'],
     author='Ben Hoff',
     author_email='beohoff@gmail.com',
-    entry_points={'chatimusmaximus.communication_protocols': ['irc = chatimusmaximus.communication_protocols.irc',
-                                                              'javascript_webscraper = chatimusmaximus.communication_protocols.javascript_webscraper',
-                                                              'xmpp = chatimusmaximus.communication_protocols.xmpp',
-                                                              'socket_io = chatimusmaximus.communication_protocols.socket_io',
-                                                              'youtube_api = chatimusmaximus.communication_protocols.youtube_api'],
-
-                  'vexbot.plugins': ['chatimusmaximus = chatimusmaximus.__main__'],
-
+    entry_points={'vexbot.plugins': ['chatimusmaximus = chatimusmaximus.__main__'],
                   'gui_scripts': ['chatimusmaximus = chatimusmaximus.__main__:main']},
-                                                              #'youtube = chatimusmaximus.communication_protocols.client']},
 
     packages= find_packages(), # exclude=['docs', 'tests']
     package_data={'chatimusmaximus': ['default_settings.yml', 'gui/resources/click.wav', 'gui/resources/icons/*', 'gui/resources/buttons/*']},
@@ -43,15 +35,11 @@ setup(
         'pluginmanager',
         'pyzmq',
         'PyYAML',
+        'Quamash',
+        'vexbot',
         ],
 
     extras_require={
-        'gui': ['Quamash'],
         'dev': ['flake8'],
-        'javascript_webscrapper': ['selenium'],
-        'irc': ['irc3'],
-        'socket_io': ['requests', 'websocket-client'],
-        'xmpp': ['slixmpp', 'dnspython3'],
-        'youtube': ['google-api-python-client'],
         },
 )

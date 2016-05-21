@@ -34,7 +34,10 @@ class StatusBar(QtWidgets.QStatusBar):
     @QtCore.pyqtSlot(bool, str)
     def set_widget_status(self, bool, platform_name):
         # get the appropriate status widget
-        button = self._status_widgets[platform_name]
+        if platform_name:
+            button = self._status_widgets[platform_name]
+        else:
+            return
         if bool:
             button.setIcon(self._green_icon)
         else:

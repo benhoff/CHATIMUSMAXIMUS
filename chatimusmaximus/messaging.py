@@ -13,7 +13,6 @@ class ZmqMessaging(QtCore.QObject):
         self.sub_socket = context.socket(zmq.SUB)
         self.sub_socket.setsockopt(zmq.SUBSCRIBE, b'')
         self.pub_socket = context.socket(zmq.PUB)
-        self._already_running = False
         self.thread = Thread(target=self.recv_sub_socket, daemon=True)
         self.thread.start()
 
@@ -21,18 +20,12 @@ class ZmqMessaging(QtCore.QObject):
         self.sub_socket.connect(address)
 
     def publish_to_address(self, address):
-        # FIXME
-        try:
-            self.pub_socket.bind(address)
-        except zmq.ZMQError:
-            self._already_running = True
+        self.pub_socket.connect(address)
 
     @QtCore.pyqtSlot(str, str, str)
     def publish_message(self, service, user, text):
-        # FIXME
-        if not self._already_running:
-            frame = [service, 'MSG', user, text]
-            self.pub_socket.send_pyobj(frame)
+        frame = [service, 'MSG', user, text]
+        self.pub_socket.send_pyobj(frame)
 
     def recv_sub_socket(self):
         while True:
