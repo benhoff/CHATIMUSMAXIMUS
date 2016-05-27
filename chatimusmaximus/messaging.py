@@ -29,8 +29,9 @@ class ZmqMessaging(QtCore.QObject):
 
     @QtCore.pyqtSlot(str, str, str)
     def publish_message(self, service, user, text):
-        frame = [service, 'MSG', user, text]
-        self.pub_socket.send_pyobj(frame)
+        frame = (service,
+                 pickle.dumps(('MSG', user, text)))
+        self.pub_socket.send_multipart(frame)
 
     def _duplicate_message(self, message):
         """
