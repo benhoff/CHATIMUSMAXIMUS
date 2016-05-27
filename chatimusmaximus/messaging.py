@@ -1,7 +1,9 @@
-from PyQt5 import QtCore
-import zmq
-from threading import Thread
 import time
+import pickle
+from threading import Thread
+
+import zmq
+from PyQt5 import QtCore
 
 
 class ZmqMessaging(QtCore.QObject):
@@ -51,7 +53,10 @@ class ZmqMessaging(QtCore.QObject):
 
     def recv_sub_socket(self):
         while True:
-            frame = self.sub_socket.recv_pyobj()
+            frame = self.sub_socket.recv_multipart()
+            frame = [frame[0].decode('ascii'),
+                     *pickle.loads(frame[1])]
+
             frame_length = len(frame)
             if frame_length == 4:
                 del frame[1]
