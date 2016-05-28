@@ -10,7 +10,7 @@ with open(os.path.join(directory, 'README.rst')) as f:
 
 setup(
     name="chatimusmaximus",
-    version='0.2.2',
+    version='0.3.0',
     description='Chat GUI for youtube, twitch, livecoding, and WatchPeopleCode chats',
     # long_description=long_description,
     url='https://github.com/benhoff/chatimusmaximus',
@@ -29,14 +29,18 @@ setup(
                   'gui_scripts': ['chatimusmaximus = chatimusmaximus.__main__:main']},
 
     packages= find_packages(), # exclude=['docs', 'tests']
-    package_data={'chatimusmaximus': ['default_settings.yml', 'gui/resources/click.wav', 'gui/resources/icons/*', 'gui/resources/buttons/*']},
+    package_data={'chatimusmaximus': ['default_settings.yml',
+                                      'gui/resources/click.wav',
+                                      'gui/resources/icons/*',
+                                      'gui/resources/buttons/*']},
 
     install_requires=[
         'pyzmq',
         'PyYAML',
-        'pYqT5',
+        'PyQt5',
         'Quamash',
         'vexbot',
+        'vexmessage',
         ],
 
     extras_require={

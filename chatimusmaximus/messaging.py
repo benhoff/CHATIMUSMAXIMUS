@@ -1,12 +1,13 @@
 import time
-import pickle
 from threading import Thread
 
 import zmq
 from PyQt5 import QtCore
+from vexmessage import create_vex_message, decode_vex_message
 
 
 class ZmqMessaging(QtCore.QObject):
+    # source, sender, message
     message_signal = QtCore.pyqtSignal(str, str, str)
     connected_signal = QtCore.pyqtSignal(bool, str)
 
@@ -16,22 +17,47 @@ class ZmqMessaging(QtCore.QObject):
         self.sub_socket = context.socket(zmq.SUB)
         self.sub_socket.setsockopt(zmq.SUBSCRIBE, b'')
         self.pub_socket = context.socket(zmq.PUB)
-        self.thread = Thread(target=self.recv_sub_socket, daemon=True)
+        self.thread = Thread(target=self._recv_sub_socket, daemon=True)
         self.thread.start()
         # service, user, msg, time
-        self._last_message = ['', '', '', time.time()]
+        self._last_message = ('', '', '', time.time())
+
+    @QtCore.pyqtSlot(str, str, str)
+    def publish_message(self, service, user, text, target=''):
+        frame = create_vex_message(target,
+                                   service,
+                                   'MSG',
+                                   user,
+                                   text)
+
+        self.pub_socket.send_multipart(frame)
 
     def subscribe_to_publisher(self, address: str):
         self.sub_socket.connect(address)
 
-    def publish_to_address(self, address):
+    def publish_to_address(self, address: str):
         self.pub_socket.connect(address)
 
-    @QtCore.pyqtSlot(str, str, str)
-    def publish_message(self, service, user, text):
-        frame = (service.encode('ascii'),
-                 pickle.dumps(('MSG', user, text)))
-        self.pub_socket.send_multipart(frame)
+    def _recv_sub_socket(self):
+        while True:
+            frame = self.sub_socket.recv_multipart()
+            msg = decode_vex_message(frame)
+            if msg.type == 'MSG':
+                if not self._duplicate_message(msg):
+                    self.message_signal.emit(msg.source,
+                                             msg.contents[0],
+                                             msg.contents[1])
+
+            elif msg.type == 'STATUS':
+                state = msg.contents[0]
+                if state == 'CONNECTED':
+                    state = True
+                elif state == 'DISCONNECTED':
+                    state = False
+                else:
+                    continue
+                self.connected_signal.emit(state, msg.source)
+
 
     def _duplicate_message(self, message):
         """
@@ -40,8 +66,12 @@ class ZmqMessaging(QtCore.QObject):
         being displayed
         """
         last_message = self._last_message
-        self._last_message = list(message)
-        self._last_message.append(time.time())
+        # source, user, msg, time
+        self._last_message = tuple(message.source,
+                                   message.contents[0],
+                                   message.contents[1],
+                                   time.time())
+
         last_user = last_message[1]
         if last_user != message[1]:
             return False
@@ -51,26 +81,3 @@ class ZmqMessaging(QtCore.QObject):
             return True
 
         return False
-
-    def recv_sub_socket(self):
-        while True:
-            frame = self.sub_socket.recv_multipart()
-            frame = [frame[0].decode('ascii'),
-                     *pickle.loads(frame[1])]
-
-            frame_length = len(frame)
-            if frame_length == 4:
-                del frame[1]
-                if not self._duplicate_message(frame):
-                    self.message_signal.emit(*frame)
-            elif frame_length == 2:
-                state = frame[1]
-                if state == 'CONNECTED':
-                    state = True
-                elif state == 'DISCONNECTED':
-                    state = False
-                else:
-                    frame = [frame[0], frame[0], frame[1]]
-                    self.message_signal.emit(*frame)
-                    continue
-                self.connected_signal.emit(state, frame[0])
