@@ -20,6 +20,7 @@ try:
 except ImportError:
     pass
 
+
 def main():
     # create the Application
     app = QtWidgets.QApplication(sys.argv)

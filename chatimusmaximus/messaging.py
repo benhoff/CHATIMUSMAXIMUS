@@ -58,7 +58,6 @@ class ZmqMessaging(QtCore.QObject):
                     continue
                 self.connected_signal.emit(state, msg.source)
 
-
     def _duplicate_message(self, message):
         """
         zmq is giving me grief. Tiny method
