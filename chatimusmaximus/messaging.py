@@ -29,7 +29,7 @@ class ZmqMessaging(QtCore.QObject):
 
     @QtCore.pyqtSlot(str, str, str)
     def publish_message(self, service, user, text):
-        frame = (service,
+        frame = (service.encode('ascii'),
                  pickle.dumps(('MSG', user, text)))
         self.pub_socket.send_multipart(frame)
 
@@ -67,6 +67,10 @@ class ZmqMessaging(QtCore.QObject):
                 state = frame[1]
                 if state == 'CONNECTED':
                     state = True
-                else:
+                elif state == 'DISCONNECTED':
                     state = False
+                else:
+                    frame = [frame[0], frame[0], frame[1]]
+                    self.message_signal.emit(*frame)
+                    continue
                 self.connected_signal.emit(state, frame[0])
