@@ -27,3 +27,5 @@ If you run into issues, send me an email [beohoff@gmail] or start an issue!
 2. Or run the code from vexbot `https://github.com/benhoff/vexbot.git`. I haven't had time to write up running instructions for vexbot :shame: but feel free to email me about it.
 
 pull requests welcome!
+
+Chatimusmaximus uses [Click](http://www.freesound.org/people/lebcraftlp/sounds/192278/) from [lebcraftlp](http://www.freesound.org/people/lebcraftlp/).
