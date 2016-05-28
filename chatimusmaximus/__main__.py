@@ -14,6 +14,11 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 log.addHandler(logging.StreamHandler())
 
+try:
+    import setproctitle
+    setproctitle.setproctitle('chatimusmaximus')
+except ImportError:
+    pass
 
 def main():
     # create the Application
