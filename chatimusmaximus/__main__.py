@@ -2,6 +2,7 @@ import sys
 import asyncio
 import logging
 
+import pluginmanager
 from PyQt5 import QtWidgets
 from quamash import QEventLoop
 
@@ -43,6 +44,7 @@ def main():
     messager.connected_signal.connect(main_window.status_bar.set_widget_status)
     main_window.command_line_signal.connect(messager.publish_message)
 
+
     sockets = settings_data['sockets_to_connect_to']
     cmd_line_address = settings_data['display']['address']
 
@@ -61,6 +63,13 @@ def main():
     except ZMQError:
         s = 'command line address to connect to {} is throwing errors!'
         print(s.format(cmd_line_address))
+
+    plugin_manager = pluginmanager.PluginInterface()
+    plugin_manager.set_entry_points('chatimusmaximus.gui')
+    # plugins, names
+    plugins, _ = plugin_manager.collect_entry_point_plugins()
+    for plug in plugins:
+        plug(main_window, messager)
 
     # show me the money!
     main_window.show()

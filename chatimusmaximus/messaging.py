@@ -33,6 +33,15 @@ class ZmqMessaging(QtCore.QObject):
 
         self.pub_socket.send_multipart(frame)
 
+    def send_command(self, text, target=''):
+        # FIXME
+        frame = create_vex_message(target,
+                                   'chatimus',
+                                   'CMD',
+                                   (text,))
+
+        self.pub_socket.send_multipart(frame)
+
     def subscribe_to_publisher(self, address: str):
         self.sub_socket.connect(address)
 
