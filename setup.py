@@ -10,7 +10,7 @@ with open(os.path.join(directory, 'README.rst')) as f:
 
 setup(
     name="chatimusmaximus",
-    version='0.4.0',
+    version='0.4.1',
     description='Chat GUI for youtube, twitch, livecoding, and WatchPeopleCode chats',
     # long_description=long_description,
     url='https://github.com/benhoff/chatimusmaximus',
@@ -35,6 +35,7 @@ setup(
                                       'gui/resources/buttons/*']},
 
     install_requires=[
+        'pluginmanager',
         'pyzmq',
         'PyYAML',
         'PyQt5',

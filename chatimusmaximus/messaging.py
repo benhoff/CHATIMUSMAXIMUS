@@ -29,7 +29,7 @@ class ZmqMessaging(QtCore.QObject):
                                    service,
                                    'MSG',
                                    (user,
-                                   text))
+                                    text))
 
         self.pub_socket.send_multipart(frame)
 

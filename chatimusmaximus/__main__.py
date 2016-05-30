@@ -44,7 +44,6 @@ def main():
     messager.connected_signal.connect(main_window.status_bar.set_widget_status)
     main_window.command_line_signal.connect(messager.publish_message)
 
-
     sockets = settings_data['sockets_to_connect_to']
     cmd_line_address = settings_data['display']['address']
 
