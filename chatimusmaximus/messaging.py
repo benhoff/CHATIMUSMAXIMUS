@@ -24,11 +24,12 @@ class ZmqMessaging(QtCore.QObject):
 
     @QtCore.pyqtSlot(str, str, str)
     def publish_message(self, service, user, text, target=''):
+        # FIXME
         frame = create_vex_message(target,
                                    service,
                                    'MSG',
-                                   user,
-                                   text)
+                                   (user,
+                                   text))
 
         self.pub_socket.send_multipart(frame)
 
@@ -72,10 +73,10 @@ class ZmqMessaging(QtCore.QObject):
                               time.time())
 
         last_user = last_message[1]
-        if last_user != message[1]:
+        if last_user != self._last_message[1]:
             return False
 
-        if (last_message[2] == message[2] and
+        if (last_message[2] == self._last_message[2] and
                 self._last_message[3] - last_message[3] < 1):
             return True
 
