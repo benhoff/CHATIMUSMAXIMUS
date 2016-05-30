@@ -66,10 +66,10 @@ class ZmqMessaging(QtCore.QObject):
         """
         last_message = self._last_message
         # source, user, msg, time
-        self._last_message = tuple(message.source,
-                                   message.contents[0],
-                                   message.contents[1],
-                                   time.time())
+        self._last_message = (message.source,
+                              message.contents[0],
+                              message.contents[1],
+                              time.time())
 
         last_user = last_message[1]
         if last_user != message[1]:
