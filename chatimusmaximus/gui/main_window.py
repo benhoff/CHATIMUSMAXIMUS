@@ -42,7 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # alias for pep8
         msg_area = self.central_widget.message_area
         msg_area.time_signal.connect(self.status_bar.time_label.setText)
-        self.menu_bar = MenuBar(parent=self)
+        self.menu_bar = MenuBar(self.settings_model, parent=self)
         self.setMenuBar(self.menu_bar)
 
         icon_dict = _get_icon_dict()
