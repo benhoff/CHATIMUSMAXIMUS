@@ -51,22 +51,29 @@ class ZmqMessaging(QtCore.QObject):
     def _recv_sub_socket(self):
         while True:
             frame = self.sub_socket.recv_multipart()
-            msg = decode_vex_message(frame)
-            if msg.type == 'MSG':
-                if not self._duplicate_message(msg):
-                    self.message_signal.emit(msg.source,
-                                             msg.contents[0],
-                                             msg.contents[1])
+            message = decode_vex_message(frame)
+            if message.type == 'MSG':
+                if not self._duplicate_message(message):
+                    user = message.contents[0]
+                    try:
+                        msg = message.contents[1]
+                    except IndexError:
+                        user = message.source
+                        msg = message.contents[0]
 
-            elif msg.type == 'STATUS':
-                state = msg.contents[0]
+                    self.message_signal.emit(message.source,
+                                             user,
+                                             msg)
+
+            elif message.type == 'STATUS':
+                state = message.contents[0]
                 if state == 'CONNECTED':
                     state = True
                 elif state == 'DISCONNECTED':
                     state = False
                 else:
                     continue
-                self.connected_signal.emit(state, msg.source)
+                self.connected_signal.emit(state, message.source)
 
     def _duplicate_message(self, message):
         """
@@ -76,9 +83,16 @@ class ZmqMessaging(QtCore.QObject):
         """
         last_message = self._last_message
         # source, user, msg, time
+        user = message.contents[0]
+        try:
+            msg = message.contents[1]
+        except IndexError:
+            user = message.source
+            msg = message.contents[0]
+
         self._last_message = (message.source,
-                              message.contents[0],
-                              message.contents[1],
+                              user,
+                              msg,
                               time.time())
 
         last_user = last_message[1]
