@@ -28,8 +28,8 @@ class ZmqMessaging(QtCore.QObject):
         frame = create_vex_message(target,
                                    service,
                                    'MSG',
-                                   (user,
-                                    text))
+                                   author=user,
+                                   message=text)
 
         self.pub_socket.send_multipart(frame)
 
@@ -38,7 +38,7 @@ class ZmqMessaging(QtCore.QObject):
         frame = create_vex_message(target,
                                    'chatimus',
                                    'CMD',
-                                   (text,))
+                                   command=text)
 
         self.pub_socket.send_multipart(frame)
 
@@ -54,19 +54,15 @@ class ZmqMessaging(QtCore.QObject):
             message = decode_vex_message(frame)
             if message.type == 'MSG':
                 if not self._duplicate_message(message):
-                    user = message.contents[0]
-                    try:
-                        msg = message.contents[1]
-                    except IndexError:
-                        user = message.source
-                        msg = message.contents[0]
-
-                    self.message_signal.emit(message.source,
-                                             user,
-                                             msg)
+                    user = message.contents.get('author', message.source)
+                    msg = message.contents.get('message')
+                    if msg:
+                        self.message_signal.emit(message.source,
+                                                 user,
+                                                 msg)
 
             elif message.type == 'STATUS':
-                state = message.contents[0]
+                state = message.contents.get('status')
                 if state == 'CONNECTED':
                     state = True
                 elif state == 'DISCONNECTED':
@@ -80,16 +76,15 @@ class ZmqMessaging(QtCore.QObject):
         zmq is giving me grief. Tiny method
         to prevent duplicate messages from
         being displayed
+
+        if no message is found, defaults to `True`
         """
         last_message = self._last_message
         # source, user, msg, time
-        user = message.contents[0]
-        try:
-            msg = message.contents[1]
-        except IndexError:
-            user = message.source
-            msg = message.contents[0]
-
+        user = message.contents.get('author', message.source)
+        msg = message.contents.get('message', None)
+        if not msg:
+            return True
         self._last_message = (message.source,
                               user,
                               msg,
