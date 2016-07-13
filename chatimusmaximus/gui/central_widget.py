@@ -14,9 +14,6 @@ class CentralWidget(QtWidgets.QWidget):
         self.command_line = CommandLine(parent=self)
         # duck type for easier access in `main_window`
         self.command_line_signal = self.command_line.line_edit.listener_signal
-
-        # create vertical layout to stack the textedit on top
-        # of the `clear` button
         vertical_layout = QtWidgets.QVBoxLayout()
 
         # add the text edit and button to vertical layout

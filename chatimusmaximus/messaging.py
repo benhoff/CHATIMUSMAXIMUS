@@ -10,6 +10,7 @@ class ZmqMessaging(QtCore.QObject):
     # source, sender, message
     message_signal = QtCore.pyqtSignal(str, str, str)
     connected_signal = QtCore.pyqtSignal(bool, str)
+    clear_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -60,6 +61,11 @@ class ZmqMessaging(QtCore.QObject):
                         self.message_signal.emit(message.source,
                                                  user,
                                                  msg)
+
+            elif message.type == 'CMD':
+                command = message.contents.get('command')
+                if command == 'clear':
+                    self.clear_signal.emit()
 
             elif message.type == 'STATUS':
                 state = message.contents.get('status')
