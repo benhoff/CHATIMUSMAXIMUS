@@ -42,7 +42,8 @@ def main():
 
     messager.message_signal.connect(main_window.chat_slot)
     messager.connected_signal.connect(main_window.status_bar.set_widget_status)
-    messager.clear_signal.connect(main_window.central_widget.message_area.clear)
+    clear = main_window.central_widget.message_area.clear
+    messager.clear_signal.connect(clear)
     main_window.command_line_signal.connect(messager.publish_message)
 
     sockets = settings_data['sockets_to_connect_to']
